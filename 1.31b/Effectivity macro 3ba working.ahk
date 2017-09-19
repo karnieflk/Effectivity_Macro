@@ -1,4 +1,4 @@
-﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir   %A_ScriptDir% ; Ensures a consistent starting directory.
@@ -31,12 +31,14 @@ DetectHiddenText on
 #InstallMouseHook
 ;OnExit, Exit_Label
 ;ListLines Off
+Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, sleepstill, Current_Monitor, Effectivity_Macro, Version_Number, Addser
+
 Version_Number = 1.3 Beta
 
 Effectivity_Macro :=  "Effectivity Macro V" Version_Number
 ;msgbox, %Effectivity_Macro%
 
-Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, sleepstill, Current_Monitor
+
 
 /*
 \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
@@ -49,8 +51,6 @@ Checkp=0
 Sleepstill = 0
 LoopCount = -1
 ButtonLoop = 0
-Searchcount = 0
-Guicount = 1
 Serialcount = 0
 Programend = 0
 Needrefresh = 0
@@ -306,7 +306,7 @@ $^2::
    GuiControlGet, editfieldcheck,,EditField
    if editfieldcheck = 
    {
-      Move_Message_Box("262144","Danger Will Robinson!!!","No Prefixes added",)
+      Move_Message_Box("262144","Danger Will Robinson!!!","No Prefixes added")
       ;~ msgbox,262144, Danger Will Robinson!!! %Effectivity_Macro%, No Prefixes added
       Exit
    }		
@@ -360,39 +360,31 @@ THis section does the following:
 Enterallserials()
 {
    global 
+   ; Initial setup before the macro starts to output to the screen
    
    IniRead, refreshrate,  C:\Serialmacro\Settings.ini,refreshrate,refreshrate																		  
  
    Prefixcount = 5
-   addtime = 0
-  
+   addtime = 0  
    Badlist = 
-   StartTime := A_TickCount
+    Stoptimer = 0
+   Serialzcounter2 = 0
+   Serialzcounter = 0
+     StartTime := A_TickCount
    Move_Message_Box("262144","Click on the ACM window that you want to add effectivity to and then press the OK button","Select ACM Screen")
    ;~ Msgbox,262144,, Click on the ACM window that you want to add effectivity to and then press the OK button
    sleep(5)
    WinGet,  Active_ID, ID,A
    Monitorprogram := Title
    sleep(3)
-    
-SerialFullScreen(Active_ID)
    
-Prefixcount = 5
-   Badlist = 
-   
-   Guicontrol,hide, Starting
-   
-   Gui, Submit, NoHide
-   
-   Stoptimer = 0
-   Serialzcounter2 = 0
-   Serialzcounter = 0
-   
+SerialFullScreen(Active_ID)   
+GUI_Image_Set ("Run") ; options are Stop, Run, Pause, Start   
+  
    Gosub, Getmousepositions
    gosub, Createtab
-   ;Msgbox, MOnitor is %Current_Monitor%
-   
-   Gosub, Comma_Check 
+    
+   Comma_Check(Effectivity_Macro)
 
 Result :=   Searchend()
           If (Result = Failure) or (Result = Timedout)
@@ -405,7 +397,7 @@ Result :=   Searchend()
    {
       tabcount++
       IniRead, refreshrate,  C:\Serialmacro\Settings.ini,refreshrate,refreshrate																		   
-      Gosub, checkforactivity ; check every second (100ms) how long there has been no activity
+      checkforactivity()  
       
       	  ;~ If Runcount > 20
 	  ;~ {
@@ -425,38 +417,34 @@ Result :=   Searchend()
       
       If breakloop = 1
       {
-         Gui 1: -AlwaysOnTop
+         Gui 1: -AlwaysOnTop    
+         SplashTextOn,,,Macro Stopped	
+         GUI_Image_Set ("Stop") ; options are Stop, Run, Pause, Start      
+         Sleep(10)
+          SplashTextOff
          Break
-         SplashTextOn,,,Macro Stopped		
-         Guicontrol,hide, Start
-         Guicontrol,hide, paused
-         Guicontrol,show, Stopped
-         Guicontrol,hide, Running
-         Gui, Submit, NoHide
       }
       
-      Gosub, loopcounts
+      LoopCount++
       If LoopCount >= %Refreshrate%
-      ;If Needrefresh = 1
-      {
+       {
          Click, %Applyx%,%Applyy%
          Click, %Applyx%,%Applyy%
          sleep(10)
           Needrefresh = 0
          ;msgbox, refresh
          sleep(3)
-    Result :=   Searchend()
+         Result :=   Searchend()
           If (Result = Failure) or (Result = Timedout)
             Exit
-         Gosub, Win_check
+            
+        Win_check(Active_ID)
          sleep()
          Send {F5}
          sleep(20)
-         Searchcount = 0
-         Searchcountser = 0
+             Searchcountser = 0
          Gosub Refreshpage
          Loopcount = 0
-         Searchcount = 0
          Searchcountser = 0
          Needrefresh = 0
          sleep(10)
@@ -465,12 +453,37 @@ Result :=   Searchend()
       
       sleep()
       Prefix_Number_Location_Check=0
-      Searchcount = 0
-      Searchcountser = 0
+       Searchcountser = 0
       ;Settimer, checkforactivity, Off
-      Gosub, Get_Prefix
-      Gosub, Copy_Serial
-      Gosub, Number_Check
+      Modifier = 
+     Prefiix := Get_Prefix()
+     If Prefix = Complete
+   {
+      Complete = 1      
+      Enterserials()
+   }
+   
+   First_Effectivity_Numbers :=  Copy_Serial("1") ; options are 1  for first set of Prefix numbers, 2 for second set of prefix numbers
+      Result := Number_Check()
+      
+      If Result = -
+         Second_Effectivity_Numbers := Copy_Serial("2") ; options are 1  for first set of Prefix numbers, 2 for second set of prefix numbers
+   else if (Result = ,) or (Result = )
+         {
+          Second_Effectivity_Numbers = %First_Effectivity_Numbers%    
+         Searchcountser = 0
+          nextserialtoaddv = %Addser%-%Second_Effectivity_Numbers%
+         GuiControl,1:,nextserialtoadd, %nextserialtoaddv%
+         COntrolSEnd,, {del},%Effectivity_Macro% 
+         Gui, submit, nohide
+         }
+ 
+Result :=   Searchend()
+          If (Result = Failure) or (Result = Timedout)
+            Exit
+            
+      GOsub, EnterSerials
+  
    }
    return
 }
@@ -494,6 +507,45 @@ Click, %prefixx%, %prefixy%
 Send {Ctrl down} {1} {Ctrl Up}
 
 Return
+}
+
+
+GUI_Image_Set (Set_Image) ; options are Stop, Run, Pause, Start
+{
+   If (Set_image = Stop)
+   {
+         Guicontrol,hide, Start
+         Guicontrol,hide, paused
+         Guicontrol,show, Stopped
+         Guicontrol,hide, Running        
+      }
+      
+      If (Set_Image = Run)
+      {
+          Guicontrol,Hide, Start
+         Guicontrol,hide, paused
+         Guicontrol,Hide, Stopped
+         Guicontrol,Show Running     
+      }
+      
+            If (Set_Image = Pause)
+      {
+          Guicontrol,Hide, Start
+         Guicontrol,Show, paused
+         Guicontrol,Hide, Stopped
+         Guicontrol,hide, Running     
+      }
+      
+            If (Set_Image = Start)
+      {
+          Guicontrol,Show, Start
+         Guicontrol,hide, paused
+         Guicontrol,Hide, Stopped
+         Guicontrol,hide, Running     
+      }
+            
+       Gui, Submit, NoHide
+   return
 }
 /*
 \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
@@ -533,9 +585,9 @@ Getmousepositions:
    MouseGetPos, Add_Button_X_Location, Add_Button_Y_Location
    
    
-   WinGetTitle, Title, A
+   winget,  Active_ID, ID, A 
    ;WinSet, AlwaysOnTop,on,%Title%
-   Current_Monitor := GetCurrentMonitor()
+   Current_Monitor := GetCurrentMonitor(Active_ID)
    sleep(5)
    tooltip,
    SetTimer,ToolTipTimerbutton,off
@@ -605,13 +657,11 @@ Getmousepositions:
 */
 
 
-Get_Prefix:
+Get_Prefix()
 {
+  global 
+  static Prefixcount, PrefixStore1, Prefixstore, Guitextlocation
  
-   Modifier = 
-   
-   Guicount++ ; adds +1 to the number in the Guicount variable
-   
    COntrolSEnd,,{Ctrl Down}{Home}{Ctrl Up}, %Effectivity_Macro% ;note that the controlsend has two commas after the function call (THis always messed me up)
    sleep()
    COntrolSEnd,,{Shift Down}{Right 3}{Shift Up}, %Effectivity_Macro% 
@@ -622,7 +672,7 @@ Get_Prefix:
    
    If Prefixes = ***
    {
-      complete = 1
+     Prefix_Holder_for_ACM_Input =  complete 
    }
    
    
@@ -648,7 +698,7 @@ Get_Prefix:
       ;msgbox, prefix store is %prefixstore% ; for diag purposes
    }
    
-   Return
+   Return %Prefix_Holder_for_ACM_Input%
 }
 
 /*
@@ -668,9 +718,11 @@ Get_Prefix:
 
 
 
-Copy_Serial:
+Copy_Serial(Prefix_Number_Location_Check)
 {
-   Prefix_Number_Location_Check++ ; adds +1 to the number in this variable
+   global
+   
+   ;~ Prefix_Number_Location_Check++ ; adds +1 to the number in this variable
    
    COntrolSEnd,,{Ctrl Down}{Home}{Ctrl Up}, %Effectivity_Macro%
    sleep()
@@ -682,63 +734,65 @@ Copy_Serial:
    
    If Prefix_Number_Location_Check = 1 ; variable will be 1 if it is the first set of Serial numbers (12345-xxxxx)
    {
-      First_Effectivity_Numbers = %SerialN%
-      
+      ;~ First_Effectivity_Numbers = %SerialN%      
+      Prefix_Numbers = %SerialN%      
       
       If Serialzcounter  = 0
       {
          If Serialstore1 = 
          {
-            Serialstore1 = %First_Effectivity_Numbers%
+            ;~ Serialstore1 = %First_Effectivity_Numbers%
+            Serialstore1 = %Prefix_Numbers%
          }
-         Serialstore = %First_Effectivity_Numbers%
+         
+         ;~ Serialstore = %First_Effectivity_Numbers%
+         Serialstore = %Prefix_Numbers%
          Serialzcounter = 1
       }else  {
          Serialstore1 = %Serialstore%
-         Serialstore =  %First_Effectivity_Numbers%
-      }}
+         ;~ Serialstore =  %First_Effectivity_Numbers%
+         Serialstore =  %Prefix_Numbers%
+      }
+          Addser = %Prefixes%%Prefix_Numbers%
+      }
    
    If Prefix_Number_Location_Check = 2 ; variable will be 2 if it is the second set of Serial numbers (xxxxx-12345)
    {
-      Second_Effectivity_Numbers = %SerialN%
+      ;~ Second_Effectivity_Numbers = %SerialN%
+      Prefix_Numbers = %SerialN%
       
       If Serialzcounter2  = 0
       {
          If Serialstore3 = 
          {
-            Serialstore3 = %Second_Effectivity_Numbers%
+            ;~ Serialstore3 = %Second_Effectivity_Numbers%
+            Serialstore3 = %Prefix_Numbers%
          }
-         Serialstore2 = %Second_Effectivity_Numbers%
+         ;~ Serialstore2 = %Second_Effectivity_Numbers%
+         Serialstore2 = %Prefix_Numbers%
          Serialzcounter2 = 1
       }else  {
          Serialstore3 = %Serialstore2%
-         Serialstore2 =  %Second_Effectivity_Numbers%
+         ;~ Serialstore2 =  %Second_Effectivity_Numbers%
+         Serialstore2 =  %Prefix_Numbers%
       }
       COntrolSEnd,, {del 2}, %Effectivity_Macro% 
+      If Prefix_Numbers = 
+         Prefix_Numbers = 99999
       
-	If Second_Effectivity_Numbers = 99999
-	Second_Effectivity_Numbers = %A_Space%
-   }
+	If Prefix_Numbers = 99999
+	Prefix_Numbers = %A_Space%	
+    ;~ If Second_Effectivity_Numbers = 99999
+	;~ Second_Effectivity_Numbers = %A_Space%
+     nextserialtoaddv = %Addser%-%Second_Effectivity_Numbers_Temp%	
+      GuiControl,1:,nextserialtoadd, %nextserialtoaddv%
+      Gui, submit, nohide
+      }
+ 
    
-   Return
+   Return Prefix_Numbers
 }
 
-/*
-\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-										loopcounts subroutine
-	THis section does the following:
-1. Adds one to the loopcount variable
-
-		
-\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-*/
-
-
-loopcounts:
-{
-   LoopCount++
-   return
-}
 
 
 /*
@@ -760,7 +814,7 @@ loopcounts:
 */
 
 
-Number_Check:
+Number_Check()
 {
    ;2rd set of numbers check ===========
    COntrolSEnd,,{Ctrl Down}{Home}{Ctrl Up}, %Effectivity_Macro%
@@ -772,90 +826,80 @@ Number_Check:
    COntrolSEnd,, {del},%Effectivity_Macro% 
    
    Serial_Break_Char_Check = %Numbers%
+   Return Serial_Break_Char_Check
+}
+
+
    
-   ;msgbox, text is %Serial_Break_Char_Check%
-   
-   
-   If Serial_Break_Char_Check = -
-   {
-      Gosub, Copy_Serial
-      If Second_Effectivity_Numbers =
-      {
-         Second_Effectivity_Numbers_Temp = 99999
-      }else  {
-         Second_Effectivity_Numbers_Temp = %Second_Effectivity_Numbers%
-      }
+Serial_Break_Char(Serial_Break_Char_Check)
+{
+   ;~ If Serial_Break_Char_Check = -
+   ;~ {
       
-      Searchcount = 0
-      Searchcountser = 0
-      Addser = %Prefixes%%First_Effectivity_Numbers%
-      nextserialtoaddv = %Addser%-%Second_Effectivity_Numbers_Temp%	
-      GuiControl,1:,nextserialtoadd, %nextserialtoaddv%
-      Gui, submit, nohide
-    ;~ gosub, searchendforserials	
-Result :=   Searchend()
-          If (Result = Failure) or (Result = Timedout)
-            Exit
-      GOsub, EnterSerials
-      ;gosub, Number_Check
-      Return
-   }
+      ;~ Second_Effectivity_Numbers :=  Copy_Serial(2) ; options are 1  for first set of Prefix numbers, 2 for second set of prefix numbers
+      ;~ If Second_Effectivity_Numbers =
+      ;~ {
+         ;~ Second_Effectivity_Numbers_Temp = 99999
+      ;~ }else  {
+         ;~ Second_Effectivity_Numbers_Temp = %Second_Effectivity_Numbers%
+      ;~ }
+      
+  
+Searchcountser = 0
+
    
-   Else If Serial_Break_Char_Check = ,
-   {
-      If Prefix_Number_Location_Check = 1
-      {
-         Second_Effectivity_Numbers = %First_Effectivity_Numbers%
-         Searchcount = 0
-         Searchcountser = 0
-         Addser = %Prefixes%%First_Effectivity_Numbers%
-         nextserialtoaddv = %Addser%-%Second_Effectivity_Numbers%
-         GuiControl,1:,nextserialtoadd, %nextserialtoaddv%
-         COntrolSEnd,, {del},%Effectivity_Macro% 
-         Gui, submit, nohide
-           ;~ gosub, searchendforserials	
-         Result :=   Searchend()
-          If (Result = Failure) or (Result = Timedout)
-            Exit
-         GOsub, EnterSerials
-         Return
-      }
-      Else if Prefix_Number_Location_Check = 2
-      {
-         Addser = %Prefixes%%First_Effectivity_Numbers%
-         nextserialtoaddv = %Addser%-%Second_Effectivity_Numbers%
-         GuiControl,1:,nextserialtoadd, %nextserialtoaddv%
-         COntrolSEnd,, {del},%Effectivity_Macro% 
-         Gui, submit, nohide
-       ;~ gosub, searchendforserials
-  Result :=   Searchend()
-          If (Result = Failure) or (Result = Timedout)
-            Exit   
-         GOsub, EnterSerials
-         Return
-      }}
    
-   Else if Serial_Break_Char_Check = 
-   {
-      If Prefix_Number_Location_Check = 1
-      {
-         Second_Effectivity_Numbers = %First_Effectivity_Numbers%
+   ;~ If Serial_Break_Char_Check = ,
+   ;~ {
+      ;~ If Prefix_Number_Location_Check = 1
+      ;~ {
+     
+             ;~ Result :=   Searchend()
+          ;~ If (Result = Failure) or (Result = Timedout)
+            ;~ Exit
+         ;~ GOsub, EnterSerials
+         ;~ Return
+      ;~ }
+
+      
+  ;~ thise here -->Do a num check in the correct Location    
+  ;~ Else if Prefix_Number_Location_Check = 2  
+      ;~ {
+         ;~ Addser = %Prefixes%%First_Effectivity_Numbers%
+         ;~ nextserialtoaddv = %Addser%-%Second_Effectivity_Numbers%
+         ;~ GuiControl,1:,nextserialtoadd, %nextserialtoaddv%
+         ;~ COntrolSEnd,, {del},%Effectivity_Macro% 
+         ;~ Gui, submit, nohide
+       ;~ ;gosub, searchendforserials
+  ;~ Result :=   Searchend()
+          ;~ If (Result = Failure) or (Result = Timedout)
+            ;~ Exit   
+         ;~ GOsub, EnterSerials
+         ;~ Return
+      ;~ }}
+   
+   ;~ Else if Serial_Break_Char_Check = 
+   ;~ {
+      ;~ If Prefix_Number_Location_Check = 1
+      ;~ {
+         ;~ Second_Effectivity_Numbers = %First_Effectivity_Numbers%
          
-         If Second_Effectivity_Numbers =
-         {
-            Second_Effectivity_Numbers_Temp = 99999
-         }else  {
-            Second_Effectivity_Numbers_Temp = %Second_Effectivity_Numbers%
-         }
+         ;~ If Second_Effectivity_Numbers =
+         ;~ {
+            ;~ Second_Effectivity_Numbers_Temp = 99999
+         ;~ }else  {
+            ;~ Second_Effectivity_Numbers_Temp = %Second_Effectivity_Numbers%
+         ;~ }
          
          
-         Searchcount = 0
-         Searchcountser = 0
-         Addser = %Prefixes%%First_Effectivity_Numbers%
-         nextserialtoaddv = %Addser%-%Second_Effectivity_Numbers_Temp%	
-         
+      
+         ;~ Searchcountser = 0
+         ;~ Addser = %Prefixes%%First_Effectivity_Numbers%
+         ;~ nextserialtoaddv = %Addser%-%Second_Effectivity_Numbers_Temp%	
+               figure this out..  Stopped here.  
+               
          if complete = 1
-         GuiControl,1:,nextserialtoadd, 
+      
          Else
             GuiControl,1:,nextserialtoadd, %nextserialtoaddv%
 			
@@ -869,19 +913,13 @@ Result :=   Searchend()
          GOsub, EnterSerials
          Return
       }	
+      
+      
       Addser = %Prefixes%%First_Effectivity_Numbers%
       nextserialtoaddv = %Addser%-%Second_Effectivity_Numbers_Temp%	
       GuiControl,1:,nextserialtoadd, %nextserialtoaddv%
       COntrolSEnd,, {del},%Effectivity_Macro% 
       Gui, submit, nohide
-      
-      
-    ;~ gosub, searchendforserials	
-        Result :=   Searchend()
-          If (Result = Failure) or (Result = Timedout)
-            Exit
-      Gosub, EnterSerials	
-      Return
    }
    
    return
@@ -905,7 +943,7 @@ Result :=   Searchend()
 */
 
 
-Comma_Check:
+Comma_Check(Effectivity_Macro)
 {
    COntrolSEnd,, {Shift Down}{Right}{SHift Up},%Effectivity_Macro% 
    ControlGet,Commacheck,Selected,,,%Effectivity_Macro% 
@@ -913,12 +951,10 @@ Comma_Check:
    {
       ;Msgbox, COmmafound
       Controlsend,,{BackSpace 2},%Effectivity_Macro% 
-      Return
-   }else  {
+   } else  {
       ;msgbox, comma not found
       COntrolSEnd,, {Left}{BackSpace 2}, %Effectivity_Macro% 
-      Return
-   }
+      }
    Return
 }
 
@@ -966,8 +1002,7 @@ Check_Space:
 Reloading:
 {
      Send {Shift Up}{Ctrl Up} 
-   Move_Message_Box("262144", "The number of successful Serial additions to ACM is %Serialcount% `n`n Serial Macro is currently Paused.`n`n Press Okay Button to reload Macro.", "Reload" ) ; THis is to identify the msgbox and move the msgbox to the active screen
-   Msgbox,262144,Reload --%Effectivity_Macro%, The number of successful Serial additions to ACM is %Serialcount% `n`n Serial Macro is currently Paused.`n`n Press Okay Button to reload Macro.
+   Move_Message_Box("262144", "The number of successful Serial additions to ACM is %Serialcount% `n`n Serial Macro is currently Paused.`n`n Press Okay Button to reload Macro.", "Reload" Effectivity_Macro ) ; THis is to identify the msgbox and move the msgbox to the active screen
    Pause, on
    Reload
    Return
@@ -1030,13 +1065,10 @@ Stop_Macro:
    ;~ Msgbox,262148,Stop %Effectivity_Macro%, The number of successful Serial additions to ACM is %Serialcount% `n`n Are you sure that you want to stop the macro?.`n`n Press YES to stop the Macro.`n`n No to keep going.
    if Msg_box_Result = yes
    {
+       tooltip = 
       Stopactcheck = 1						
       Gui 1: -AlwaysOnTop
-      Guicontrol,hide, Start
-      Guicontrol,hide, paused
-      Guicontrol,show, Stopped
-      Guicontrol,hide, Running
-      Gui, Submit, NoHide
+      GUI_Image_Set ("Stop") ; options are Stop, Run, Pause, Start
       Send {Shift Up}{Ctrl Up}
       breakloop = 1
       Exit
@@ -1068,13 +1100,10 @@ Exitprogram:
    ;~ Msgbox,262148,Stop %Effectivity_Macro%, The number of successful Serial additions to ACM is %Serialcount% `n`n Are you sure that you want to quit the macro?.`n`n Press YES to stop the Macro.`n`n No to keep going.
       if Msg_box_Result = yes
    {
+      tooltip = 
       Stopactcheck = 1						
       Gui 1: -AlwaysOnTop
-      Guicontrol,hide, Start
-      Guicontrol,hide, paused
-      Guicontrol,show, Stopped
-      Guicontrol,hide, Running
-      Gui, Submit, NoHide
+      GUI_Image_Set ("Stop") ; options are Stop, Run, Pause, Start
       Send {Shift Up}{Ctrl Up}
       breakloop = 1
       Exitapp
@@ -1096,13 +1125,10 @@ Quitapp:
    ;~ msgbox,262148,Quit %Effectivity_Macro%, Are you sure you want to quit?
    if Msg_box_Result = yes
    {
+       tooltip = 
       Stopactcheck = 1					
       Gui 1: -AlwaysOnTop
-      Guicontrol,hide, Start
-      Guicontrol,hide, paused
-      Guicontrol,show, Stopped
-      Guicontrol,hide, Running
-      Gui, Submit, NoHide
+      GUI_Image_Set ("Stop") ; options are Stop, Run, Pause, Start
       Send {Shift Up}{Ctrl Up}
       breakloop = 1
       WinSet, AlwaysOnTop, Off,%Title%
@@ -1129,12 +1155,13 @@ Quitapp:
 \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 */
 
-Win_check:
+Win_check(Active_ID)
 {
-   IfWinNotActive , %Title%
+   IfWinNotActive , ahk_id %Active_ID%
    {
-      WinActivate, %Title%
-      WinWaitActive, %Title%,,3
+      WinActivate,  ahk_id %Active_ID%
+      Sleep()
+      WinWaitActive,  ahk_id %Active_ID%,,3
       sleep(5)
    }
    
@@ -1229,7 +1256,7 @@ Searchend()
    while RETSearch  < 1
    {
    pToken := Setup_Images()
-      Current_Monitor := GetCurrentMonitor()
+      Current_Monitor := GetCurrentMonitor(Active_ID)
       Sleep()
       bmpHaystack := Gdip_BitmapFromScreen(Current_Monitor)
       sleep()
@@ -1240,10 +1267,12 @@ Searchend()
       If RETSearch < 0
       {
          Failure :=  RETSearch_Failure_code(RETSearch)
-           Move_Message_Box"262144","Error Searchend (bmpNeedle1)" Failure,"Failure")
+           Move_Message_Box("262144","Error Searchend (bmpNeedle1)" Failure,"Failure")
          ;~ Msgbox,262144, %Effectivity_Macro%, Error Searchend (bmpNeedle1) %Failure%
          Return  "Failure"
+         Break         
       }
+      
       Attempts_Left := 7 - A_index
             SplashTextOn,,25,Serial Macro, Macro Time will time out after %Attempts_Left% more attemps
             Click, %Applyx%,%Applyy%
@@ -1319,7 +1348,7 @@ Searchendforserials:
       if RETSearch = -1005
       RETSearch = Cannot find monitor for screen capture
   Move_Message_Box("262144", "Error Searchendserials (bmpNeedle1)" RetSearch, "Failure")
-      Msgbox,262144, %Effectivity_Macro%, Error Searchendserials (bmpNeedle1) %RetSearch%
+      ;~ Msgbox,262144, %Effectivity_Macro%, Error Searchendserials (bmpNeedle1) %RetSearch%
       Exit
    }
    
@@ -1534,10 +1563,10 @@ refreshcheck:
 \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 */
 
-GetCurrentMonitor()
+GetCurrentMonitor(Active_ID)
 {
    SysGet, numberOfMonitors, MonitorCount
-   WinGetPos, winX, winY, winWidth, winHeight, A
+   WinGetPos, winX, winY, winWidth, winHeight, ahk_id %Active_ID%
    winMidX := winX + winWidth / 2
    winMidY := winY + winHeight / 2
    Loop %numberOfMonitors%
@@ -1599,7 +1628,7 @@ SearchendRefresh()
     while RETSearch  < 1
    {
       pToken := Setup_Images()
-      Current_Monitor := GetCurrentMonitor()
+      Current_Monitor := GetCurrentMonitor(Active_ID)
       Sleep()
       bmpHaystack := Gdip_BitmapFromScreen(Current_Monitor)
       sleep()
@@ -1640,7 +1669,7 @@ SearchendRefresh()
 
 Enterserials:
 {
-   Gosub, Win_check ; checks to make sure the ACm window is the top one
+ Win_check(Active_ID) ; checks to make sure the ACm window is the top one
    
    
    
@@ -1696,11 +1725,8 @@ Enterserials:
       ;~ Msgbox,262144,%Effectivity_Macro%, The number of successful Serial additions to ACM is %Serialcount% `n`n Macro Finished due to no more Serials to add. `n`n It took the macro %Total_Time% to perform tasks. `n`n Please close Serial Macro Window when finished checking to ensure serials were entered correctly.
       Guicontrol,1:, Editfield,
       gosub, radio2h
-      Guicontrol,hide, Start
-      Guicontrol,hide, paused
-      Guicontrol,show, Stopped
-      Guicontrol,hide, Running
-      Exit
+      GUI_Image_Set ("Stop") ; options are Stop, Run, Pause, Start
+       Exit
       Return
    }
    
@@ -1719,11 +1745,11 @@ Enterserials:
    SEndRaw, %Prefix_Holder_for_ACM_Input%
    sleep()
    Send {Tab}
-   Gosub, Win_check
+Win_check(Active_ID)
    Sendraw, %First_Effectivity_Numbers%
    sleep(3)
    Send {Tab}
-   Gosub, Win_check
+Win_check(Active_ID)
    SendRaw, %Second_Effectivity_Numbers%
    sleep(3)
    Send {Tab}
@@ -1739,7 +1765,7 @@ Enterserials:
       SplashTextOn,,25,Serial Macro, Macro will resume in 1
       sleep(10)
       SplashTextOff
-      gosub, Win_check
+      Win_check(Active_ID)
       Click, %prefixx%, %prefixy%
       sleep(5)
       Send {Tab 3}
@@ -1758,8 +1784,7 @@ Enterserials:
    ;SetTimer, refreshcheck, 250
    Serialcount +=1	
    sleep()
-   Searchcount = 0
-   Searchcountser = 0
+      Searchcountser = 0
    
    
    If Second_Effectivity_Numbers =
@@ -1887,7 +1912,7 @@ Engmodel:
   Move_Message_Box("262144", "Select the engeering model and then press the OK button on this window. The prefix will be logged for this session to prevent more timouts of the same prefix.","Multiple Models")
    ;~ Msgbox,262144, %Effectivity_Macro%, Select the engeering model and then press the OK button on this window. `n`n The prefix will be logged for this session to prevent more timouts of the same prefix.
    sleep()
-   gosub, Win_check
+ Win_check(Active_ID)
    Click, %prefixx%, %prefixy%
    Send {Tab 3}
    SplashTextOn,,25,Serial Macro, Macro will resume in 3
@@ -1898,11 +1923,7 @@ Engmodel:
    sleep(3) 
    
    SplashTextOff
-   Guicontrol,hide, Start
-   Guicontrol,hide, paused
-   Guicontrol,hide, Stopped
-   Guicontrol,show, Running
-   Gui, Submit, NoHide
+   GUI_Image_Set ("Run") ; options are Stop, Run, Pause, Start
    Pause, Off
    
    Click, %Applyx%,%Applyy%
@@ -1925,19 +1946,11 @@ Anarchy:
    ;~ Msgbox,262148,%Effectivity_Macro%, Press Yes button if you found the issue and to Resume the Macro, No button to reload macro
    If Msg_box_Result =  Yes
    {
-      Guicontrol,hide, Start
-      Guicontrol,hide, paused
-      Guicontrol,hide, Stopped
-      Guicontrol,show, Running
-      Gui, Submit, NoHide
-      Pause, Off
+      GUI_Image_Set ("Run") ; options are Stop, Run, Pause, Start
+       Pause, Off
    }else  {
-      Guicontrol,hide, Start
-      Guicontrol,hide, paused
-      Guicontrol,show, Stopped
-      Guicontrol,hide, Running
-      Gui, Submit, NoHide
-      Pause, Off 
+      GUI_Image_Set ("Stop") ; options are Stop, Run, Pause, Start
+       Pause, Off 
       Gosub, Reloading
    }
    return
@@ -1968,14 +1981,9 @@ Serialnogo:
    sleep(5) 
    SplashTextOff
    
-   
-   Guicontrol,hide, Start
-   Guicontrol,hide, paused
-   Guicontrol,hide, Stopped
-   Guicontrol,show, Running
-   Gui, 1:Submit, NoHide
+   GUI_Image_Set ("Run") ; options are Stop, Run, Pause, Start
    Pause, Off
-   gosub, Win_check
+Win_check(Active_ID)
    Click, %prefixx%, %prefixy%
    sleep(5)
    Send {ctrl down}{a}{Ctrl up}
@@ -2013,89 +2021,57 @@ pausedstate:
 
 
 
-checkforactivity:
+checkforactivity()
 {
-   if A_TimeIdlePhysical < 4999 ; meaning there has been user activity
-   {
-      Gui 1: -AlwaysOnTop
-      
+     
+     while (A_TimeIdlePhysical < 5000)
       {
-         If Stopactcheck = 1
-         {
-            SplashTextOff
-            Return
-         }
-         If (A_TimeIdlePhysical > 0) and (A_TimeIdlePhysical < 1000)
-         Timeleft = 5
+         Gui 1: -AlwaysOnTop
+         activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my )
          
-         If Stopactcheck = 1
-         {
-            SplashTextOff
-            Return
-         }
-         If (A_TimeIdlePhysical > 1000) and (A_TimeIdlePhysical < 2000)
-         Timeleft = 4
-         
-         If Stopactcheck = 1
-         {
-            SplashTextOff
-            Return
-         }
-         If (A_TimeIdlePhysical > 2000) and (A_TimeIdlePhysical < 3000)
-         Timeleft = 3
-         
-         If Stopactcheck = 1
-         {
-            SplashTextOff
-            Return
-         }
-         If (A_TimeIdlePhysical > 3000) and (A_TimeIdlePhysical < 4000)
-         Timeleft = 2
-         
-         If Stopactcheck = 1
-         {
-            SplashTextOff
-            Return
+            If Stopactcheck = 1
+            {
+               SplashTextOff
+               Break
+            }
+            
+            If (A_TimeIdlePhysical > 0) and (A_TimeIdlePhysical < 1000)
+            Timeleft = 5
+        
+            If (A_TimeIdlePhysical > 1000) and (A_TimeIdlePhysical < 2000)
+            Timeleft = 4
+       
+            If (A_TimeIdlePhysical > 2000) and (A_TimeIdlePhysical < 3000)
+            Timeleft = 3
+   
+            If (A_TimeIdlePhysical > 3000) and (A_TimeIdlePhysical < 4000)
+            Timeleft = 2   
+        
+            If (A_TimeIdlePhysical > 4000) and (A_TimeIdlePhysical < 5000)
+            Timeleft = 1	
+            
+            SplashTextOn ,350,50,Macro paused, Macro is now paused due to user activity.`n Macro will resume after %timeleft% seconds of no user input
+            WinMove, Macro paused,,%amonx%, %Amony%
+            pausedstate = yes
+            GUI_Image_Set ("Pause") ; options are Stop, Run, Pause, Start
+           sleep(10)
          }
          
-         If (A_TimeIdlePhysical > 4000) and (A_TimeIdlePhysical < 5000)
-         Timeleft = 1	
-         
-         If Stopactcheck = 1
-         {
-            SplashTextOff
-            Return
-         }}
-         SplashTextOn,350,50,Macro paused, Macro is now paused due to user activity.`n Macro will resume after %timeleft% seconds of no user input
-         pausedstate = yes
-         Guicontrol,hide, Start
-         Guicontrol,show, paused
-         Guicontrol,hide, Stopped
-         Guicontrol,hide, Running
-         Gui, Submit, NoHide
-         sleep(10)
-         Gosub, checkforactivity
-      } 
-      if A_TimeIdlePhysical > 5000 ; meaning there has been no user activity
+      if A_TimeIdlePhysical >= 5000 ; meaning there has been no user activity
       {
          If pausedstate = yes
          {
             splashtextoff
             Gui 1: +AlwaysOnTop
-            Gosub, Win_check
+         Win_check(Active_ID)
             pausedstate = no
-            Guicontrol,hide, Start
-            Guicontrol,hide, paused
-            Guicontrol,hide, Stopped
-            Guicontrol,show, Running
-            gosub, radio1h
+            GUI_Image_Set ("Run") ; options are Stop, Run, Pause, Start
+             gosub, radio1h
             Gui, Submit, NoHide
-            ;~ gosub, SerialFullScreen
-         SerialFullScreen(Active_ID)
+             SerialFullScreen(Active_ID)
             sleep(10)
-         }
-         return
-      }
+         }}
+         
       return
    }
    
@@ -2120,32 +2096,17 @@ checkforactivity:
       {
          gosub, radio1h
          Gui 1: -AlwaysOnTop
-         Guicontrol,hide, Start
-         Guicontrol,show, paused
-         Guicontrol,hide, Stopped
-         Guicontrol,hide, Running
-         Gui, Submit, NoHide
-         Move_Message_Box("Press pause to unpause")      
-          Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,.1
-         Move_Message_Box("Press pause to unpause")      
-         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,.1
-      Move_Message_Box("Press pause to unpause")      
-         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,.1
-Move_Message_Box("Press pause to unpause")      
-         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,.1
-Move_Message_Box("Press pause to unpause")      
-         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,10
+         GUI_Image_Set ("Pause") ; options are Stop, Run, Pause, Start
+         Move_Message_Box("262144","Press pause to unpause",Effectivity_Macro,".1")      
+         Move_Message_Box("262144","Press pause to unpause",Effectivity_Macro,".1")      
+         Move_Message_Box("262144","Press pause to unpause",Effectivity_Macro,".1")      
+         Move_Message_Box("262144","Press pause to unpause",Effectivity_Macro)      
          Pause, toggle, 1 
          Return
       }else  {
          Gui 1: +AlwaysOnTop
-         Guicontrol,hide, Start
-         Guicontrol,hide, paused
-         Guicontrol,hide, paused
-         Guicontrol,hide, Stopped
-         Guicontrol,show, Running
-         Gui, Submit, NoHide
-         Pause, toggle, 1
+      GUI_Image_Set ("Run") ; options are Stop, Run, Pause, Start
+        Pause, toggle, 1
       }
       return
    }
@@ -2154,26 +2115,40 @@ Move_Message_Box("Press pause to unpause")
    {
       ;~ WinGetTitle, title, ahk_id %Active_ID%
       WinGetPos,  Xarbor,yarbor,warbor,harbor, ahk_id %Active_ID%
-      CurrmonAM := GetCurrentMonitor()
+      CurrmonAM := GetCurrentMonitor(Active_ID)
       SysGet,Aarea,MonitorWorkArea,%currmonAM%
-      WidthA := AareaRight- AareaLeft
-      HeightA := aareaBottom - aAreaTop
-      leftt := aAreaLeft - 4
-      topp := AAreaTop - 4
+      WorkWidthA := AareaRight- AareaLeft
+      workHeightA := aareaBottom - aAreaTop
+      left := aAreaLeft - 4
+      top := AAreaTop - 4
       MouseGetPos mmx,mmy
-      If yarbor = %topp%
+      If yarbor = %top%
       {
-         If xarbor = %leftt%
+         If xarbor = %left%
          ;Msgbox, win maxed
          Return
       }
       Else
-         ;msgbox, not maxed
+      {
+      SysGet,Aarea,Monitor,%currmonAM%
+      WidthA := AareaRight- AareaLeft
+      HeightA := aareaBottom - aAreaTop
+      left := aAreaLeft - 4
+      top := AAreaTop - 4
+        If yarbor = %top%
+         {
+         If xarbor = %left%
+         ;Msgbox, win maxed
+         Return
+         } }
+   ;msgbox, not maxed
+   
       CoordMode, mouse, Relative
       MouseMove 300,10
       Click
       Click
       Coordmode, mouse, screen
+      
       ;MouseMove, mmx, mmy
       return
    }
@@ -2183,13 +2158,8 @@ Move_Message_Box("Press pause to unpause")
       pause, off
       Gui 1: +AlwaysOnTop
       gosub, radio1h
-      Guicontrol,hide, Start
-      Guicontrol,hide, paused
-      Guicontrol,hide, paused
-      Guicontrol,hide, Stopped
-      Guicontrol,show, Running
-      Gui 1:Submit, NoHide
-	  GuiControlGet,sleep_delay,,editfield20
+      GUI_Image_Set ("Run") ; options are Stop, Run, Pause, Start
+      GuiControlGet,sleep_delay,,editfield20
       WinGetPos,ex,ey,,,Macro Timed Out
       IniWrite, %ex%,  C:\Serialmacro\Settings.ini,Timeoutwindow,Xposition
       IniWrite, %ey%,  C:\Serialmacro\Settings.ini,Timeoutwindow,Yposition
@@ -3053,27 +3023,24 @@ radio3h:
 
 Guiclose:
 {
-Move_Message_Box("Are you sure you want to quit")
-     msgbox,262148,Quit %Effectivity_Macro%, Are you sure you want to quit?
-   ifMsgBox Yes
+Result := Move_Message_Box("262148","Are you sure you want to quit?", "Quit" Effectivity_Macro)
+   
+   If Result =  Yes
    {
       ;gui destroy
       ExitApp
-   }else  {
-      Return
    }
+   
    Return
 }
 
 restartmacro:
 {
-  Move_Message_Box("Are you sure that you want to reload the program")
-    msgbox,262148,Reload %Effectivity_Macro%, Are you sure that you want to reload the program?
-   IfMsgBox yes
+ Msg_box_Result :=  Move_Message_Box("262148","Are you sure that you want to reload the program?", Effectivity_Macro)
+
+   If Msg_box_Result =  yes
    {
       Reload
-   }else  {
-      return
    }
    return
 }
@@ -3081,22 +3048,18 @@ restartmacro:
 
 restartmacroEffectivity:
 {
-   Move_Message_Box( "Are you sure that you want to reload the program")
-   msgbox,262148,Reload %Effectivity_Macro%, Are you sure that you want to reload the program?
-   IfMsgBox yes
+Msg_box_Result :=   Move_Message_Box("262148", "Are you sure that you want to reload the program", "reload" Effectivity_Macro)
+If Msg_box_Result = yes
    {
       GuiControlGet, nextserialtoadd
       GuiControlGet, EditField
       GuiControlGet, EditField2
-      TempSavefile = %nextserialtoadd%`,`n%editfield%
-      
+      TempSavefile = %nextserialtoadd%`,`n%editfield%      
       FileAppend, %TempSavefile%, C:\SerialMacro\TempAdd.txt 
       FileAppend, %EditField2%, C:\SerialMacro\TempAdded.txt 
       FileAppend, %totalprefixes%, C:\SerialMacro\Tempamount.txt
       FileAppend, %Serialcount%, C:\SerialMacro\Tempcount.txt
       Reload
-   }else  {
-      return
    }
    return
 }
@@ -3142,11 +3105,7 @@ Macrotimedout:
    Gui, 3:add, Text, xp+35 yp+3, <-- Make this Value Higher if Acm is running slow
    Gui, 3:Show, x%amonx% y%amony%, Macro Timed Out %Effectivity_Macro%
    Guicontrol,3:, editfield20, %Sleep_Delay%
-   Guicontrol,hide, Start
-   Guicontrol,show, paused
-   Guicontrol,hide, Stoppedquick 
-   Guicontrol,hide, Running
-   Gui, Submit, NoHide
+   GUI_Image_Set ("Pause") ; options are Stop, Run, Pause, Start
    gui, 3: +alwaysontop
    Pausescript()
    return
@@ -3179,9 +3138,8 @@ Updatechecker:
    if not (FileExist("C:\Serialmacro\Settings.ini"))
    {
       FileAppend,, C:\Serialmacro\Settings.ini
-      Move_Message_Box("Do you want to check for an update")
-      Msgbox,4,%A_Space%Effectivity Macro Updater, %A_Space%Looks like This may be the first time running this application. Do you want to check for an update?
-      ifmsgbox Yes
+      Msg_box_Result := Move_Message_Box("4"," Looks like This may be the first time running this application. Do you want to check for an update?","Effectivity Macro Updater" )
+            if Msg_box_Result = Yes
       {
          gosub, Versioncheck
       }else  {
@@ -3198,9 +3156,9 @@ Updatechecker:
       EnvSub, NumberOfDays, %updatestatus% , Days 	; this does a date calc, in days
       If NumberOfDays > %Updaterate%	; More than 13 days
       {
-         Move_Message_Box("Would you like to check for a new update")
-          MsgBox,4,%A_Space%Effectivity Macro Updater, It has been %NumberOfDays% days since the last update check.`n`n Would you like to check for a new update?`n`n
-         ifmsgbox Yes	
+        Msg_box_Result :=  Move_Message_Box("4","It has been %NumberOfDays% days since the last update check.`n`n Would you like to check for a new update?", "Effectivity Macro Updater")
+      
+         if Msg_box_Result = Yes	
          gosub, Versioncheck
          else
          {
@@ -3312,24 +3270,22 @@ Versioncheck:
       
       ;MSGBOX, %clipboard%
       settimer, versiontimeout, Off
- Move_Message_Box(" Would you like to open the Cat Box site to download the latest version")
-      msgbox,262148,Effectivity Macro Updater, New update found. Would you like to open the Cat Box site to download the latest version?`n`nThe list below is what has changed.%whatisnew%
-      IfMsgBox, yes 
+Msg_box_Result :=  Move_Message_Box("262148", " New update found. Would you like to open the Cat Box site to download the latest version?", "Effectivity Macro Updater")
+  If Msg_box_Result = Yes
       {
          IniWrite, 14,  C:\Serialmacro\Settings.ini,update,updaterate	
          IniWrite, %A_now%,  C:\Serialmacro\Settings.ini,  update,lastupdate
          Run, https://cat.box.com/s/eghbsbas6d2qdwsy7y8cyfdglv2331mb
       }
       Else
+      {
          sleep(5)
       IniWrite, 14,  C:\Serialmacro\Settings.ini,update,updaterate	
       IniWrite, %A_now%,  C:\Serialmacro\Settings.ini,  update,lastupdate
-      
-      return
-   }
+       }
    Gui,2:Destroy
    return
-}
+}}
 
 versiontimeout:
 {
@@ -3412,28 +3368,30 @@ create_checkgui:
    winmovemsgbox:
    {
       SetTimer, WinMoveMsgBox, OFF 
-      WinMove, %Msg_box_test% , Amonx, Amony 
+      WinMove, %Msg_box_text% , Amonx, Amony 
       return
 }
 
 
-Move_Message_Box(Msg_box_type,Msg_box_test,
+Move_Message_Box(Msg_box_type, Msg_box_text, Msg_box_title, Msg_box_Time := 2147483 )
 {
-   global Msg_box_test
+   global 
    activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-          Settimer, winmovemsgbox, 20
-    return
+Settimer, winmovemsgbox, 20
+MsgBox, % Msg_box_type , %Msg_box_title% , %Msg_box_text% , %Msg_box_time%
+IfMsgBox yes
+   Result = Yes
+IfMsgBox no
+   Result = no
+
+    return Result
 }
 
-sleep(Amount:=0)
+
+sleep(Amount := 100)
 {
-If amount = 0
-amount = 100
-Else
 amount := amount * 100
-
 Sleep %Amount%
-
 Return
 }
 
