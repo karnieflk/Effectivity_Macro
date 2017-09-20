@@ -31,7 +31,7 @@ DetectHiddenText on
 #InstallMouseHook
 ;OnExit, Exit_Label
 ;ListLines Off
-Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, sleepstill, Current_Monitor, Effectivity_Macro, Version_Number, Addser
+Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title,Current_Monitor, Effectivity_Macro, Version_Number, Addser
 
 Version_Number = 1.3 Beta
 
@@ -48,7 +48,7 @@ Effectivity_Macro :=  "Effectivity Macro V" Version_Number
 ; THis section sets some variables up for later use
 
 Checkp=0
-Sleepstill = 0
+
 LoopCount = -1
 ButtonLoop = 0
 Serialcount = 0
@@ -67,7 +67,8 @@ Textaddbutton = Please Shift + mouse button click on the "Add Button" in the ACM
 Textprefixbutton = Please Shift + mouse button click in the "prefix" edit field in the ACM effectivity screen to get it's location.
 Textapplybutton = Please Shift + mouse button click on the "Apply button" in the ACM effectivity screen to get it's location.
 Radiobutton = 1
-
+Base_Timeout_Time = 5
+addtime = 0
 
 
 /*
@@ -478,11 +479,26 @@ Result :=   Searchend()
          Gui, submit, nohide
          }
  
-Result :=   Searchend()
-          If (Result = Failure) or (Result = Timedout)
+		Result := Searchendforserials()
+          If (Result = Failure)
+		    {
+			Move_Message_Box("262144","Error verifing serial committal `n Macro will stop","Error")
+			GUI_Image_Set ("Stop") ; options are Stop, Run, Pause, Start   
             Exit
-            
-      GOsub, EnterSerials
+			}
+			Else If Result = TimedOut
+			{
+			Timeout = Yes
+            gosub, Macrotimedout
+			}
+			Else If Result = Success
+			EnterSerials()
+			Else
+			{
+			Move_Message_Box("262144","Error verifing serial committal `n Macro will stop","Error")Move_Message_Box("262144","Error verifing serial committal `n Macro will stop","Error")
+			GUI_Image_Set ("Stop") ; options are Stop, Run, Pause, Start   
+            Exit
+			}
   
    }
    return
@@ -896,31 +912,31 @@ Searchcountser = 0
          ;~ Searchcountser = 0
          ;~ Addser = %Prefixes%%First_Effectivity_Numbers%
          ;~ nextserialtoaddv = %Addser%-%Second_Effectivity_Numbers_Temp%	
-               figure this out..  Stopped here.  
+               ; figure this out..  Stopped here.  
                
-         if complete = 1
+         ; if complete = 1
       
-         Else
-            GuiControl,1:,nextserialtoadd, %nextserialtoaddv%
+         ; Else
+            ; GuiControl,1:,nextserialtoadd, %nextserialtoaddv%
 			
-         COntrolSEnd,, {del},%Effectivity_Macro% 
-         Gui, submit, nohide
+         ; COntrolSEnd,, {del},%Effectivity_Macro% 
+         ; Gui, submit, nohide
          
-           ;~ gosub, searchendforserials	
-               Result :=   Searchend()
-          If (Result = Failure) or (Result = Timedout)
-            Exit
-         GOsub, EnterSerials
-         Return
-      }	
+           ~ gosub, searchendforserials	
+               ; Result :=   Searchend()
+          ; If (Result = Failure) or (Result = Timedout)
+            ; Exit
+         ; GOsub, EnterSerials
+         ; Return
+      ; }	
       
       
-      Addser = %Prefixes%%First_Effectivity_Numbers%
-      nextserialtoaddv = %Addser%-%Second_Effectivity_Numbers_Temp%	
-      GuiControl,1:,nextserialtoadd, %nextserialtoaddv%
-      COntrolSEnd,, {del},%Effectivity_Macro% 
-      Gui, submit, nohide
-   }
+      ; Addser = %Prefixes%%First_Effectivity_Numbers%
+      ; nextserialtoaddv = %Addser%-%Second_Effectivity_Numbers_Temp%	
+      ; GuiControl,1:,nextserialtoadd, %nextserialtoaddv%
+      ; COntrolSEnd,, {del},%Effectivity_Macro% 
+      ; Gui, submit, nohide
+   ; }
    
    return
 }
@@ -1231,8 +1247,7 @@ Searchend()
    ;~ {
       ;~ SetTimer, refreshcheck, Off
       ;~ Refreshchecks = 0
-      ;~ SleepStill = 0 
-      ;~ ;Msgbox, found
+            ;~ ;Msgbox, found
    ;~ }
    
    
@@ -1245,8 +1260,7 @@ Searchend()
          ;~ gosub, Macrotimedout
       ;~ }
       ;~ ;Msgbox, notfound
-      ;~ Sleepstill = 1
-      ;~ sleep(5)
+        ;~ sleep(5)
       ;~ searchcount++
     ;~ Searchend()
    ;~ }
@@ -1325,205 +1339,58 @@ RETSearch_Failure_code(RETSearch)
 \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 */
 
-Searchendforserials:
+Searchendforserials()
 {
-   
+   Global
+   Retsearch = 0
    ;msgbox, end serials
+   While Retsearch < 1
+   {
+   Current_Monitor := GetCurrentMonitor(Active_ID)
    listlines off
    bmpHaystack := Gdip_BitmapFromScreen(Current_Monitor)
    sleep()
    RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,5,0,0,0)
    sleep()
    ;listlines on
-   If RETSearch < 0
-   {
-      if RETSearch = -1001
-      RETSearch = invalid haystack or needle bitmap pointer
-      if RETSearch = -1002
-      RETSearch = invalid variation value
-      if RETSearch = -1003
-      RETSearch = Unable to lock haystack bitmap bits
-      if RETSearch = -1004
-      RETSearch = Unable to lock needle bitmap bits
-      if RETSearch = -1005
-      RETSearch = Cannot find monitor for screen capture
-  Move_Message_Box("262144", "Error Searchendserials (bmpNeedle1)" RetSearch, "Failure")
-      ;~ Msgbox,262144, %Effectivity_Macro%, Error Searchendserials (bmpNeedle1) %RetSearch%
-      Exit
-   }
-   
-   
-   If RETSearch > 0
-   {
-      SplashTextOff
-      Return
-   }
-   
-   If RETSearch = 0
-   {
+    If RETSearch < 0
+      {
+         Failure :=  RETSearch_Failure_code(RETSearch)
+           Move_Message_Box("262144","Error Searchendserials (bmpNeedle1)" Failure,"Failure")
+         ;~ Msgbox,262144, %Effectivity_Macro%, Error Searchend (bmpNeedle1) %Failure%
+         Return  "Failure"
+         Break         
+      } 
+  
       ;msgbox, notfound serialsearch
-      
-      listlines off
-      
-      If addtime = 2
-      {
-         If Searchcountser = 1
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 7
+      Total_Timeout_Time := addtime + Base_Timeout_Time + 1
+       
+	   Loop, %Total_Timeout_Time%
+	   {
+			Total_Timeout_Time--
+       
+            SplashTextOn,,25,Serial Macro, Macro Time out in %Total_Timeout_Time%%
             Click, %Applyx%,%Applyy%
             Click, %Applyx%,%Applyy%
-         }
-         If Searchcountser = 2
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 6
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         
-         If Searchcountser = 3
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 5
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         
-         If Searchcountser = 4
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 4
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         
-         
-         If Searchcountser = 5
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 3
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         If Searchcountser = 6
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 2
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         If Searchcountser = 7
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 1
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         ;listlines on
-         If Searchcountser = 8
-         {
-            SplashTextoff
-            Timeout = Yes
-            gosub, Macrotimedout
-         }}
-      
-      
-      If addtime = 1
-      {
-         If Searchcountser = 1
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 6
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         
-         If Searchcountser = 2
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 5
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         
-         If Searchcountser = 3
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 4
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         
-         
-         If Searchcountser = 4
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 3
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         If Searchcountser = 5
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 2
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         If Searchcountser = 6
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 1
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         ;listlines on
-         If Searchcountser = 7
-         {
-            SplashTextoff
-            Timeout = Yes
-            gosub, Macrotimedout
-         }}else  {
-         If Searchcountser = 1
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 5
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         
-         If Searchcountser = 2
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 4
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         
-         
-         If Searchcountser = 3
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 3
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         If Searchcountser = 4
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 2
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         If Searchcountser = 5
-         {
-            SplashTextOn,,25,Serial Macro, Macro Time out in 1
-            Click, %Applyx%,%Applyy%
-            Click, %Applyx%,%Applyy%
-         }
-         ;listlines on
-         If Searchcountser = 6
-         {
-            SplashTextoff
-            Timeout = Yes
-            gosub, Macrotimedout
-         }}
-      
-      ;Msgbox, notfound
-      Sleepstill = 1
-      sleep(5)
-      searchcountser++
-    ;~ gosub, searchendforserials	
-Result :=   Searchend()
+			Sleep (5)
+			Result :=   Searchend()
           If (Result = Failure) or (Result = Timedout)
-            Exit
-   }
-   Return
-}
-
+		  {
+		  SplashTextOff
+          return "Failure"
+		}
+		Else If Result = Success
+		SplashTextOff
+		Return "Success"
+		Break			
+         }		 
+        
+            SplashTextoff
+            Return "TimedOut"
+         }
+		 Return
+		 }
+      
 
 
 /*
@@ -1771,7 +1638,6 @@ Win_check(Active_ID)
       Send {Tab 3}
       sleep(5)
       DualACMCheck = 0
-      SleepStill = 0 
       sleep(3)
    }
    
@@ -1796,8 +1662,7 @@ Win_check(Active_ID)
    GuiControl,1:,serialsentered, Number of Serials successfully added to ACM = %Serialcount%
    ;SetTimer, refreshcheck, Off
    Refreshchecks = 0
-   SleepStill = 0 
-   Modifier = 
+    Modifier = 
    Skipserial = 0
    Return
 }
@@ -1893,15 +1758,16 @@ ToolTipTimerprefix:
 
 Engmodel:
 {
+LEft off here!! Need to figure out how to handle once it has dual eng clicked..
    warned = 1
    WinGetPos,ex,ey,,,Macro Timed Out
    IniWrite, %ex%,  C:\Serialmacro\Settings.ini,Timeoutwindow,Xposition
    IniWrite, %ey%,  C:\Serialmacro\Settings.ini,Timeoutwindow,Yposition																	
    Gui, 3:Destroy
-   Modifier = -**Multiple Engineering Models** 
+   Modifier = **Multiple Engineering Models** 
    ;DualACMPrefix = %PrefixStore1%
    ;msgbox, noprefix is %noacmPrefix%
-   DUalACMCheck = 1
+   ; DUalACMCheck = 1
    DualENG = %DualENG%%PrefixStore1%`,
    StringTrimRight, EditField2, Editfield2,1
    ;msgbox, after trim :`n %EditField2%`n Prefixstore is %PrefixStore1%`nSerial is %Serialstore1%-%Serialstore3% Mod is %Modifier%
@@ -1915,20 +1781,21 @@ Engmodel:
  Win_check(Active_ID)
    Click, %prefixx%, %prefixy%
    Send {Tab 3}
-   SplashTextOn,,25,Serial Macro, Macro will resume in 3
+   Loop, 4
+   {
+   Loop_Count := 4 - A_LoopIndex
+    SplashTextOn,,25,Serial Macro, Macro will resume in %Loop_Count%
    sleep(3) 
-   SplashTextOn,,25,Serial Macro, Macro will resume in 2 
-   sleep(3)
-   SplashTextOn,,25,Serial Macro, Macro will resume in 1
-   sleep(3) 
-   
+   }
    SplashTextOff
    GUI_Image_Set ("Run") ; options are Stop, Run, Pause, Start
    Pause, Off
    
+   Loop, 3
+   {
    Click, %Applyx%,%Applyy%
-   Click, %Applyx%,%Applyy%
-   Click, %Applyx%,%Applyy%
+   }
+   
    modifier = 
 Result :=   Searchend()
           If (Result = Failure) or (Result = Timedout)
@@ -3065,30 +2932,25 @@ If Msg_box_Result = yes
 }
 
 
-Macrotimedout:
+Macrotimedout()
 {
+Global Sleep_Delay
+
    IniRead, amonx,  C:\Serialmacro\Settings.ini,Timeoutwindow,Xposition
    IniRead, amony,  C:\Serialmacro\Settings.ini,Timeoutwindow,Yposition
    IniRead, Sleep_Delay, C:\Serialmacro\Settings.ini,Sleep_Delay,Sleep_Delay
    
+   Add in check for if off of visable screen
    
-   If amonx = Error
+   If (amonx = Error) or (Amony = Error)
    {
       activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
 
    }
-   
-   If Amony = Error
-   {
-      activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-
-   }
-   
+     
    ;msgbox, Prefix is %Guitextlocation%`n Serial is %Second_Effectivity_Numbers%-%Second_Effectivity_Numbers%`n Mod is %Modifier%
    Gui, 3:Add, Picture, x0 y0 w385 h215 +0x4000000, C:\SerialMacro\background.png
    gui, -alwaysontop
-   
-   
    gui, 3:add, Text, x10 y10 w360  h20 BackgroundTrans,  The delay is most likely due to one of the following:
    gui, 3:add, Text, xp yp+21 w360  h20 BackgroundTrans,  - The Eng Model needs to be manually added with the drop down menu.
    gui, 3:add, Text, xp yp+21 w360  h20 BackgroundTrans,  - Effectivity # Does not Exist in ACM
