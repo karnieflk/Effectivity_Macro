@@ -99,6 +99,7 @@ Load_ini_file(inifile)
 Install_Requied_Files(File_Install_Root_Folder,File_Install_Work_Folder)
 
 Create_Tray_Menu()
+Create_Main_GUI_Menu()
 
 editfield := Temp_File_Read_Delete(File_Install_Root_Folder,"TempAdd.txt")
 editfield2 := Temp_File_Read_Delete(File_Install_Root_Folder,"TempAdded.txt")
@@ -115,9 +116,122 @@ Msg_Box_Result := Update_Check(updatestatus)
 If Msg_Box_Result = Yes
 	Versioncheck()
 
-
+Serials_GUI_Screen()
 return
 
+SerialsGUIscreen()
+{
+Global 
+
+activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+ 
+   If totalprefixes < 1
+   {
+      TotalPrefixes = 0
+   }
+  
+   gui 1:add, Edit, x10 y50 w390 h240  vEditField,%editfield%   
+   gui 1:add, Edit, xp yp w390 h240 vEditField2,%editfield2%
+   
+   Gui 1:Add, Picture, x315 y310 w50 h50 +0x4000000  BackGroundTrans vStarting gstartmacro , C:\SerialMacro\Start.png
+   Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vRunning, C:\SerialMacro\Running.png
+   Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vpaused  gpausesub, C:\SerialMacro\Paused.png
+   Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vStopped grestartmacro, C:\SerialMacro\Stopped.png
+   Gui, 1:Add, Picture, x0 y0 w410 h400 +0x4000000 , C:\SerialMacro\background.png
+   
+   Gui 1:Add, Edit, xp+165 yp+343 w110 h20  vnextserialtoadd, %nextserialtoaddv%
+   
+   Gui 1:Add, Text, x5 y5 w300 h25 BackgroundTrans +Center vreloadprefixtext, There are a total of %TotalPrefixes% Effectivity to add to ACM
+   
+   Gui 1:add, Radio, xp+25 yp+25 w130 h20 BackGroundTrans vradio1 gradio1h, Effectivity to be added 
+   Gui 1:add, Radio, xp+155 yp w140 h20 BackGroundTrans vradio2 gradio2h, Effectivity already added
+   
+   Gui 1:Add, Text, xp-170 Yp+265 W250 h13 BackGroundTrans vserialsentered, Number of Effectivity successfully added to ACM = %Serialcount%
+   
+   Gui 1:Add, Text, Xp Yp+15 w250 h13  BackGroundTrans , If macro is operating incorrectly, press Esc to reload
+   Gui 1:Add, Text, xp yp+15 w250 h13  BackGroundTrans , Or press Pause Button on keyboard to Pause macro, Press Pause again to resume macro.
+   Gui 1:Add, Text, xp yp+20 w145 h20  BackgroundTrans , Next Effectivity to add to ACM:   
+   Gui 1:Menu, MyMenuBar
+   Gui 1:Show,  x%amonx% y%amony% , %Effectivity_Macro%
+   gui 1: +alwaysontop
+   Editfield_Control("Editfield")
+
+   ; IfExist  C:\SerialMacro\Tempcount.txt
+   ; {
+      ; FileRead, Serialcount,C:\SerialMacro\Tempcount.txt
+      ; GuiControl,1:,serialsentered, Number of Serials successfully added to ACM = %Serialcount%	
+      ; FileDelete, C:\SerialMacro\Tempcount.txt
+   ; }
+   Gui 1:Submit, NoHide
+   Return
+}
+
+ Editfield_Control(Textbox)
+ {
+ If Textbox = Editfield
+ {
+   Guicontrol,hide, Editfield2,
+   Guicontrol,show, Editfield,
+   Guicontrol, Focus, Editfield
+ }
+ Else
+ {
+ Guicontrol,hide, Editfield,
+  Guicontrol,show, Editfield2,   
+   Guicontrol, Focus, Editfield2
+  }
+  return
+ }
+ 
+ 
+startmacro:
+{
+   skipbox = 0
+   gosub, enterallserials
+   return
+}
+
+   pausesub:
+   {
+      if A_IsPaused = 0
+      {
+         gosub, radio1h
+         Gui 1: -AlwaysOnTop
+		 Gui_Image_Show("Paused")
+		 make the above function for the images
+         Guicontrol,hide, Start
+         Guicontrol,show, paused
+         Guicontrol,hide, Stopped
+         Guicontrol,hide, Running
+         Gui, Submit, NoHide
+         activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+         Titletext := "Press pause to unpause"
+         Settimer, winmovemsgbox, 20
+         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,.1
+         Settimer, winmovemsgbox, 20
+         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,.1
+         Settimer, winmovemsgbox, 20
+         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,.1
+         Settimer, winmovemsgbox, 20
+         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,.1
+         Settimer, winmovemsgbox, 20
+         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,10
+         Pause, toggle, 1 
+         Return
+      }else  {
+         Gui 1: +AlwaysOnTop
+         Guicontrol,hide, Start
+         Guicontrol,hide, paused
+         Guicontrol,hide, paused
+         Guicontrol,hide, Stopped
+         Guicontrol,show, Running
+         Gui, Submit, NoHide
+         Pause, toggle, 1
+      }
+      return
+   }
+   
+   
 
 
 Folder_Exist_Check(Folder)
@@ -174,6 +288,26 @@ Menu, Tray, Add, Quit, Quitapp
 return
 }
 
+Create_Main_GUI_Menu()
+{
+   Menu, BBBB, Add, &Check For Update , Versioncheck
+   Menu, BBBB, Add, &Options, OptionsGui
+   Menu, BBBB, Add, 
+   Menu, CCCC, Add, &Run							(Crtl + 2), Enterallserials
+   Menu, CCCC, Add, &Pause/Unpause 				(Pause / Insert), pausesub
+   Menu, CCCC, Add, &Stop Macro					(ESC), Exitprogram
+   Menu, CCCC, Add, &Reload Macro, restartmacro
+   Menu, CCCC, Add, &Reload Macro with Current Effectivity, restartmacroEffectivity
+   Menu, BBBB, Add, &Exit							(Ctrl + Q), Quitapp
+   Menu, DDDD, Add, &How To Use					(F1), HowTo
+   Menu, DDDD, Add, &About , Aboutmacro
+   
+   Menu, MyMenuBar, Add, &File, :BBBB
+   Menu, MyMenuBar, Add, &Macro, :CCCC
+   Menu, MyMenuBar, Add, &Help, :DDDD
+   Return
+   }
+   
 Temp_File_Read_Delete(File_Install_Root_Folder,File_Name)
 {
 	IfExist(%File_Install_Root_Folder% "\" %File_Name% )
