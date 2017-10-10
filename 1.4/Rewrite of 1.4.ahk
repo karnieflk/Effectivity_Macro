@@ -54,11 +54,11 @@ File_Install_Root_Folder = %A_ScriptDir%\Install_Files
 File_Install_Work_Folder = C:\SerialMacro
 Image_Red_Exclamation_Point = %File_Install_Work_Folder%\red_image.png
 IMage_Actve_Add_Button = %File_Install_Work_Folder%\Active_plus.png
-Image_Active_Apply_Button := %File_Install_Work_Folder%\orange_button.png
+Image_Active_Apply_Button = %File_Install_Work_Folder%\orange_button.png
 
 Unit_Test = 0 ; Set this to 1 to perform unit tests and logging. 
 
-IfExist(A_ScriptDir "\Dev.txt")
+IfExist,%_ScriptDir%\Dev.txt)
 	IfNotExist, %A_ScriptDir%\Install_Files
 	{
 	MsgBox, No Install file folder
@@ -117,9 +117,10 @@ If Msg_Box_Result = Yes
 	Versioncheck()
 
 Serials_GUI_Screen()
+If unit_test = 1
 return
 
-SerialsGUIscreen()
+Serials_GUI_Screen()
 {
 Global 
 
@@ -143,8 +144,8 @@ activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the 
    
    Gui 1:Add, Text, x5 y5 w300 h25 BackgroundTrans +Center vreloadprefixtext, There are a total of %TotalPrefixes% Effectivity to add to ACM
    
-   Gui 1:add, Radio, xp+25 yp+25 w130 h20 BackGroundTrans vradio1 gradio1h, Effectivity to be added 
-   Gui 1:add, Radio, xp+155 yp w140 h20 BackGroundTrans vradio2 gradio2h, Effectivity already added
+   Gui 1:add, Radio, xp+25 yp+25 w130 h20 BackGroundTrans vradio gradio_button, Effectivity to be added 
+   Gui 1:add, Radio, xp+155 yp w140 h20 BackGroundTrans  gradio_button, Effectivity already added
    
    Gui 1:Add, Text, xp-170 Yp+265 W250 h13 BackGroundTrans vserialsentered, Number of Effectivity successfully added to ACM = %Serialcount%
    
@@ -166,6 +167,28 @@ activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the 
    Return
 }
 
+radio_button:
+{
+	Gui,1:submit,nohide
+	If radio=0
+	{
+Editfield_Control("Editfield")
+}
+If radio = 1
+{
+	Editfield_Control("Editfield2")
+}
+   ;~ GuiControl,, radio2, 0
+   ;~ GuiControl,, radio1,1
+   ;GuiControl,, radio3,0
+   ;Storeeditfield2 = %editfield2%`
+   ;~ Guicontrol,show, Editfield,
+   ;~ Guicontrol,hide, Editfield2,
+   ;Guicontrol,hide, Editfield3,
+   gui, submit, nohide
+    return
+}
+
  Editfield_Control(Textbox)
  {
  If Textbox = Editfield
@@ -183,55 +206,120 @@ activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the 
   return
  }
  
+ Exit_Program()
+{
+   global Serialcount
+ Result := Move_Message_Box("262148",Effectivity_Macro, " The number of successful Serial additions to ACM is %Serialcount% `n`n Are you sure you want to quit the macro?.`n`n Press YES to stop the Macro.`n`n No to keep going.")	   
+
+If Result = Yes
+   {
+      Stopactcheck = 1						
+      Gui 1: -AlwaysOnTop
+      Gui_Image_Show("Stopped")
+      Send {Shift Up}{Ctrl Up}
+      breakloop = 1
+      ExitApp
+}
+return
+   }
+
+ Howto()
+{
+   splashtexton,,Effectivity Macro, Loading PDF
+   Run, C:\SerialMacro\How to use Effectivity Macro.pdf
+   sleep(20)
+   SplashTextOff
+   return
+}   
  
+ Quitapp:
+{
+Result := 	Move_Message_Box("262148","Quit " Effectivity_Macro, "Are you sure you want to quit?")
+
+   If result =  Yes
+   {
+      Stopactcheck = 1					
+      Gui 1: -AlwaysOnTop
+	 Gui_Image_Show("Stopped") ; Options are Start, Paused, Running, Stopped
+      Gui, Submit, NoHide
+      Send {Shift Up}{Ctrl Up}
+      breakloop = 1
+      ExitApp
+   }
+   Return
+}
+
 startmacro:
 {
    skipbox = 0
-   gosub, enterallserials
+ enterallserials()
    return
 }
+
+Enterallserials()
+{
+	Msgbox, enterallserials
+return
+}
+
 
    pausesub:
    {
       if A_IsPaused = 0
       {
-         gosub, radio1h
+         gosub, radio_button
          Gui 1: -AlwaysOnTop
-		 Gui_Image_Show("Paused")
-		 make the above function for the images
-         Guicontrol,hide, Start
-         Guicontrol,show, paused
-         Guicontrol,hide, Stopped
-         Guicontrol,hide, Running
+		 Gui_Image_Show("Paused") ; Options are Start, Paused, Running, Stopped
          Gui, Submit, NoHide
-         activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-         Titletext := "Press pause to unpause"
-         Settimer, winmovemsgbox, 20
-         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,.1
-         Settimer, winmovemsgbox, 20
-         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,.1
-         Settimer, winmovemsgbox, 20
-         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,.1
-         Settimer, winmovemsgbox, 20
-         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,.1
-         Settimer, winmovemsgbox, 20
-         Msgbox,262144,%Effectivity_Macro%, Macro is paused. Press pause to unpause,10
+		 Loop, 4
+		{
+		Move_Message_Box("262144",Effectivity_Macro, "Macro is paused. Press pause key to unpause",".1")
+		}
+	   Move_Message_Box("262144",Effectivity_Macro, "Macro is paused. Press pause key to unpause","10")       
          Pause, toggle, 1 
          Return
       }else  {
          Gui 1: +AlwaysOnTop
-         Guicontrol,hide, Start
-         Guicontrol,hide, paused
-         Guicontrol,hide, paused
-         Guicontrol,hide, Stopped
-         Guicontrol,show, Running
+     Gui_Image_Show("Running") ; Options are Start, Paused, Running, Stopped
          Gui, Submit, NoHide
          Pause, toggle, 1
       }
       return
    }
    
-   
+Gui_Image_Show(Image)
+{
+	If ( image = Paused)
+	{
+		Guicontrol,hide, Start
+        Guicontrol,show, paused
+        Guicontrol,hide, Stopped
+        Guicontrol,hide, Running
+	 }
+	 
+	 If (image = Running)
+	{
+	    Guicontrol,Show, Start
+         Guicontrol,Hide, paused
+         Guicontrol,hide, Stopped
+         Guicontrol,hide, Running
+	 }
+	 If (image = Stopped)
+	{
+		     Guicontrol,hide, Start
+         Guicontrol,hide, paused
+         Guicontrol,Show, Stopped
+         Guicontrol,hide, Running
+	 }
+	 If (image = start)
+	{
+		     Guicontrol,show, Start
+         Guicontrol,hide, paused
+         Guicontrol,hide, Stopped
+         Guicontrol,hide, Running
+	 }
+	return
+}
 
 
 Folder_Exist_Check(Folder)
@@ -247,7 +335,6 @@ Folder_Create(Folder)
 	   sleep()	   
 	}
 	return
-	}
 
 File_Exist_Check(File)
 	{
@@ -264,18 +351,18 @@ File_Exist_Check(File)
 
 Install_Requied_Files(File_Install_Root_Folder, File_Install_Work_Folder)
 	{
-	FileInstall, %File_Install_Root_Folder%\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
-	FileInstall, %File_Install_Root_Folder%\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
-	FileInstall, %File_Install_Root_Folder%\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
-	FileInstall, %File_Install_Root_Folder%\serial macro\redimage.png, %File_Install_Work_Folder%\red_image.png,1	
-	FileInstall, %File_Install_Root_Folder%\plus_sign.png, %File_Install_Work_Folder%\plus_sign.png,1
-	FileInstall, %File_Install_Root_Folder%\active_plus.png, %File_Install_Work_Folder%\active_plus.png,1
-	FileInstall, %File_Install_Root_Folder%\orange_button.png, %File_Install_Work_Folder%\orange_button.png,1
-	FileInstall, %File_Install_Root_Folder%\paused.png, %File_Install_Work_Folder%\paused.png,1
-	 FileInstall, %File_Install_Root_Folder%\start.png, %File_Install_Work_Folder%\start.png,1
-	 FileInstall, %File_Install_Root_Folder%\Running.png, %File_Install_Work_Folder%\Running.png,1
-	 FileInstall, %File_Install_Root_Folder%\Stopped.png, %File_Install_Work_Folder%\Stopped.png,1
-	 FileInstall, %File_Install_Root_Folder%\background.png, %File_Install_Work_Folder%\background.png,1
+	FileInstall, *\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
+	FileInstall, *\Install_Files \icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
+	FileInstall, *\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
+	FileInstall, *\Install_Files\serial macro\redimage.png, %File_Install_Work_Folder%\red_image.png,1	
+	FileInstall, *\Install_Files\plus_sign.png, %File_Install_Work_Folder%\plus_sign.png,1
+	FileInstall,  *\Install_Files\active_plus.png, %File_Install_Work_Folder%\active_plus.png,1
+	FileInstall,  *\Install_Files\orange_button.png, %File_Install_Work_Folder%\orange_button.png,1
+	FileInstall, *\Install_Files\paused.png, %File_Install_Work_Folder%\paused.png,1
+	 FileInstall, *\Install_Files\start.png, %File_Install_Work_Folder%\start.png,1
+	 FileInstall,  *\Install_Files\Running.png, %File_Install_Work_Folder%\Running.png,1
+	 FileInstall,  *\Install_Files\Stopped.png, %File_Install_Work_Folder%\Stopped.png,1
+	 FileInstall,  *\Install_Files\background.png, %File_Install_Work_Folder%\background.png,1
 	return
 	}
 
@@ -295,9 +382,9 @@ Create_Main_GUI_Menu()
    Menu, BBBB, Add, 
    Menu, CCCC, Add, &Run							(Crtl + 2), Enterallserials
    Menu, CCCC, Add, &Pause/Unpause 				(Pause / Insert), pausesub
-   Menu, CCCC, Add, &Stop Macro					(ESC), Exitprogram
-   Menu, CCCC, Add, &Reload Macro, restartmacro
-   Menu, CCCC, Add, &Reload Macro with Current Effectivity, restartmacroEffectivity
+   Menu, CCCC, Add, &Stop Macro					(ESC), Exit_Program
+   Menu, CCCC, Add, &Reload Macro, restart_macro
+   Menu, CCCC, Add, &Reload Macro with Current Effectivity, restart_macro_Effectivity
    Menu, BBBB, Add, &Exit							(Ctrl + Q), Quitapp
    Menu, DDDD, Add, &How To Use					(F1), HowTo
    Menu, DDDD, Add, &About , Aboutmacro
@@ -310,7 +397,7 @@ Create_Main_GUI_Menu()
    
 Temp_File_Read_Delete(File_Install_Root_Folder,File_Name)
 {
-	IfExist(%File_Install_Root_Folder% "\" %File_Name% )
+	IfExist, %File_Install_Root_Folder%\%File_Name% )
 	FileRead, Variable_Store, %File_Install_Root_Folder%\%File_Name% 
 	else
 	Variable_Store = Null
@@ -359,6 +446,38 @@ IfMsgBox no
             return
          }}}
    
+restart_macro()
+{
+ 	Result := Move_Message_Box("262148",Effectivity_Macro, "Are you sure that you want to reload the program?" )
+
+   If Result =  yes
+      Reload
+   
+   return
+}
+
+restart_macro_Effectivity()
+{
+   global
+   Result := Move_Message_Box("262148",Effectivity_Macro, "Are you sure that you want to reload the program?" )
+
+   If Result =  yes
+   {
+        GuiControlGet, nextserialtoadd
+      GuiControlGet, EditField
+      GuiControlGet, EditField2
+      TempSavefile = %nextserialtoadd%`,`n%editfield%
+      
+      FileAppend, %TempSavefile%, C:\SerialMacro\TempAdd.txt 
+      FileAppend, %EditField2%, C:\SerialMacro\TempAdded.txt 
+      FileAppend, %totalprefixes%, C:\SerialMacro\Tempamount.txt
+      FileAppend, %Serialcount%, C:\SerialMacro\Tempcount.txt
+      Reload
+}
+
+   return
+}
+
    
 sleep(Amount := 1)
 {
@@ -367,7 +486,7 @@ Sleep %Amount%
 Return
 }
 
-Updatechecker()
+Update_Check(updatestatus)
 {
 	global
     Today := A_Now		; Set to the current date first
@@ -378,7 +497,7 @@ Updatechecker()
 			IniWrite, %updatestatus%,  %inifile%,update,updaterate	
             IniWrite, %A_now%,  %inifile%, update,lastupdate
       return Result 
-  }
+  }}
   
 Versioncheck()
 {
@@ -521,6 +640,30 @@ versiontimeout:
       Gui,2:Destroy
    }
    Return
+}
+
+OptionsGui:
+{
+   activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+
+   Iniread, refreshrate,  C:\Serialmacro\Settings.ini,refreshrate,refreshrate
+   Iniread, imagesearchoption,  C:\Serialmacro\Settings.ini,searches,imagesearchoption
+   Iniread, Sleep_Delay,  C:\Serialmacro\Settings.ini,Sleep_Delay,Sleep_Delay
+   gui 10: +alwaysontop
+   Gui , 1: -AlwaysOnTop
+   ;gui 10:add,radio, checked%mouseclicks% x0 y0 w250 h20 vmouseposclicks gmouseclickss, Mouse click method 
+   ;gui 10:add,radio, checked%imagesearchoption% xp yp+25 w317 h20 vimagesearchoption gimagessearching, Image search method `(Not fully functional`)
+   gui 10:add, text, x5 y5 w320 h20 ,Refreash ACM Rate (After how many entered effectivity)
+   gui 10:add, edit, xp+275 yp-3 w30 veditfield5 , %refreshrate%
+   gui 10:add, Text, xp-275 yp+30, ACM speed Compensation (10 = 1 second delay)
+   gui 10:add, edit, xp+275 yp-3 w30 veditfield10 , %Sleep_Delay%
+   gui 10:add, button, xp-251 yp+26 h20 w75 Default gsavesets, Save Settings
+   Gui, 10:Add, Picture, x0 y0 w325 h100 +0x4000000 , %File_Install_Work_Folder%\background.png
+   gui 10:show, x%amonx% y%amony% w325 h100, Options
+   Guicontrol,10:, editfield5, %refreshrate%
+   Guicontrol,10:, editfield10, %Sleep_Delay%
+   gui, 10:submit, nohide
+   return
 }
 
   Load_ini_file(inifile)
