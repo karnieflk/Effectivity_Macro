@@ -59,7 +59,7 @@ IMage_Actve_Add_Button = %File_Install_Work_Folder%\Active_plus.png
 Image_Active_Apply_Button = %File_Install_Work_Folder%\orange_button.png
 
 Unit_Test = 1  ; Set this to 1 to perform unit tests and logging.
-Log_Events = 0 ;Set this to 1 to perform logging
+Log_Events = 1 ;Set this to 1 to perform logging
 
 
 Result = Folder_Exist_Check("SerialMacro")
@@ -141,11 +141,8 @@ $^1::
     Guicontrol,,Radio1,1
     Gui,Submit,NoHide
     gosub, radio_button
-    If Log_Events = 1
-{
-      OutputDebug, Formatted text is %Formatted_Text%
- Sleep()
-}
+Debug_Log_Event("Formatted text is " Formatted_Text)
+
 Formatted_Serial_Array := Object()
 
 Formatted_Serial_Array := Put_Formatted_Serials_into_Array(Formatted_Text)
@@ -256,13 +253,9 @@ If FullString = No_Text_Selected
    Format_Removed_Text := Remove_Formatting(Fullstring) ; Goes to the Remove_Formatting funciton and stores the completed result into the Format_Removed_Text varialbe
    PreFormatted_Text := PreFormat_Text(Format_Removed_Text) ; Goes to the PreFormat_Text function and stors the completed result into the Preformatted_text variable
 
-If Log_Events = 1
-{
-      OutputDebug, %Format_Removed_Text%
- Sleep()
-      OutputDebug, %PreFormatted_Text%
- Sleep()
-}
+Debug_Log_Event("Format_Serials() Format_Removed_Text is " Format_Removed_Text)
+Debug_Log_Event("Format_Serials() PreFormatted_Text is " PreFormatted_Text)
+
 
 PreFormatted_Text := Check_For_Single_Serials(PreFormatted_Text)
 
@@ -284,13 +277,9 @@ PreFormatted_Text := Check_For_Single_Serials(PreFormatted_Text)
 
       If (Prefix_Extract = "`," or Prefix_Extract ="" or Prefix_Extract = "`n" or Prefix_Extract = "`r") ; checks to see if the Prefix_Store variable is a comma
       {
-               If Log_Events = 1
-    {
-      OutputDebug, Prefix extract is %Prefix_Extract%
-      sleep()
-    OutputDebug, continue
-      Sleep()
-   }
+Debug_Log_Event("Check_for_single_Serials() Prefix_Extract is " Prefix_Extract)
+Debug_Log_Event("Check_For_Single_Serials() continue")
+
          ;msgbox, nothing there
          Prefix_Extract = ; sets the Prefix_Store variable to nothing
          Second_Number_set =  ; sets the Second_Number_Set variable to nothirng
@@ -310,21 +299,13 @@ PreFormatted_Text := Check_For_Single_Serials(PreFormatted_Text)
       }
 
 Revised_PreFormatted_Text = %Revised_PreFormatted_Text%%Prefix_Extract%%First_Number_Set%%Middle_Char%%Second_Number_set%`,
-             If Log_Events = 1
-    {
-      OutputDebug, Prefix_Extract is  %Prefix_Extract%
-      sleep()
-      OutputDebug, First_Number_Set is  %First_Number_Set%
-      sleep()
-      OutputDebug, Middle_Char is  %Middle_Char%
-      sleep()
-      OutputDebug, Second_Number_set is  %Second_Number_set%
-      sleep()
-      OutputDebug, Revised_PreFormatted_Text is  %Revised_PreFormatted_Text%
-      sleep()
-    OutputDebug, New Parse
-      Sleep()
-   }
+
+      Debug_Log_Event("Check_For_Single_Serials() Prefix_Extract is " Prefix_Extract)
+      Debug_Log_Event("Check_For_Single_Serials() First_Number_Set is " First_Number_Set)
+      Debug_Log_Event("Check_For_Single_Serials() Middle_Char is " Middle_Char)
+      Debug_Log_Event("Check_For_Single_Serials() Second_Number_set is " Second_Number_set)
+      Debug_Log_Event("Check_For_Single_Serials() Revised_PreFormatted_Text is " Revised_PreFormatted_Text)
+      Debug_Log_Event("Check_For_Single_Serials() New Parse" )
 
 }
 return Revised_PreFormatted_Text
@@ -359,47 +340,35 @@ return Prefixcombinecount
       }
 
       return One_Up_Prefix_array
-      ;msgbox, matching is `n`n %a_loopfield% ; for diagnostics
+
    }
 
 
 Combineserials(Formatted_Serial_Array)
 {
-   ;~ global
 
    Prefix_Combine_array := Object()
 
 For index, element in Formatted_Serial_Array
-   ;~ Loop,  % Formatted_Serial_Array.Length()
-   {
-      ;~ MsgBox, % Formatted_Serial_Array[A_Index]
-      ;~ Prefix_Extract := Extract_Prefix(Formatted_Serial_Array[A_index])
-      Prefix_Extract := Extract_Prefix(element)
+      {
+         Prefix_Extract := Extract_Prefix(element)
 
       If (Prefix_Extract = "`," or Prefix_Extract ="" or Prefix_Extract = "`n" or Prefix_Extract = "`r") ; checks to see if the Prefix_Store variable is a comma
       {
-               If Log_Events = 1
-    {
-      OutputDebug, Prefix extract is %Prefix_Extract%
-      OutputDebug, continue
-      Sleep()
-   }
-         ;msgbox, nothing there
+
+       Debug_Log_Event("Combine_Serials() Prefix_Extract is " Prefix_Extract)
+       Debug_Log_Event("Combine_Serials() Continue" )
+
          Prefix_Extract = ; sets the Prefix_Store variable to nothing
          Second_Number_set =  ; sets the Second_Number_Set variable to nothirng
      Continue ; skips over the rest of the loop and starts at the top of the parse loop
       }
 
-     ;~ Match_result := matchprefix(Prefix_Extract) ;goes to the matchprefix function
-
-      ;~ First_Number_Set := Extract_First_Set_Of_Serial_Number(Formatted_Serial_Array[A_index])
       First_Number_Set := Extract_First_Set_Of_Serial_Number(element)
-      ;~ Middle_Char := Extract_Serial_Dividing_Char(Formatted_Serial_Array[A_index])
       Middle_Char := Extract_Serial_Dividing_Char(element)
 
       If Middle_Char = `- ; checks if Middle_Char variable is a hyphen
-             ;~ Second_Number_set := Extract_Second_Set_Of_Serial_Number(Formatted_Serial_Array[A_index])
-             Second_Number_set := Extract_Second_Set_Of_Serial_Number(element)
+                 Second_Number_set := Extract_Second_Set_Of_Serial_Number(element)
 
    else If Middle_Char = `, ; if the Middle_Char variable is a comma
       {
@@ -407,25 +376,15 @@ For index, element in Formatted_Serial_Array
          Second_Number_set = %First_Number_Set%
       }
 
-;~ If Match_Result = Already_Matched
+
 Prefix_Combine_array := (Checkvalues(Prefix_Extract,First_Number_Set,Second_Number_set)) ; goes to the Checkvalues subroutine
-;~ else
-   ;~ Prefix_Combine_array.Insert(Prefix_Extract First_Number_Set "-" Second_Number_set)  ;makes the Prefix%Prefix_Store% variable be the combination of the all those other variables
 
-   If Log_Events= 1
-{
-   OutputDebug, PRefix extract is %Prefix_Extract%
-   sleep()
-       OutputDebug, Match_Result = %Match_Result%
-       sleep()
-       OutputDebug, First_Number_Set = %First_Number_Set%
-         sleep()
-OutputDebug, Middle_Char = %Middle_Char%
-       sleep()
-       OutputDebug, Second_Number_set = %Second_Number_set%
-      Sleep()
-}
 
+
+   Debug_Log_Event("Combine_Serials() Prefix_Extract is "  Prefix_Extract)
+   Debug_Log_Event("Combine_Serials() First_Number_Set is "  First_Number_Set)
+   Debug_Log_Event("Combine_Serials() Middle_Char is "  Middle_Char)
+   Debug_Log_Event("Combine_Serials() Second_Number_set is "  Second_Number_set)
    }
 
 
@@ -473,11 +432,8 @@ oldprefix =
             }
          }
 
-   If Log_Events = 1
-   {
-       OutputDebug, oldprefix is %oldprefix%
-      sleep()
-   }
+         Debug_Log_Event("Checkvalues() oldprefix is "  oldprefix)
+
 
    If oldprefix =
       {
@@ -510,46 +466,6 @@ Serial_Combine_Array[index] :=  Prefix_store First_Number_Set "-" Second_Number_
 
 
 
-matchprefix(Prefix_Extract)
-{
-static Prefix_store_array := Object()
-Arraycounter = 0
-   Loop,  % Prefix_Store_Array.Length()
-{
-   Arraycounter++
-
-         If Prefix_store_array[%Arraycounter%] =
-         {
-            IF (Log_Events)
-            {
-               OutputDebug, Prefixstore Array %Arraycounter% is %A_LoopField%
-            SLeep(.5)
-            }
-            continue
-            }
-
-       else if  Prefix_store_array[%Arraycounter%] = %Prefix_Extract%
-            {
-            IF (Log_Events)
-               {
-               OutputDebug, % A_LoopField " contains "  Prefix_Extract
-               SLeep(.5)
-                  }
-         Return "Already_Matched"
-            }
-}
-
-
-Prefix_Store_Array.Insert(Prefix_Extract)
-   If Log_Events = 1
-   {
-      Length := Prefix_store_array.Length()
-   OutputDebug, PRefix lengrh it %Length%
-sleep(.5)
-}
-return "Updated Prefix_Store_Array with " Prefix_Extract
-}
-
 
 Remove_Formatting(Selected_Text)
 {
@@ -562,11 +478,9 @@ Remove_Formatting(Selected_Text)
    StringReplace, Selected_Text,Selected_Text, 1`-up,,All
    StringReplace, Selected_Text,Selected_Text,  `-up,`-99999, All
    StringReplace, Selected_Text,Selected_Text, and,,All
-   If Log_Events = 1
-   {
-        OutputDebug, remove_Formatting() return value is  %Selected_Text%
-   Sleep()
-}
+
+      Debug_Log_Event("Remove_formatting()  return value is "  Selected_Text)
+
    Return Selected_Text
 }
 
@@ -589,15 +503,11 @@ PreFormat_Text(Format_Removed_Text)
       If (New_Format_Text != "") && (New_Format_Text !=" ,")
          Full_Text =  %Full_Text%%New_Format_Text%`,
 
-If Log_Events = 1
-      {
-  OutputDebug,   format _text is %Format_Text%
-Sleep()
-  OutputDebug,  Full text  is %Full_Text%
-  sleep()
-    OutputDebug,  New_Format_Text  is %New_Format_Text%
-      Sleep()
-}}
+
+            Debug_Log_Event("Preformat_Text()  Format_Text is "  Format_Text)
+            Debug_Log_Event("Preformat_Text()  Format_Text is "  Format_Text)
+            Debug_Log_Event("Preformat_Text()  New_Format_Text is "  New_Format_Text)
+     }
    Return Full_Text
 }
 
@@ -612,20 +522,11 @@ TextStore =
 
       If (a_loopfield = "") || (A_LoopField = "`n") || (A_LoopField = "`n")
       {
-               If Log_Events = 1
-            {
-               OutputDebug,  A_LoopField is %A_LoopField% `n continue
-               sleep()
-               }
-
+         Debug_Log_Event("Prefix_number_checking()  A_LoopField is "  A_LoopField "`n Continue")
          Continue
       }
 
-            If Log_Events = 1
-      {
-OutputDebug,  A_LoopField is %A_LoopField%
-sleep()
-}
+     Debug_Log_Event("Prefix_number_checking()  A_LoopField is "  A_LoopField )
       Serial_Add_Count++
       Counter++
       add_comma = %A_LoopField%`,
@@ -654,25 +555,14 @@ sleep()
       TextStore = %TextStore%%Attach_Serial_Numbers%
       }
 
-   If Log_Events = 1
-      {
-   OutputDebug,  Initial Prefix_Number_Checking()  text variable   is %Text%
-   sleep()
-           OutputDebug,  Addcomma is %add_comma%
-      sleep()
-      OutputDebug,  pos is %pos%
-      sleep()
-      OutputDebug,  Prefixstore is  is %Prefixstore%
-      sleep()
-     OutputDebug,  Serial_Numbers is %Serial_Numbers%
-      sleep()
-          OutputDebug,  StringTemp_end is %StringTemp_end%
-          sleep()
-             OutputDebug,  Stringtemp is %Stringtemp%
-             sleep()
-              OutputDebug,  Finished Prefix_Number_Checking()  text  variable   is %Textstore%
-              sleep()
-      }
+ Debug_Log_Event("Prefix_Number_Checking()  Initial text is "  Text )
+ Debug_Log_Event("Prefix_Number_Checking()  Addcomma is "  Addcomma )
+ Debug_Log_Event("Prefix_Number_Checking()  pos is "  pos )
+ Debug_Log_Event("Prefix_Number_Checking()  Prefixstore is "  Prefixstore )
+ Debug_Log_Event("Prefix_Number_Checking()  Serial_Numbers is "  Serial_Numbers )
+ Debug_Log_Event("Prefix_Number_Checking()  StringTemp_end is "  StringTemp_end )
+ Debug_Log_Event("Prefix_Number_Checking()  Stringtemp is "  Stringtemp )
+ Debug_Log_Event("Prefix_Number_Checking()  Textstore is "  Textstore )
 
    return Textstore
 }
@@ -729,22 +619,17 @@ Folder_Exist_Check(Folder)
          Result = Folder_Not_Exist
          else
             Result = Folder_Exist
-        If Log_Events = 1
-      {
-         OutputDebug, Folder_Exist_Check....%Folder%.....Result = %Result% `n, %A_Desktop%\Serial_Macro_Log_File.txt
-	Sleep(.5)
- }
+
+         Debug_Log_Event("Folder_Exist_Check() .... " Folder "..... Result is " Result)
+
     return  Folder " - " Result
 	}
 
 Folder_Create(Folder)
 	{
 		 FileCreateDir, C:\%Folder%
-         If Log_Events = 1
-         {
-         OutputDebug, Folder_Create....%Folder%.....Result = %Result% `n, %A_Desktop%\Serial_Macro_Log_File.txt
-	   	Sleep(.5)
-         }
+
+    Debug_Log_Event("Folder_Create() .... " Folder "..... Result is " Result)
        sleep(5)
 	return
 	}
@@ -757,22 +642,14 @@ File_Exist_Check(File)
          Result = File_Not_Exist
          else
             Result = File_Exist
-        If Log_Events = 1
-      {
-         OutputDebug, File_Exist_Check....C:\SerialMacro\%File%.....Result = %Result% `n, %A_Desktop%\Serial_Macro_Log_File.txt
-	Sleep(.5)
- }
+             Debug_Log_Event("File_Exist_Check() ......C:\SerialMacro\" File "..... Result is " Result)
 	return File " - "  Result
 	}
 
 	File_Create(File)
 	{
       		FileAppend, "C:\SerialMacro\" %File%
-              If Log_Events = 1
-            {
-         OutputDebug, File_Create....C:\SerialMacro\%File% `n, %A_Desktop%\Serial_Macro_Log_File.txt
-		Sleep(.5)
- }
+Debug_Log_Event("File_Create() ......C:\SerialMacro\" File)
     return
 	}
 
@@ -1095,14 +972,12 @@ Temp_File_Read(File_Install_Root_Folder,File_Name)
 	IfExist, %File_Install_Root_Folder%\%File_Name%
    {
 	FileRead, Variable_Store, %File_Install_Root_Folder%\%File_Name%
-     If Log_Events = 1
-   {
-      OutputDebug, Fileread....%File_Name%.....Variable_Store %Variable_Store%
-	Sleep(.5)
+
+   Debug_Log_Event("Temp_File_read() ......File name is " File_Name " Variable_store is " Variable_Store)
  }
     else
 	Variable_Store = Null
-}
+
 	return Variable_Store
 }
 
@@ -1111,11 +986,8 @@ Temp_File_Delete(File_Install_Root_Folder,File_Name)
 	IfExist, %File_Install_Root_Folder%\%File_Name%
    {
 	FileDelete, %File_Install_Root_Folder%\%File_Name%
-    If Log_Events = 1
-   {
-      OutputDebug, FileDelete....%File_Name% `n,
-	Sleep(.5)
- }
+
+     Debug_Log_Event("Temp_File_Delete() ......File name is " File_Name)
     return  File_Name " - File Found and Deleted"
    }
    else
@@ -1557,6 +1429,18 @@ savesets()
 
                   return
                }
+
+Debug_Log_Event(Event)
+{
+   global Log_Events
+
+   If (Log_Events)
+      {
+       OutputDebug, %Event%
+      Sleep(.5)
+      }
+return
+}
 
 #`::ListLines
 +#~::ListVars
