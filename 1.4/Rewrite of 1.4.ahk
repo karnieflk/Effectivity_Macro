@@ -59,7 +59,8 @@ IMage_Actve_Add_Button = %File_Install_Work_Folder%\Active_plus.png
 Image_Active_Apply_Button = %File_Install_Work_Folder%\orange_button.png
 
 Unit_Test = 1  ; Set this to 1 to perform unit tests and logging.
-Log_Events = 1 ;Set this to 1 to perform logging
+Log_Events = 0 ;Set this to 1 to perform logging
+
 
 Result = Folder_Exist_Check("SerialMacro")
 If Result contains Folder_Not_Exist
@@ -81,6 +82,7 @@ If Result  contains File_Not_Exist
 	IniWrite, 20,  %inifile%,refreshrate,refreshrate
    Sleep()
 	}
+
 
 Load_ini_file(inifile)
 
@@ -129,6 +131,7 @@ Serials_GUI_Screen()
 
 return
 
+
   ;Sets the hotkey for Ctrl + 1 or Ctrl + numpad 1
 $^Numpad1::
 $^1::
@@ -143,6 +146,10 @@ $^1::
       OutputDebug, Formatted text is %Formatted_Text%
  Sleep()
 }
+Formatted_Serial_Array := Object()
+
+Formatted_Serial_Array := Put_Formatted_Serials_into_Array(Formatted_Text)
+
     /* for testing********
     */
 
@@ -156,7 +163,7 @@ $^1::
 
 If (combine = 1) || (Oneupserial = 1)
 {
-Combined_Serial_Array := Combineserials(Formatted_Text) ;goes to the combine Serials subroutine
+Combined_Serial_Array := Combineserials(Formatted_Serial_Array) ;goes to the combine Serials subroutine
 
 Prefix_Count :=  Combined_Serial_Array.Length()
 
@@ -183,6 +190,16 @@ Guicontrol,1:, Editfield, %Formatted_Text%*** ; Sets the listbox on teh GUi scre
    Gui, Submit, NoHide ; Updates the Gui screen
    ;~ gosub, ExportSerials
    return
+}
+
+
+Put_Formatted_Serials_into_Array(Formatted_Text)
+{
+   Formatted_Array := Object()
+   Loop, Parse, Formatted_Text, `r`n
+      Formatted_Array.Insert(A_LoopField)
+
+   return Formatted_Array
 }
 
 Extract_Serial_Array(Combined_Serial_Array)
@@ -222,7 +239,7 @@ Format_Serials()
    newline = `n
    sleep()
    If (Unit_test) ; For testing
-          Fullstring := "621r (SN: 12Y00001-00407)`n621s (SN: 8KD00001-00663,8KD00669,8KD00825)"
+          Fullstring := "621s (SN: 8KD00001-00663,8KD00669,8KD00825)"
    Else
    FullString := Copy_selected_Text()
 
@@ -273,7 +290,7 @@ PreFormatted_Text := Check_For_Single_Serials(PreFormatted_Text)
    }
          ;msgbox, nothing there
          Prefix_Extract = ; sets the Prefix_Store variable to nothing
-         Second_Number_set =  ; sets the Sencond_Number_Set variable to nothirng
+         Second_Number_set =  ; sets the Second_Number_Set variable to nothirng
          Continue ; skips over the rest of the loop and starts at the top of the parse loop
       }
 
@@ -343,41 +360,39 @@ return Prefixcombinecount
    }
 
 
-Combineserials(Formatted_Text)
+Combineserials(Formatted_Serial_Array)
 {
-   global
+   ;~ global
 
    Prefix_Combine_array := Object()
-   Prefix_Store_Array := Object()
+Prefix_store_array := Object()
 
-Loop, Parse, Formatted_Text, `n`r ; loop to divide the Formatted_Text variable by the carraige returns
+   Loop,  % Formatted_Serial_Array.Length()
    {
-      ;msgbox, combineserials loop is `n%A_LoopField%
-
-      Prefix_Extract := Extract_Prefix(A_LoopField)
+      ;~ MsgBox, % Formatted_Serial_Array[A_Index]
+      Prefix_Extract := Extract_Prefix(Formatted_Serial_Array[A_index])
 
       If (Prefix_Extract = "`," or Prefix_Extract ="" or Prefix_Extract = "`n" or Prefix_Extract = "`r") ; checks to see if the Prefix_Store variable is a comma
       {
                If Log_Events = 1
     {
       OutputDebug, Prefix extract is %Prefix_Extract%
-    OutputDebug, continue
+      OutputDebug, continue
       Sleep()
    }
          ;msgbox, nothing there
          Prefix_Extract = ; sets the Prefix_Store variable to nothing
-         Second_Number_set =  ; sets the Sencond_Number_Set variable to nothirng
-         Continue ; skips over the rest of the loop and starts at the top of the parse loop
+         Second_Number_set =  ; sets the Second_Number_Set variable to nothirng
+     Continue ; skips over the rest of the loop and starts at the top of the parse loop
       }
 
+     ;~ Match_result := matchprefix(Prefix_Extract) ;goes to the matchprefix function
 
-     Match_result := matchprefix(Prefix_Extract, Prefix_Store_Array) ;goes to the matchprefix function
-
-      First_Number_Set := Extract_First_Set_Of_Serial_Number(A_LoopField)
-   Middle_Char := Extract_Serial_Dividing_Char(A_LoopField)
+      First_Number_Set := Extract_First_Set_Of_Serial_Number(Formatted_Serial_Array[A_index])
+      Middle_Char := Extract_Serial_Dividing_Char(Formatted_Serial_Array[A_index])
 
       If Middle_Char = `- ; checks if Middle_Char variable is a hyphen
-             Second_Number_set := Extract_Second_Set_Of_Serial_Number(A_LoopField)
+             Second_Number_set := Extract_Second_Set_Of_Serial_Number(Formatted_Serial_Array[A_index])
 
    else If Middle_Char = `, ; if the Middle_Char variable is a comma
       {
@@ -385,10 +400,10 @@ Loop, Parse, Formatted_Text, `n`r ; loop to divide the Formatted_Text variable b
          Second_Number_set = %First_Number_Set%
       }
 
-If Match_Result = Already_Matched
-         Checkvalues(Prefix_Extract,First_Number_Set,Second_Number_set, Prefix_Combine_array) ; goes to the Checkvalues subroutine
-
-   Prefix_Combine_array.Insert(Prefix_Extract First_Number_Set Middle_Char Second_Number_set)  ;makes the Prefix%Prefix_Store% variable be the combination of the all those other variables
+;~ If Match_Result = Already_Matched
+Prefix_Combine_array := (Checkvalues(Prefix_Extract,First_Number_Set,Second_Number_set)) ; goes to the Checkvalues subroutine
+;~ else
+   ;~ Prefix_Combine_array.Insert(Prefix_Extract First_Number_Set "-" Second_Number_set)  ;makes the Prefix%Prefix_Store% variable be the combination of the all those other variables
 
    If Log_Events= 1
 {
@@ -434,34 +449,43 @@ Extract_Second_Set_Of_Serial_Number(Serial_Number)
    return Second_Half_Serial_Num
 }
 
-Checkvalues(Prefix_Store,ByRef First_Number_Set, ByRef Sencond_Number_Set, Prefix_array)
+
+
+Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set)
 {
-   Loop, % Prefix_array.Length()
+   static Prefix_Combine_array := Object(), Serial_Combine_Array := Object()
+
+   LoopCount = 0
+   Loop, % Prefix_Combine_array.Length()
    {
-   If  A_LoopField  Prefix_store
+      LoopCount++
+   If  Prefix_Combine_array[LoopCount]  contains %Prefix_store%
    {
-   oldprefix := A_LoopField
+   oldprefix := Serial_Combine_Array[LoopCount]
    Break
    }}
 
    If Log_Events = 1
    {
-         Loop, % Prefix_array.Length()
-{
- OutputDebug, %A_LoopField%
-   sleep()
-}
-      OutputDebug, oldprefix is %oldprefix%
+       OutputDebug, oldprefix is %oldprefix%
       sleep()
    }
-
+   If LoopCount = 0
+   {
+      LoopCount = 1
+      Prefix_Beg = %First_Number_Set%
+      Prefix_Last = %Second_Number_Set%
+      Prefix_Combine_array.Insert(Prefix_store)
+}
+else
+{
  Prefix_Beg :=  Extract_First_Set_Of_Serial_Number(oldprefix)
  Prefix_Last :=  Extract_Second_Set_Of_Serial_Number(oldprefix)
+}
 
-
-   If 	Prefix_Beg > %Sencond_Number_Set%
+   If 	Prefix_Beg > %Second_Number_Set%
    {
-      Sencond_Number_Set = %Prefix_Beg%
+      Second_Number_Set = %Prefix_Beg%
    }
 
    If 	Prefix_Beg < %First_Number_Set%
@@ -469,35 +493,52 @@ Checkvalues(Prefix_Store,ByRef First_Number_Set, ByRef Sencond_Number_Set, Prefi
       First_Number_Set = %Prefix_Beg%
    }
 
-
-   If 	Prefix_Last > %Sencond_Number_Set%
+   If 	Prefix_Last > %Second_Number_Set%
    {
-      Sencond_Number_Set = %Prefix_Last%
+      Second_Number_Set = %Prefix_Last%
    }
 
-   return
+
+Serial_Combine_Array[LoopCount] :=  Prefix_store First_Number_Set "-" Second_Number_Set
+   return  Serial_Combine_Array
 }
 
-matchprefix(Prefix_Extract,  ByRef Prefix_Store_Array)
+matchprefix(Prefix_Extract)
 {
-
-   ;StringReplace, Prefixmatching,prefixmatching,%A_Space%,,all
+static Prefix_store_array := Object()
+Arraycounter = 0
    Loop,  % Prefix_Store_Array.Length()
 {
+   Arraycounter++
 
-If A_LoopField =
-   continue
+         If Prefix_store_array[%Arraycounter%] =
+         {
+            IF (Log_Events)
+            {
+               OutputDebug, Prefixstore Array %Arraycounter% is %A_LoopField%
+            SLeep(.5)
+            }
+            continue
+            }
 
- else if Prefix_Store_Array[A_Index] contains Prefix_Extract
+       else if  Prefix_store_array[%Arraycounter%] = %Prefix_Extract%
+            {
+            IF (Log_Events)
+               {
+               OutputDebug, % A_LoopField " contains "  Prefix_Extract
+               SLeep(.5)
+                  }
          Return "Already_Matched"
+            }
 }
+
 
 Prefix_Store_Array.Insert(Prefix_Extract)
    If Log_Events = 1
    {
       Length := Prefix_store_array.Length()
    OutputDebug, PRefix lengrh it %Length%
-sleep()
+sleep(.5)
 }
 return "Updated Prefix_Store_Array with " Prefix_Extract
 }
@@ -682,16 +723,22 @@ Folder_Exist_Check(Folder)
          else
             Result = Folder_Exist
         If Log_Events = 1
-         FileAppend, Folder_Exist_Check....%Folder%.....Result = %Result% `n, %A_Desktop%\Serial_Macro_Log_File.txt
-	return  Folder " - " Result
+      {
+         OutputDebug, Folder_Exist_Check....%Folder%.....Result = %Result% `n, %A_Desktop%\Serial_Macro_Log_File.txt
+	Sleep(.5)
+ }
+    return  Folder " - " Result
 	}
 
 Folder_Create(Folder)
 	{
 		 FileCreateDir, C:\%Folder%
          If Log_Events = 1
-         FileAppend, Folder_Create....%Folder%.....Result = %Result% `n, %A_Desktop%\Serial_Macro_Log_File.txt
-	   sleep(5)
+         {
+         OutputDebug, Folder_Create....%Folder%.....Result = %Result% `n, %A_Desktop%\Serial_Macro_Log_File.txt
+	   	Sleep(.5)
+         }
+       sleep(5)
 	return
 	}
 
@@ -704,8 +751,10 @@ File_Exist_Check(File)
          else
             Result = File_Exist
         If Log_Events = 1
-         FileAppend, File_Exist_Check....C:\SerialMacro\%File%.....Result = %Result% `n, %A_Desktop%\Serial_Macro_Log_File.txt
-
+      {
+         OutputDebug, File_Exist_Check....C:\SerialMacro\%File%.....Result = %Result% `n, %A_Desktop%\Serial_Macro_Log_File.txt
+	Sleep(.5)
+ }
 	return File " - "  Result
 	}
 
@@ -713,8 +762,11 @@ File_Exist_Check(File)
 	{
       		FileAppend, "C:\SerialMacro\" %File%
               If Log_Events = 1
-         FileAppend, File_Create....C:\SerialMacro\%File% `n, %A_Desktop%\Serial_Macro_Log_File.txt
-	return
+            {
+         OutputDebug, File_Create....C:\SerialMacro\%File% `n, %A_Desktop%\Serial_Macro_Log_File.txt
+		Sleep(.5)
+ }
+    return
 	}
 
 
@@ -1037,14 +1089,13 @@ Temp_File_Read(File_Install_Root_Folder,File_Name)
    {
 	FileRead, Variable_Store, %File_Install_Root_Folder%\%File_Name%
      If Log_Events = 1
-      FileAppend, Fileread....%File_Name%.....Variable_Store %Variable_Store% `n , %A_Desktop%\Serial_Macro_Log_File.txt
-	FileDelete, %File_Install_Root_Folder%\%File_Name%
-    If Log_Events = 1
-      FileAppend, FileDelete....%File_Name% `n, %A_Desktop%\Serial_Macro_Log_File.txt
+   {
+      OutputDebug, Fileread....%File_Name%.....Variable_Store %Variable_Store%
+	Sleep(.5)
  }
     else
 	Variable_Store = Null
-
+}
 	return Variable_Store
 }
 
@@ -1054,8 +1105,11 @@ Temp_File_Delete(File_Install_Root_Folder,File_Name)
    {
 	FileDelete, %File_Install_Root_Folder%\%File_Name%
     If Log_Events = 1
-      FileAppend, FileDelete....%File_Name% `n, %A_Desktop%\Serial_Macro_Log_File.txt	IfExist, %File_Install_Root_Folder%\%File_Name%
-      return  File_Name " - File Found and Deleted"
+   {
+      OutputDebug, FileDelete....%File_Name% `n,
+	Sleep(.5)
+ }
+    return  File_Name " - File Found and Deleted"
    }
    else
 return  File_Name " - File Not Exist"
