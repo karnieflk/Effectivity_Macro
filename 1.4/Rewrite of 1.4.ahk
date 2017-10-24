@@ -163,6 +163,9 @@ Formatted_Serial_Array := Put_Formatted_Serials_into_Array(Formatted_Text)
 
 If (combine = 1) || (Oneupserial = 1)
 {
+   ;~ Prefix_array := Object()
+
+;~ Prefix_Array := Create_Prefix_Array(Formatted_Serial_Array)
 Combined_Serial_Array := Combineserials(Formatted_Serial_Array) ;goes to the combine Serials subroutine
 
 Prefix_Count :=  Combined_Serial_Array.Length()
@@ -239,7 +242,7 @@ Format_Serials()
    newline = `n
    sleep()
    If (Unit_test) ; For testing
-          Fullstring := "621s (SN: 8KD00001-00663,8KD00669,8KD00825)"
+          Fullstring := "621s (SN: 8KD00001-00663,8KD00669,8KD00825,TRD00123, TRD00124-00165, TRD00100)"
    Else
    FullString := Copy_selected_Text()
 
@@ -365,12 +368,13 @@ Combineserials(Formatted_Serial_Array)
    ;~ global
 
    Prefix_Combine_array := Object()
-Prefix_store_array := Object()
 
-   Loop,  % Formatted_Serial_Array.Length()
+For index, element in Formatted_Serial_Array
+   ;~ Loop,  % Formatted_Serial_Array.Length()
    {
       ;~ MsgBox, % Formatted_Serial_Array[A_Index]
-      Prefix_Extract := Extract_Prefix(Formatted_Serial_Array[A_index])
+      ;~ Prefix_Extract := Extract_Prefix(Formatted_Serial_Array[A_index])
+      Prefix_Extract := Extract_Prefix(element)
 
       If (Prefix_Extract = "`," or Prefix_Extract ="" or Prefix_Extract = "`n" or Prefix_Extract = "`r") ; checks to see if the Prefix_Store variable is a comma
       {
@@ -388,11 +392,14 @@ Prefix_store_array := Object()
 
      ;~ Match_result := matchprefix(Prefix_Extract) ;goes to the matchprefix function
 
-      First_Number_Set := Extract_First_Set_Of_Serial_Number(Formatted_Serial_Array[A_index])
-      Middle_Char := Extract_Serial_Dividing_Char(Formatted_Serial_Array[A_index])
+      ;~ First_Number_Set := Extract_First_Set_Of_Serial_Number(Formatted_Serial_Array[A_index])
+      First_Number_Set := Extract_First_Set_Of_Serial_Number(element)
+      ;~ Middle_Char := Extract_Serial_Dividing_Char(Formatted_Serial_Array[A_index])
+      Middle_Char := Extract_Serial_Dividing_Char(element)
 
       If Middle_Char = `- ; checks if Middle_Char variable is a hyphen
-             Second_Number_set := Extract_Second_Set_Of_Serial_Number(Formatted_Serial_Array[A_index])
+             ;~ Second_Number_set := Extract_Second_Set_Of_Serial_Number(Formatted_Serial_Array[A_index])
+             Second_Number_set := Extract_Second_Set_Of_Serial_Number(element)
 
    else If Middle_Char = `, ; if the Middle_Char variable is a comma
       {
@@ -453,35 +460,34 @@ Extract_Second_Set_Of_Serial_Number(Serial_Number)
 
 Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set)
 {
-   static Prefix_Combine_array := Object(), Serial_Combine_Array := Object()
+   static Serial_Combine_Array := Object()
+oldprefix =
 
-   LoopCount = 0
-   Loop, % Prefix_Combine_array.Length()
-   {
-      LoopCount++
-   If  Prefix_Combine_array[LoopCount]  contains %Prefix_store%
-   {
-   oldprefix := Serial_Combine_Array[LoopCount]
-   Break
-   }}
+      For Serial_index, Serial_element in Serial_Combine_Array
+         {
+            If  Serial_element contains %Prefix_store%
+             {
+             index := Serial_index
+            oldprefix := Serial_element
+            Break
+            }
+         }
 
    If Log_Events = 1
    {
        OutputDebug, oldprefix is %oldprefix%
       sleep()
    }
-   If LoopCount = 0
-   {
-      LoopCount = 1
-      Prefix_Beg = %First_Number_Set%
-      Prefix_Last = %Second_Number_Set%
-      Prefix_Combine_array.Insert(Prefix_store)
-}
+
+   If oldprefix =
+      {
+      oldprefix := Prefix_store First_Number_Set . "-" . Second_Number_Set
+      Serial_Combine_Array.Insert(oldprefix)
+      }
 else
 {
  Prefix_Beg :=  Extract_First_Set_Of_Serial_Number(oldprefix)
  Prefix_Last :=  Extract_Second_Set_Of_Serial_Number(oldprefix)
-}
 
    If 	Prefix_Beg > %Second_Number_Set%
    {
@@ -497,11 +503,12 @@ else
    {
       Second_Number_Set = %Prefix_Last%
    }
-
-
-Serial_Combine_Array[LoopCount] :=  Prefix_store First_Number_Set "-" Second_Number_Set
+}
+Serial_Combine_Array[index] :=  Prefix_store First_Number_Set "-" Second_Number_Set
    return  Serial_Combine_Array
 }
+
+
 
 matchprefix(Prefix_Extract)
 {
