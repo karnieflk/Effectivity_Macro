@@ -4,70 +4,158 @@
 #Include Unit_testing\JUnit.ahk
 #Include Unit_testing\OutputDebug.ahk
 
-Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug).Test(Folder_Function_Check, File_Function_Check)
+Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug).Test(Folder_Function_Check, File_Function_Check,INI_File_Tests,temp_File_Functions_Check,Macro_Update_Check_Functions)
 
 class Folder_Function_Check
 {
-
-   _Folder_Exists__Test_FolderNotExist() ; Needs to have the "_" in front so it runs first
-    {
-Result := Folder_Exist_Check("Macro_Test_Folder")
-Yunit.assert(Result == "Macro_Test_Folder - Folder_Not_Exist", "Folder Exists - Delete folder on Root C Drive and Rerun tests")
-}
-
-
     Folder_Create()
     {
     Result := Folder_Create("Macro_Test_Folder")
               Yunit.assert(Result == 0, "Error Creating Folder on Root C drive")
-
-
+              
                 Result := FileExist("C:\Macro_Test_Folder")
-                Yunit.assert(Result !="" , "Cannot find Folder on Root C drive")
+                 FileRemoveDir, C:\Macro_Test_Folder, 1
+                Yunit.assert(Result !="" , "Did not create the folder")
       }
 
-    Folder_Exists__Test_FolderExists()
+Class Folder_Exists_Function
+{
+   Folder_Not_Exist_Check() 
+ {
+Result := Folder_Exist_Check("Macro_Test_Folder_Not_Exist")
+Yunit.assert(Result == "Macro_Test_Folder_Not_Exist - Folder_Not_Exist")
+}
+   
+   Folder_Exists_Check()
     {
+        FileCreateDir, C:\Macro_Test_Folder
+        sleep 500
 Result := Folder_Exist_Check("Macro_Test_Folder")
  FileRemoveDir, C:\Macro_Test_Folder, 1
          Yunit.assert(Result == "Macro_Test_Folder - Folder_Exist")
   }
 
-}
+}}
 
 class File_Function_Check
 {
-    Begin()
-    {
-     }
-
-_File_Exist_Check__Test_NoFileExist() ; Needs to have the "_" in front so it runs first
-{
-    Result := File_Exist_Check("Macro_Testing.ini")
-    Yunit.assert(Result == "Macro_Testing.ini - File_Not_Exist", "File exists, delete file in root C folder")
-}
-
-File_Create()
+  File_Create()
 {
 
      Result := File_Create("Macro_Testing.ini" , "1")
      Yunit.assert(Result == 0 , "Error Creating File")
           Result := FileExist(A_Desktop "\Macro_Testing.ini")
+          FileDelete, %A_Desktop%\Macro_Testing.ini
                 Yunit.assert(Result !="" , "Function not creating the file")
 }
 
-File_Exist_Check__Test_FileExist()
+Class File_Exist_Function
 {
+
+No_File_Exist_Check() 
+{
+    Result := File_Exist_Check("Macro_Testing_not_exist.ini")
+    Yunit.assert(Result == "Macro_Testing_not_exist.ini - File_Not_Exist")
+}
+
+
+
+File_Exist_Check()
+{
+    FileAppend, test, %A_Desktop%\Macro_Testing.ini
       Result := File_Exist_Check("Macro_Testing.ini", "1")
-        FileDelete, %A_Desktop%\Macro_Testing.ini
-    Yunit.assert(Result == "Macro_Testing.ini - File_Exist")
+     FileDelete, %A_Desktop%\Macro_Testing.ini
+      Yunit.assert(Result == "Macro_Testing.ini - File_Exist")
+}}}
+
+Class INI_File_Function_Tests
+{
+
+Ini_File_Read()
+{   
+     
+     Inifile := A_Desktop "\Macro_Testing.ini"
+      FileAppend,,%inifile%
+      sleep 500
+Loop, 10
+IniWrite,%A_index%,%inifile%,Testing,Test_Section%A_index%
+
+    Load_ini_file(inifile)
+    FileDelete, %inifile%
+    Loop, 10
+       Yunit.assert(Test_Section A_index == A_index)
+   
+ }
+      
+Ini_File_Write() 
+{
+       Inifile := A_Desktop "\Macro_Testing.ini"
+  FileAppend,,%inifile%
+           
+  Write_ini_file(inifile)
+    Load_ini_file(inifile)
+           FileDelete %inifile%
+    Loop, 10
+       Yunit.assert(Test_Section A_index == A_index)
+       }
 }
 
+Class temp_File_Functions_Check
+{
+    Temp_File_Delete()
+{
+     File_Location := A_Desktop
+    File_Name := "Unit_test_Temp_File.txt"
+    FileAppend, Test, %File_Location%\%File_name%
+    sleep 500
+Result := Temp_File_Delete(File_Location,File_Name)
+Yunit.assert(Result == File_Name " - File Found and Deleted")
+}
 
+Class Temp_File_Read_Function
+{
+    Test_For_Failure_to_Read()
+{
+    
+    File_Location := A_Desktop
+    File_Name := "Unit_test_Temp_File_Failure_To_Read.txt"
+    
+Result := Temp_File_Read(File_Location,File_Name) 
+Yunit.assert(Result == "Null")
+}
 
+Test_For_Successful_Read()
+{
+    File_Location := A_Desktop
+    File_Name := "Unit_test_Temp_File.txt"
+    FileAppend, Test, %File_Location%\%File_name%
+    
+Result := Temp_File_Read(File_Location,File_Name)  
+FileDelete, %File_location%\%File_Name%
+Yunit.assert(Result == "Test")
+}}}
 
-
-    End()
+Class Macro_Update_Check_Functions
+{
+    class Calculations
     {
-    }
+        Calculate_Days_Since_Last_Update()  
+{        
+    Updatestatus := A_Now
+    Newtime = -10
+    EnvAdd, UpdateStatus, %Newtime%, days
+    
+        Days := Calculate_Days_Since_Last_Update(updatestatus)  
+        Yunit.assert(Days == "10")
+ }  } 
+ 
+    
+    
+    
+    
+    
+    
 }
+ 
+ 
+    
