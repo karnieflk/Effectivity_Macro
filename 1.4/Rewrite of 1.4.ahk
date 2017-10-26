@@ -101,9 +101,21 @@ If Refreshrate = Error
 
 
 
-Install_Requied_Files_Root(File_Install_Work_Folder)
-Install_Requied_Files_Icons(File_Install_Work_Folder)
+Result := Install_Requied_Files_Root(File_Install_Work_Folder)
+If (Result)
+Move_Message_Box("0","Error","Error with installing How To PDF File. `n`nThis will not effect Program Operation")
+
+Result := Install_Requied_Files_Icons(File_Install_Work_Folder)
+If (Result)
+Move_Message_Box("0","Error","Error with installing Program Icons. `n`nThis will not Effect Program Operation")
+
 Install_Requied_Files_Images(File_Install_Work_Folder)
+If (Result)
+{
+Move_Message_Box("0","Error","Error with installing Images needed for screen searching.`n`n Program will not run without these files.`n`n Please restart Program and if error occurs agian, Contact Jarett Karnia for assisstance")
+If (!unit_test)
+ExitApp
+}
 
 Create_Tray_Menu()
 Create_Main_GUI_Menu()
@@ -123,11 +135,19 @@ If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null")
    editfield2 =
    TotalPrefixes =
 }
-
-Msg_Box_Result := Update_Check(updatestatus)
+ If(!Unit_test)
+{
+Days := Calculate_Days_Since_Last_Update(updatestatus)
+   If Days > %Updaterate%	; More than speficied days
+         {
+            Msg_Box_Result := Move_Message_Box("4","Effectivity Macro Updater", "Would you like to check for a new update?" )
+            lastupdate = %A_now%
+             IniWrite, %updatestatus%,  %inifile%,update,updaterate
+            IniWrite, %A_now%,  %inifile%, update,lastupdate
+         }
 If Msg_Box_Result = Yes
 Versioncheck()
-
+}
 Serials_GUI_Screen()
 
 return
@@ -648,29 +668,51 @@ File_Create(File, Unit_test := 0)
 Install_Requied_Files_Root( File_Install_Work_Folder)
 {
    FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
-   return
+   return errorlevel
 }
 
 Install_Requied_Files_Icons( File_Install_Work_Folder)
 {
+   Problems = 0
    FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
+   If (Errorlevel)
+      Problems = 1
    FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
-
-   return
+ If (Errorlevel)
+      Problems = 1
+      
+   return Problems
 }
 
 Install_Requied_Files_Images( File_Install_Work_Folder)
 {
+      Problems = 0
    FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
+      If (Errorlevel)
+      Problems = 1
    FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
+      If (Errorlevel)
+      Problems = 1
    FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
+      If (Errorlevel)
+      Problems = 1
    FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
+      If (Errorlevel)
+      Problems = 1
    FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
+      If (Errorlevel)
+      Problems = 1
    FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
+      If (Errorlevel)
+      Problems = 1
    FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
+      If (Errorlevel)
+      Problems = 1
    FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
+      If (Errorlevel)
+      Problems = 1
 
-   return
+   return Problems
 }
 
 /*
@@ -1147,22 +1189,18 @@ activeMonitorInfo( ByRef aX, ByRef aY, ByRef aWidth,  ByRef  aHeight, ByRef mous
          Return
       }
 
-      Update_Check(updatestatus)
-      {
-         global
-         Load_ini_file(inifile)
-         Today := A_Now		; Set to the current date first
-         EnvSub, Today, %updatestatus% , Days 	; this does a date calc, in days
-         If Today > %Updaterate%	; More than speficied days
-         {
-            Result := Move_Message_Box("4","Effectivity Macro Updater", "Would you like to check for a new update?" )
-            lastupdate = %A_now%
-            Write_ini_file(inifile)
-            ;~ IniWrite, %updatestatus%,  %inifile%,update,updaterate
-            ;~ IniWrite, %A_now%,  %inifile%, update,lastupdate
-            return Result
-         }}
-
+      ;~ Update_Check(updatestatus,days,Unit_test := 0)
+      ;~ {      
+      
+            ;~ return Result
+         ;~ }}
+         
+  Calculate_Days_Since_Last_Update(updatestatus)
+  {
+  Today := A_Now		; Set to the current date first
+EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days  
+   Return Today
+}
          Versioncheck()
          {
             global Checkversion, Update_Check_URL, Program_Location_Link, Version_Number
