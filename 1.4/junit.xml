@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites failures=1 tests=10>
+	<testsuite failures=1 tests=10 name="AHK_YUnit">
+		<testcase name="Folder_Create" classname="Folder_Function_Check/>
+		<testcase name="Folder_Exists_Check" classname="Folder_Function_Check.Folder_Exists_Function/>
+		<testcase name="Folder_Not_Exist_Check" classname="Folder_Function_Check.Folder_Exists_Function/>
+		<testcase name="File_Create" classname="File_Function_Check/>
+		<testcase name="File_Exist_Check" classname="File_Function_Check.File_Exist_Function/>
+		<testcase name="No_File_Exist_Check" classname="File_Function_Check.File_Exist_Function/>
+		<testcase name="Temp_File_Delete" classname="temp_File_Functions_Check/>
+		<testcase name="Test_For_Failure_to_Read" classname="temp_File_Functions_Check.Temp_File_Read_Function/>
+		<testcase name="Test_For_Successful_Read" classname="temp_File_Functions_Check.Temp_File_Read_Function/>
+		<testcase name="Calculate_Days_Since_Last_Update" classname="Macro_Update_Check_Functions.Calculations>
+			<failure message="Line #58: FAIL" type ="failure"></failure>
+		</testcase>
+	</testsuite>
+</testsuites>
