@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites failures=1 tests=10>
-	<testsuite failures=1 tests=10 name="AHK_YUnit">
+<testsuites failures=0 tests=15>
+	<testsuite failures=0 tests=15 name="AHK_YUnit">
 		<testcase name="Folder_Create" classname="Folder_Function_Check/>
 		<testcase name="Folder_Exists_Check" classname="Folder_Function_Check.Folder_Exists_Function/>
 		<testcase name="Folder_Not_Exist_Check" classname="Folder_Function_Check.Folder_Exists_Function/>
@@ -10,8 +10,11 @@
 		<testcase name="Temp_File_Delete" classname="temp_File_Functions_Check/>
 		<testcase name="Test_For_Failure_to_Read" classname="temp_File_Functions_Check.Temp_File_Read_Function/>
 		<testcase name="Test_For_Successful_Read" classname="temp_File_Functions_Check.Temp_File_Read_Function/>
-		<testcase name="Calculate_Days_Since_Last_Update" classname="Macro_Update_Check_Functions.Calculations>
-			<failure message="Line #58: FAIL" type ="failure"></failure>
-		</testcase>
+		<testcase name="Calculate_Days_Since_Last_Update" classname="Macro_Update_Check_Functions.Calculations/>
+		<testcase name="Test_For__Found_title" classname="Macro_Update_Check_Functions.Check_Doc_Title/>
+		<testcase name="Test_For__Not_Found_Title" classname="Macro_Update_Check_Functions.Check_Doc_Title/>
+		<testcase name="Test_For__Found_title" classname="Macro_Update_Check_Functions.Format_Serial_check_title/>
+		<testcase name="TEst_for__Not_found_title" classname="Macro_Update_Check_Functions.Format_Serial_check_title/>
+		<testcase name="Add_Digits" classname="Formatting_Functions_Check/>
 	</testsuite>
 </testsuites>
