@@ -680,7 +680,7 @@ Install_Requied_Files_Icons( File_Install_Work_Folder)
    FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
  If (Errorlevel)
       Problems = 1
-      
+
    return Problems
 }
 
@@ -1190,15 +1190,15 @@ activeMonitorInfo( ByRef aX, ByRef aY, ByRef aWidth,  ByRef  aHeight, ByRef mous
       }
 
       ;~ Update_Check(updatestatus,days,Unit_test := 0)
-      ;~ {      
-      
+      ;~ {
+
             ;~ return Result
          ;~ }}
-         
+
   Calculate_Days_Since_Last_Update(updatestatus)
   {
   Today := A_Now		; Set to the current date first
-EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days  
+EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
    Return Today
 }
          Versioncheck()
@@ -1239,10 +1239,12 @@ EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
             ;~ Progress, Off
 
 
-            Checkversion := Check_Doc_Title()
-            wb.Close
+            Doc_Title := Check_Doc_Title()
+
+          update_Version:=  Format_Serial_Check_Title(Doc_Title)
+
             ;~ msgbox, Checkversion is %Checkversion%
-            If Checkversion = Not_Found
+            If update_Version = Not_Found
             {
                Progress,  w200,Updating..., Error Occured. Update Not Able To Complete, Effectivity Macro Updater
                Progress, 0
@@ -1253,17 +1255,17 @@ EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
             }
 
 
-            If Checkversion <= %Version_Number%
+            If update_Version <= %Version_Number%
             {
                Progress,  w200,Updating..., Macro is Up to date., Effectivity Macro Updater
                Progress, 100
-               sleep()
+               sleep(100)
                Progress, off
                settimer, versiontimeout, Off
                ;Msgbox,,Serial Macro Updater,Macro is Up to date.
             }
 
-            If Checkversion > %Version_Number%
+            If update_Version > %Version_Number%
             {
                settimer, versiontimeout, Off
 
@@ -1288,24 +1290,29 @@ EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
                Winactivate, Serial version
                wingettitle, Google_Doc_Title, A
                sleep()
-               ;~ Msgbox, Title is  %title%
-
+               ;~ Msgbox, Title is  %Google_Doc_Title%
+               Result = Not_Found
                If Google_Doc_Title !=
                {
-                  Result =
+                  Result := Google_Doc_Title
                   break
                }}
-               Progress, Off
-               If Result != Not_Found
-               {
-                  StringGetPos, pos, Google_Doc_Title, #, 1
-                  Update_Check_Version_Number := SubStr(Google_Doc_Title, pos+2)
-                  Result := SubStr(Update_Check_Version_Number,1,3)
-               }
-
-
-               return Result
+                 return Result
             }
+
+            Format_Serial_Check_Title(Title)
+            {
+              If Title != Not_Found
+               {
+                  StringGetPos, pos, Title, #, 1
+                  Update_Check_Version_Number := SubStr(Title, pos+2)
+                  Update_Check_Version_Number := SubStr(Update_Check_Version_Number,1,3)
+                  return Update_Check_Version_Number
+               }
+               else
+                  return "Not_Found"
+}
+
 
             create_checkgui(ByRef hwnd, ByRef ParentGUI, ByRef wb)
             {
