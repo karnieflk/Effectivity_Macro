@@ -17,7 +17,7 @@ DetectHiddenText on
 #InstallKeybdHook
 #InstallMouseHook
 
-   #include Unit_testing\Unit_testing.ahk
+   ;~ #include Unit_testing\Unit_testing.ahk ; Uncomment this to run unit test modules, to narrow down what function is broken
 /*
 ****************************************************************************************************************************************************
 ************ Variable Setup *******************************************************************************
@@ -59,7 +59,7 @@ Image_Red_Exclamation_Point = %File_Install_Work_Folder%\red_image.png
 IMage_Actve_Add_Button = %File_Install_Work_Folder%\Active_plus.png
 Image_Active_Apply_Button = %File_Install_Work_Folder%\orange_button.png
 
-Unit_Test = 1  ; Set this to 1 to perform unit tests and logging.
+Unit_Test = 0 ; Set this to 1 to perform unit tests and logging.
 Log_Events = 0 ;Set this to 1 to perform logging
 
 
@@ -140,16 +140,19 @@ If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null")
 Days := Calculate_Days_Since_Last_Update(updatestatus)
    If Days > %Updaterate%	; More than speficied days
          {
-            Msg_Box_Result := Move_Message_Box("4","Effectivity Macro Updater", "Would you like to check for a new update?" )
+            Msg_Box_Result_Update := Move_Message_Box("4","Effectivity Macro Updater", "Would you like to check for a new update?" )
             lastupdate = %A_now%
              IniWrite, %updatestatus%,  %inifile%,update,updaterate
             IniWrite, %A_now%,  %inifile%, update,lastupdate
          }
-If Msg_Box_Result = Yes
+If Msg_Box_Result_Update = Yes
 Versioncheck()
 }
+
 Serials_GUI_Screen()
 
+If Msg_Box_Result_Update = Yes
+ SetTimer, QuitBrowser, 1000
 return
 
 
@@ -340,7 +343,7 @@ Combinecount(Prefix_Store_Array)
 
 One_Up_All(Serial_Store_Array)
 {
-   
+
    One_Up_Prefix_array := Object()
    Length:= Serial_Store_Array.length()
     For index, Element in Serial_Store_Array
@@ -351,7 +354,7 @@ Result := Extract_Prefix(Element)
 
     if (Element = "" or Element = "`," or Element = "`r" or Element = "`n")  ; If the text before the comma is nothing, then skip the rest of the loop.
       Continue ; skip over the rest of  the loop
-      
+
       else
          One_Up_Prefix_array.insert(Result "00001-99999") ; Sets the One_Up_Prefix_array variable to the Prefix variable and adds in 00001-99999
    }
@@ -374,7 +377,7 @@ Combineserials(Formatted_Serial_Array)
          Second_Number_set =  ; sets the Second_Number_Set variable to nothirng
          Continue ; skips over the rest of the loop and starts at the top of the parse loop
       }
-      
+
       First_Number_Set := Extract_First_Set_Of_Serial_Number(element)
       Middle_Char := Extract_Serial_Dividing_Char(element)
 
@@ -661,17 +664,17 @@ File_Create(File, Unit_test := 0)
 
 Install_Requied_Files_Root( File_Install_Work_Folder)
 {
-   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
+   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
    return errorlevel
 }
 
 Install_Requied_Files_Icons( File_Install_Work_Folder)
 {
    Problems = 0
-   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
+   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
    If (Errorlevel)
       Problems = 1
-   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
+   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
  If (Errorlevel)
       Problems = 1
 
@@ -681,28 +684,28 @@ Install_Requied_Files_Icons( File_Install_Work_Folder)
 Install_Requied_Files_Images( File_Install_Work_Folder)
 {
       Problems = 0
-   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
+   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
       If (Errorlevel)
       Problems = 1
-   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
+   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
       If (Errorlevel)
       Problems = 1
-   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
+   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
       If (Errorlevel)
       Problems = 1
-   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
+   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
       If (Errorlevel)
       Problems = 1
-   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
+   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
       If (Errorlevel)
       Problems = 1
-   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
+   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
       If (Errorlevel)
       Problems = 1
-   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
+   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
       If (Errorlevel)
       Problems = 1
-   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
+   FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
       If (Errorlevel)
       Problems = 1
 
@@ -1183,11 +1186,6 @@ activeMonitorInfo( ByRef aX, ByRef aY, ByRef aWidth,  ByRef  aHeight, ByRef mous
          Return
       }
 
-      ;~ Update_Check(updatestatus,days,Unit_test := 0)
-      ;~ {
-
-            ;~ return Result
-         ;~ }}
 
   Calculate_Days_Since_Last_Update(updatestatus)
   {
@@ -1215,6 +1213,7 @@ EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
             Progress, 25
             sleep(2)
             ;~ MsgBox, %Update_Check_URL%
+            Update_Check_URL := "https://docs.google.com/document/d/1woiaqcTjqkABrIecRERDAt6nqiEknFWdySqRmie7bCM/edit?usp=sharing"
             wb.navigate(Update_Check_URL) ; Update_Check_url is from Config FIle
 
             Progress,  w200, Updating...,Gathering Current Version From Server, Effectivity Macro Updater
@@ -1237,6 +1236,7 @@ EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
 
           update_Version:=  Format_Serial_Check_Title(Doc_Title)
 
+
             ;~ msgbox, Checkversion is %Checkversion%
             If update_Version = Not_Found
             {
@@ -1248,12 +1248,11 @@ EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
                return
             }
 
-
             If update_Version <= %Version_Number%
             {
                Progress,  w200,Updating..., Macro is Up to date., Effectivity Macro Updater
                Progress, 100
-               sleep(100)
+               sleep(10)
                Progress, off
                settimer, versiontimeout, Off
                ;Msgbox,,Serial Macro Updater,Macro is Up to date.
@@ -1271,10 +1270,24 @@ EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
 
             IniWrite, %updaterate%, %inifile%,update,updaterate
             IniWrite, %A_now%,  %inifile%, update,lastupdate
-            Progress, Off
+                    Progress, w200,,Disconnecting From Server..., Effectivity Macro Updater
+               Progress,25
+               Sleep()
+               Progress, 50
+
             Gui,2:Destroy
+                           wb.Quit
+wb:= ""
+            Progress, Off
             return
          }
+
+QuitBrowser:
+{
+SetTimer, QuitBrowser, Off
+
+return
+}
 
          Check_Doc_Title()
          {
@@ -1283,7 +1296,7 @@ EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
             {
                Winactivate, Serial version
                wingettitle, Google_Doc_Title, A
-               sleep()
+               sleep(10)
                ;~ Msgbox, Title is  %Google_Doc_Title%
                Result = Not_Found
                If Google_Doc_Title !=
