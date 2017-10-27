@@ -172,26 +172,21 @@ $^1::
    */
 
    ;~ SerialbreakquestionGUI() ; Goes to the Serialsgui.ahk and into the SerialbreakquestionGUI subroutine
-   combine = 1
-   Oneupserial = 0
+   combine = 0
+   Oneupserial = 1
 
    /*
    Stop for testing
    */
 
-   If (combine = 1) || (Oneupserial = 1)
+   If (combine = "1") || (Oneupserial = "1")
    {
-      ;~ Prefix_array := Object()
-
-      ;~ Prefix_Array := Create_Prefix_Array(Formatted_Serial_Array)
       Combined_Serial_Array := Combineserials(Formatted_Serial_Array) ;goes to the combine Serials subroutine
 
       Prefix_Count :=  Combined_Serial_Array.Length()
 
-      ;CombineCount(Prefix_Store_Array)
-
       If Oneupserial = 1
-      One_Up_Prefix_array := One_Up_All(Combined_Serial_Array)
+      Combined_Serial_Array := One_Up_All(Combined_Serial_Array)
 
       Editfield := Extract_Serial_Array(Combined_Serial_Array)
 
@@ -223,11 +218,11 @@ Put_Formatted_Serials_into_Array(Formatted_Text)
 
 Extract_Serial_Array(Combined_Serial_Array)
 {
-   editfield =
-   loop % Combined_Serial_Array.Length()
+     editfield =
+For index, Element in  Combined_Serial_Array
    {
       ;~ MsgBox % Combined_Serial_Array[A_Index]
-      Editfield := Editfield Combined_Serial_Array[A_Index] ",`n"
+      Editfield := Editfield element ",`n"
    }
 
    return Editfield
@@ -343,15 +338,22 @@ Combinecount(Prefix_Store_Array)
    return Prefixcombinecount
 }
 
-One_Up_All(Prefix_Store_Array)
+One_Up_All(Serial_Store_Array)
 {
-   Loop, Parse, Prefix_Store_Array, `,  ; parse loop to breaks the Prefixmatching variable up at the commas
-   {
-      if a_loopfield =  ; If the text before the comma is nothing, then skip the rest of the loop.
-      Continue ; skip over the rest of the loop
+   
+   One_Up_Prefix_array := Object()
+   Length:= Serial_Store_Array.length()
+    For index, Element in Serial_Store_Array
+    {
+If A_index > %Length%
+   Break
+Result := Extract_Prefix(Element)
 
+    if (Element = "" or Element = "`," or Element = "`r" or Element = "`n")  ; If the text before the comma is nothing, then skip the rest of the loop.
+      Continue ; skip over the rest of  the loop
+      
       else
-         One_Up_Prefix_array = %One_Up_Prefix_array%%A_LoopField%00001-99999`,`n ; Sets the One_Up_Prefix_array variable to the Prefix variable and adds in 00001-99999
+         One_Up_Prefix_array.insert(Result "00001-99999") ; Sets the One_Up_Prefix_array variable to the Prefix variable and adds in 00001-99999
    }
 
    return One_Up_Prefix_array
@@ -361,21 +363,18 @@ One_Up_All(Prefix_Store_Array)
 Combineserials(Formatted_Serial_Array)
 {
    Prefix_Combine_array := Object()
-
    For index, element in Formatted_Serial_Array
    {
       Prefix_Extract := Extract_Prefix(element)
-
       If (Prefix_Extract = "`," or Prefix_Extract ="" or Prefix_Extract = "`n" or Prefix_Extract = "`r") ; checks to see if the Prefix_Store variable is a comma
       {
          Debug_Log_Event("Combine_Serials() Prefix_Extract is " Prefix_Extract)
          Debug_Log_Event("Combine_Serials() Continue" )
-
          Prefix_Extract = ; sets the Prefix_Store variable to nothing
          Second_Number_set =  ; sets the Second_Number_Set variable to nothirng
          Continue ; skips over the rest of the loop and starts at the top of the parse loop
       }
-
+      
       First_Number_Set := Extract_First_Set_Of_Serial_Number(element)
       Middle_Char := Extract_Serial_Dividing_Char(element)
 
@@ -387,17 +386,12 @@ Combineserials(Formatted_Serial_Array)
          Middle_Char = `- ; makes the Middle_Char variable a hyphen
          Second_Number_set = %First_Number_Set%
       }
-
-
       Prefix_Combine_array := (Checkvalues(Prefix_Extract,First_Number_Set,Second_Number_set)) ; goes to the Checkvalues subroutine
-
       Debug_Log_Event("Combine_Serials() Prefix_Extract is "  Prefix_Extract)
       Debug_Log_Event("Combine_Serials() First_Number_Set is "  First_Number_Set)
       Debug_Log_Event("Combine_Serials() Middle_Char is "  Middle_Char)
       Debug_Log_Event("Combine_Serials() Second_Number_set is "  Second_Number_set)
    }
-
-
    Return Prefix_Combine_array
 }
 

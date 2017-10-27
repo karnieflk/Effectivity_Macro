@@ -172,26 +172,21 @@ $^1::
    */
 
    ;~ SerialbreakquestionGUI() ; Goes to the Serialsgui.ahk and into the SerialbreakquestionGUI subroutine
-   combine = 1
-   Oneupserial = 0
+   combine = 0
+   Oneupserial = 1
 
    /*
    Stop for testing
    */
 
-   If (combine = 1) || (Oneupserial = 1)
+   If (combine = "1") || (Oneupserial = "1")
    {
-      ;~ Prefix_array := Object()
-
-      ;~ Prefix_Array := Create_Prefix_Array(Formatted_Serial_Array)
       Combined_Serial_Array := Combineserials(Formatted_Serial_Array) ;goes to the combine Serials subroutine
 
       Prefix_Count :=  Combined_Serial_Array.Length()
 
-      ;CombineCount(Prefix_Store_Array)
-
       If Oneupserial = 1
-      One_Up_Prefix_array := One_Up_All(Combined_Serial_Array)
+      Combined_Serial_Array := One_Up_All(Combined_Serial_Array)
 
       Editfield := Extract_Serial_Array(Combined_Serial_Array)
 
@@ -223,11 +218,11 @@ Put_Formatted_Serials_into_Array(Formatted_Text)
 
 Extract_Serial_Array(Combined_Serial_Array)
 {
-   editfield =
-   loop % Combined_Serial_Array.Length()
+     editfield =
+For index, Element in  Combined_Serial_Array
    {
       ;~ MsgBox % Combined_Serial_Array[A_Index]
-      Editfield := Editfield Combined_Serial_Array[A_Index] ",`n"
+      Editfield := Editfield element ",`n"
    }
 
    return Editfield
@@ -343,15 +338,23 @@ Combinecount(Prefix_Store_Array)
    return Prefixcombinecount
 }
 
-One_Up_All(Prefix_Store_Array)
+One_Up_All(Serial_Store_Array)
 {
-   Loop, Parse, Prefix_Store_Array, `,  ; parse loop to breaks the Prefixmatching variable up at the commas
-   {
-      if a_loopfield =  ; If the text before the comma is nothing, then skip the rest of the loop.
-      Continue ; skip over the rest of the loop
+   
+   One_Up_Prefix_array := Object()
+   Length:= Serial_Store_Array.length()
+   Length--
+ For index, Element in Serial_Store_Array
+    {
+If A_index > %Length%
+   Break
+Result := Extract_Prefix(Element)
 
+    if (Element = "" or Element = "`," or Element = "`r" or Element = "`n")  ; If the text before the comma is nothing, then skip the rest of the loop.
+      Continue ; skip over the rest of  the loop
+      
       else
-         One_Up_Prefix_array = %One_Up_Prefix_array%%A_LoopField%00001-99999`,`n ; Sets the One_Up_Prefix_array variable to the Prefix variable and adds in 00001-99999
+         One_Up_Prefix_array.insert(Result "00001-99999") ; Sets the One_Up_Prefix_array variable to the Prefix variable and adds in 00001-99999
    }
 
    return One_Up_Prefix_array
@@ -361,21 +364,18 @@ One_Up_All(Prefix_Store_Array)
 Combineserials(Formatted_Serial_Array)
 {
    Prefix_Combine_array := Object()
-
    For index, element in Formatted_Serial_Array
    {
       Prefix_Extract := Extract_Prefix(element)
-
       If (Prefix_Extract = "`," or Prefix_Extract ="" or Prefix_Extract = "`n" or Prefix_Extract = "`r") ; checks to see if the Prefix_Store variable is a comma
       {
          Debug_Log_Event("Combine_Serials() Prefix_Extract is " Prefix_Extract)
          Debug_Log_Event("Combine_Serials() Continue" )
-
          Prefix_Extract = ; sets the Prefix_Store variable to nothing
          Second_Number_set =  ; sets the Second_Number_Set variable to nothirng
          Continue ; skips over the rest of the loop and starts at the top of the parse loop
       }
-
+      
       First_Number_Set := Extract_First_Set_Of_Serial_Number(element)
       Middle_Char := Extract_Serial_Dividing_Char(element)
 
@@ -387,17 +387,12 @@ Combineserials(Formatted_Serial_Array)
          Middle_Char = `- ; makes the Middle_Char variable a hyphen
          Second_Number_set = %First_Number_Set%
       }
-
-
       Prefix_Combine_array := (Checkvalues(Prefix_Extract,First_Number_Set,Second_Number_set)) ; goes to the Checkvalues subroutine
-
       Debug_Log_Event("Combine_Serials() Prefix_Extract is "  Prefix_Extract)
       Debug_Log_Event("Combine_Serials() First_Number_Set is "  First_Number_Set)
       Debug_Log_Event("Combine_Serials() Middle_Char is "  Middle_Char)
       Debug_Log_Event("Combine_Serials() Second_Number_set is "  Second_Number_set)
    }
-
-
    Return Prefix_Combine_array
 }
 
@@ -680,7 +675,7 @@ Install_Requied_Files_Icons( File_Install_Work_Folder)
    FileInstall, C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
  If (Errorlevel)
       Problems = 1
-      
+
    return Problems
 }
 
@@ -1190,16 +1185,15 @@ activeMonitorInfo( ByRef aX, ByRef aY, ByRef aWidth,  ByRef  aHeight, ByRef mous
       }
 
       ;~ Update_Check(updatestatus,days,Unit_test := 0)
-      ;~ {      
-      
+      ;~ {
+
             ;~ return Result
          ;~ }}
-         
+
   Calculate_Days_Since_Last_Update(updatestatus)
   {
   Today := A_Now		; Set to the current date first
-
-EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days  
+EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
    Return Today
 }
          Versioncheck()
@@ -1240,10 +1234,12 @@ EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
             ;~ Progress, Off
 
 
-            Checkversion := Check_Doc_Title()
-            wb.Close
+            Doc_Title := Check_Doc_Title()
+
+          update_Version:=  Format_Serial_Check_Title(Doc_Title)
+
             ;~ msgbox, Checkversion is %Checkversion%
-            If Checkversion = Not_Found
+            If update_Version = Not_Found
             {
                Progress,  w200,Updating..., Error Occured. Update Not Able To Complete, Effectivity Macro Updater
                Progress, 0
@@ -1254,17 +1250,17 @@ EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
             }
 
 
-            If Checkversion <= %Version_Number%
+            If update_Version <= %Version_Number%
             {
                Progress,  w200,Updating..., Macro is Up to date., Effectivity Macro Updater
                Progress, 100
-               sleep()
+               sleep(100)
                Progress, off
                settimer, versiontimeout, Off
                ;Msgbox,,Serial Macro Updater,Macro is Up to date.
             }
 
-            If Checkversion > %Version_Number%
+            If update_Version > %Version_Number%
             {
                settimer, versiontimeout, Off
 
@@ -1289,24 +1285,29 @@ EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
                Winactivate, Serial version
                wingettitle, Google_Doc_Title, A
                sleep()
-               ;~ Msgbox, Title is  %title%
-
+               ;~ Msgbox, Title is  %Google_Doc_Title%
+               Result = Not_Found
                If Google_Doc_Title !=
                {
-                  Result =
+                  Result := Google_Doc_Title
                   break
                }}
-               Progress, Off
-               If Result != Not_Found
-               {
-                  StringGetPos, pos, Google_Doc_Title, #, 1
-                  Update_Check_Version_Number := SubStr(Google_Doc_Title, pos+2)
-                  Result := SubStr(Update_Check_Version_Number,1,3)
-               }
-
-
-               return Result
+                 return Result
             }
+
+            Format_Serial_Check_Title(Title)
+            {
+              If Title != Not_Found
+               {
+                  StringGetPos, pos, Title, #, 1
+                  Update_Check_Version_Number := SubStr(Title, pos+2)
+                  Update_Check_Version_Number := SubStr(Update_Check_Version_Number,1,3)
+                  return Update_Check_Version_Number
+               }
+               else
+                  return "Not_Found"
+}
+
 
             create_checkgui(ByRef hwnd, ByRef ParentGUI, ByRef wb)
             {
