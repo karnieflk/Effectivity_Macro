@@ -209,6 +209,14 @@ Class Macro_Update_Check_Functions
 
     class Formatting_Functions_Check
     {
+
+        Combinecount()
+        {
+            Prefix_Store_Array := "one,two,six,ten,pat,sam,big,fog,dog,log,mog,mug,cat,"
+            Correct_answer := "13"
+        Result := Combinecount(Prefix_Store_Array)
+        Yunit.assert(Result == Correct_answer, "Did not add digits")
+    }
              Add_Digits()
              {
                 Serial_number = 1-5`)
@@ -229,11 +237,11 @@ Class Macro_Update_Check_Functions
 
 Put_Formatted_Serials_into_Array()
 {
- Test_Serials := "TDK0001,`nTDK0002,`nTDK0003,`n"
+ Test_Serials := "TDK00001,`nTDK00002,`nTDK00003,`n"
 Result_array := Object()
 Result_array := Put_Formatted_Serials_into_Array(Test_Serials)
 For Index, Element in Result_array
-  Yunit.assert(Element == "TDK000" Index ","," Failed on Index" index  )
+  Yunit.assert(Element == "TDK0000" Index ","," Failed on Index" index  )
 
 }
 
@@ -241,15 +249,15 @@ Extract_Serial_Array()
 {
        Test_array := Object()
        Loop, 5
-        Test_array.Insert("TRD000"A_Index "-TRD000"A_Index)
+        Test_array.Insert("TRD0000"A_Index "-0000"A_Index)
 
       Correct_answer =
       (
-TRD0001-TRD0001,
-TRD0002-TRD0002,
-TRD0003-TRD0003,
-TRD0004-TRD0004,
-TRD0005-TRD0005,`n
+TRD00001-00001,
+TRD00002-00002,
+TRD00003-00003,
+TRD00004-00004,
+TRD00005-00005,`n
 )
  Result := Extract_Serial_Array(Test_Array)
  ;~ MsgBox, % result
@@ -260,15 +268,30 @@ Formatted_Text_Serial_Count()
 {
 Test_Serials =
 (
-TRD0001-TRD0001,
-TRD0002-TRD0002,
-TRD0003-TRD0003,
-TRD0004-TRD0004,
-TRD0005-TRD0005,`n
+TRD00001-00001,
+TRD00002-00002,
+TRD00003-00003,
+TRD00004-00004,
+TRD00005-00005,`n
 )
 Correct_answer := 5
  Result := Formatted_Text_Serial_Count(Test_Serials)
   Yunit.assert(REsult == Correct_answer )
+}
+
+One_Up_all()
+{
+    Serial_Store_Array := Object(), Result_array := Object()
+
+    Loop, 5
+        Serial_Store_Array.Insert("TR" A_Index "0000"A_Index "-00005")
+
+   Result_array :=  One_Up_All(Serial_Store_Array)
+   For index, Element in Result_array
+{
+      Yunit.assert(Element  == "TR" A_Index "00001-99999" )
+}
+
 }
 
 class Copy_Selected_Text_Function
@@ -299,8 +322,37 @@ Correct_answer = Test Window`,
                  Gui, 6:Destroy
                   Yunit.assert(REsult == Correct_answer, "Result should be No_Text_Selected" )
 
+}}
+
+class Check_For_Single_Serials
+{
+            Text_Is_All_Single_Serials()
+            {
+                PreFormatted_Text := "TRD00001,HAT00001,FRT00001,LFT00001,RHT00001"
+
+                Correct_answer := "TRD00001-00001,HAT00001-00001,FRT00001-00001,LFT00001-00001,RHT00001-00001,"
+            Result :=  Check_For_Single_Serials(PreFormatted_Text)
+                      Yunit.assert(REsult == Correct_answer )
+    }
+
+            Some_Text_Is_Single_Serials()
+            {
+                PreFormatted_Text := "TRD00001-00005,HAT00001,FRT00001,LFT00001-10002,RHT00001"
+
+                Correct_answer := "TRD00001-00005,HAT00001-00001,FRT00001-00001,LFT00001-10002,RHT00001-00001,"
+            Result :=  Check_For_Single_Serials(PreFormatted_Text)
+               Yunit.assert(REsult == Correct_answer )
+    }
+
+                Text_no_Single_Serials()
+            {
+                PreFormatted_Text := "TRD00001-00005,HAT00001-00001,FRT00001-00001,LFT00001-10002,RHT00001-00001,"
+            Result :=  Check_For_Single_Serials(PreFormatted_Text)
+                   Yunit.assert(REsult == PreFormatted_Text )
+    }
 }
-}
+
+
 }
 
 
