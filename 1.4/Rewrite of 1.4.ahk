@@ -17,12 +17,13 @@ DetectHiddenText on
 #InstallKeybdHook
 #InstallMouseHook
 
-   ;~ #include Unit_testing\Unit_testing.ahk ; Uncomment this to run unit test modules, to narrow down what function is broken
+   #include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
 /*
 ****************************************************************************************************************************************************
 ************ Variable Setup *******************************************************************************
 *****************************************************************************************
 */
+
 Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, sleepstill, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser
 
 Version_Number = 1.4 beta
@@ -59,7 +60,7 @@ Image_Red_Exclamation_Point = %File_Install_Work_Folder%\red_image.png
 IMage_Actve_Add_Button = %File_Install_Work_Folder%\Active_plus.png
 Image_Active_Apply_Button = %File_Install_Work_Folder%\orange_button.png
 
-Unit_Test = 0 ; Set this to 1 to perform unit tests and logging.
+Unit_Test = 1 ; Set this to 1 to perform unit tests and logging.
 Log_Events = 0 ;Set this to 1 to perform logging
 
 
@@ -160,7 +161,7 @@ return
 $^Numpad1::
 $^1::
 {
-   Formatted_Text := Format_Serials() ; Goes to the Formatserials subroutine
+   Formatted_Text := Format_Serial_Functions() ; Goes to the Formatserials subroutine
    Sort, Formatted_Text ; Sorts the prefixes in order
    Guicontrol,,Radio1,1
    Gui,Submit,NoHide
@@ -214,8 +215,11 @@ Put_Formatted_Serials_into_Array(Formatted_Text)
 {
    Formatted_Array := Object()
    Loop, Parse, Formatted_Text, `r`n
+   {
+      If A_LoopField =
+         continue
    Formatted_Array.Insert(A_LoopField)
-
+}
    return Formatted_Array
 }
 
@@ -235,13 +239,17 @@ Formatted_Text_Serial_Count(Formatted_Text)
 {
    Serial_Counter = 0
    Loop, Parse, Formatted_Text,`,
+   {
+        If (A_LoopField = "") || (A_LoopField = "`r") || (A_LoopField = "`n")
+         continue
    Serial_Counter++
-
+}
    return Serial_Counter
 }
 
 Copy_selected_Text()
 {
+   Clipboard =
    Send ^c ; sends a control C to the computer to copy selected text
    sleep(2)
    if clipboard =  ; if no text is seleted then clipboard will be remain blank
@@ -250,7 +258,7 @@ Copy_selected_Text()
       return Clipboard ","
 }
 
-Format_Serials()
+Format_Serial_Functions(Fullstring := "")
 {
    Clear_Format_Variables()
    newline = `n

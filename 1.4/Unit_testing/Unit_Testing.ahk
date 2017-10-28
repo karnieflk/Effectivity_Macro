@@ -227,9 +227,81 @@ Class Macro_Update_Check_Functions
                     Yunit.assert(Result == Correct_answer, "Did not let variable pass through")
                 }
 
+Put_Formatted_Serials_into_Array()
+{
+ Test_Serials := "TDK0001,`nTDK0002,`nTDK0003,`n"
+Result_array := Object()
+Result_array := Put_Formatted_Serials_into_Array(Test_Serials)
+For Index, Element in Result_array
+  Yunit.assert(Element == "TDK000" Index ","," Failed on Index" index  )
+
+}
+
+Extract_Serial_Array()
+{
+       Test_array := Object()
+       Loop, 5
+        Test_array.Insert("TRD000"A_Index "-TRD000"A_Index)
+
+      Correct_answer =
+      (
+TRD0001-TRD0001,
+TRD0002-TRD0002,
+TRD0003-TRD0003,
+TRD0004-TRD0004,
+TRD0005-TRD0005,`n
+)
+ Result := Extract_Serial_Array(Test_Array)
+ ;~ MsgBox, % result
+ Yunit.assert(REsult == Correct_answer )
+}
+
+Formatted_Text_Serial_Count()
+{
+Test_Serials =
+(
+TRD0001-TRD0001,
+TRD0002-TRD0002,
+TRD0003-TRD0003,
+TRD0004-TRD0004,
+TRD0005-TRD0005,`n
+)
+Correct_answer := 5
+ Result := Formatted_Text_Serial_Count(Test_Serials)
+  Yunit.assert(REsult == Correct_answer )
+}
+
+class Copy_Selected_Text_Function
+{
 
 
+Test_Is_Selected_Test()
+{
+Correct_answer = Test Window`,
+                 Gui,6:add, Edit,,Test Window
+                    gui 6:Show,w500, Copy Test
+                    WinActivate Copy test
+                REsult :=  Copy_selected_Text()
+                  Gui, 6:Destroy
+                  Yunit.assert(REsult == Correct_answer)
 
-    }
+ }
+
+ Text_Is_Not_Selected_Test()
+ {
+
+    Correct_answer = No_Text_Selected
+
+                 Gui,6:add, Edit,,
+                    gui 6:Show,w500, Copy Test
+                    WinActivate Copy test
+                REsult :=  Copy_selected_Text()
+                 Gui, 6:Destroy
+                  Yunit.assert(REsult == Correct_answer, "Result should be No_Text_Selected" )
+
+}
+}
+}
+
 
 
