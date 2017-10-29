@@ -154,6 +154,9 @@ Serials_GUI_Screen()
 
 If Msg_Box_Result_Update = Yes
  SetTimer, QuitBrowser, 1000
+
+ If (Unit_test)
+Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1")
 return
 
 
@@ -176,8 +179,8 @@ $^1::
    */
 
    ;~ SerialbreakquestionGUI() ; Goes to the Serialsgui.ahk and into the SerialbreakquestionGUI subroutine
-   combine = 0
-   Oneupserial = 1
+   combine = 1
+   Oneupserial = 0
 
    /*
    Stop for testing
@@ -373,9 +376,12 @@ Result := Extract_Prefix(Element)
 
 Combineserials(Formatted_Serial_Array)
 {
-   Prefix_Combine_array := Object()
+  Local Prefix_Combine_array := Object()
+
+
    For index, element in Formatted_Serial_Array
    {
+      ;~ MsgBox, Formatted serial is %element%
       Prefix_Extract := Extract_Prefix(element)
       If (Prefix_Extract = "`," or Prefix_Extract ="" or Prefix_Extract = "`n" or Prefix_Extract = "`r") ; checks to see if the Prefix_Store variable is a comma
       {
@@ -398,6 +404,10 @@ Combineserials(Formatted_Serial_Array)
          Second_Number_set = %First_Number_Set%
       }
       Prefix_Combine_array := (Checkvalues(Prefix_Extract,First_Number_Set,Second_Number_set)) ; goes to the Checkvalues subroutine
+
+          ;~ For index, element in Prefix_Combine_array
+   ;~ MsgBox, % element " Is element`n index is " index
+
       Debug_Log_Event("Combine_Serials() Prefix_Extract is "  Prefix_Extract)
       Debug_Log_Event("Combine_Serials() First_Number_Set is "  First_Number_Set)
       Debug_Log_Event("Combine_Serials() Middle_Char is "  Middle_Char)
@@ -432,30 +442,30 @@ Extract_Second_Set_Of_Serial_Number(Serial_Number)
 
 
 
-Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set)
+Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 {
    static Serial_Combine_Array := Object()
-   oldprefix =
+
+
+
+ oldprefix :=""
+
+
+If (Reset) ; This is here for the sole purpose of Unit testing. Since the Serial_Combine_array is static, is keeps the values between function call.The below will reset  the Serial_Combine_array to nothing.
+{
+Serial_array_reset := Object()
+
+Serial_Combine_Array := Serial_array_reset
+return
+}
 
    For Serial_index, Serial_element in Serial_Combine_Array
    {
+
       If  Serial_element contains %Prefix_store%
       {
-         index := Serial_index
-         oldprefix := Serial_element
-         Break
-      }}
-
-   Debug_Log_Event("Checkvalues() oldprefix is "  oldprefix)
-
-
-   If oldprefix =
-   {
-      oldprefix := Prefix_store First_Number_Set . "-" . Second_Number_Set
-      Serial_Combine_Array.Insert(oldprefix)
-   }else  {
-      Prefix_Beg :=  Extract_First_Set_Of_Serial_Number(oldprefix)
-      Prefix_Last :=  Extract_Second_Set_Of_Serial_Number(oldprefix)
+                Prefix_Beg :=  Extract_First_Set_Of_Serial_Number(Serial_element)
+      Prefix_Last :=  Extract_Second_Set_Of_Serial_Number(Serial_element)
 
       If 	Prefix_Beg > %Second_Number_Set%
       {
@@ -470,8 +480,14 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set)
       If 	Prefix_Last > %Second_Number_Set%
       {
          Second_Number_Set = %Prefix_Last%
+      }
+
+   Serial_Combine_Array[Serial_index] :=  Prefix_store First_Number_Set "-" Second_Number_Set
+          return  Serial_Combine_Array
       }}
-   Serial_Combine_Array[index] :=  Prefix_store First_Number_Set "-" Second_Number_Set
+
+      Serial_Combine_Array.Insert(Prefix_store First_Number_Set . "-" . Second_Number_Set)
+
    return  Serial_Combine_Array
 }
 

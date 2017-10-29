@@ -352,8 +352,58 @@ class Check_For_Single_Serials
     }
 }
 
+class Combin_Serials_Function_tests
+{
+ Two_Serials_Combine_Test()
+{
+Result_array_combine1:= Object()
+    Test_Array3 := Object()
+    Correct_answer := "TAP00500-01000"
+            Test_Array3.Insert("TAP00500-00600")
+            Test_Array3.Insert("TAP00800-01000")
+            Result_array_combine1 := Combineserials(Test_Array3)
+            Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
+                                 For index, Element in Result_array_combine1
+                                    Yunit.assert(Element ==  Correct_answer)
+                  }
+
+ Two_Different_Serials_No_Combine_Test()
+{
+
+    Test_Array1 := Object()
+
+    Correct_answer1 := "TAP00500-00600"
+    Correct_answer2 := "RAT00800-01000"
+            Test_Array1.Insert("TAP00500-00600")
+            Test_Array1.Insert("RAT00800-01000")
+            Result_array_combine2 := Combineserials(Test_Array1)
+                Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
+            For index, Element in Result_array_combine2
+                       Yunit.assert(Element == Correct_answer%Index%)
+                  }
+
+
+Two_Different_Serial_Sets_Combine_Test()
+{
+
+    Test_Array2 := Object()
+
+    Correct_answer1 := "TAP00500-01000"
+    Correct_answer2 := "RAT00500-01000"
+           Test_Array2.Insert("TAP00500-00600")
+            Test_Array2.Insert("TAP00800-01000")
+            Test_Array2.Insert("RAT00500-00600")
+            Test_Array2.Insert("RAT00800-01000")
+            Result_array_combine3 := Combineserials(Test_Array2)
+                Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
+            For index, Element in Result_array_combine3
+                       Yunit.assert(Element ==   Correct_answer%Index% )
+                  }
+}
+
 
 }
+
 
 
 
