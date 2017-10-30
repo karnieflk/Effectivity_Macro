@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites failures=0 tests=28>
-	<testsuite failures=0 tests=28 name="AHK_YUnit">
+<testsuites failures=0 tests=26>
+	<testsuite failures=0 tests=26 name="AHK_YUnit">
 		<testcase name="Folder_Create" classname="Folder_Function_Check/>
 		<testcase name="Folder_Exists_Check" classname="Folder_Function_Check.Folder_Exists_Function/>
 		<testcase name="Folder_Not_Exist_Check" classname="Folder_Function_Check.Folder_Exists_Function/>
@@ -17,17 +17,15 @@
 		<testcase name="TEst_for__Not_found_title" classname="Macro_Update_Check_Functions.Format_Serial_check_title/>
 		<testcase name="Add_Digits" classname="Formatting_Functions_Check/>
 		<testcase name="Combinecount" classname="Formatting_Functions_Check/>
+		<testcase name="Extract_First_Set_Of_Serial_Number" classname="Formatting_Functions_Check/>
+		<testcase name="Extract_Prefix" classname="Formatting_Functions_Check/>
+		<testcase name="Extract_Second_Set_Of_Serial_Number" classname="Formatting_Functions_Check/>
 		<testcase name="Extract_Serial_Array" classname="Formatting_Functions_Check/>
+		<testcase name="Extract_Serial_Dividing_Char" classname="Formatting_Functions_Check/>
 		<testcase name="Formatted_Text_Serial_Count" classname="Formatting_Functions_Check/>
 		<testcase name="One_Up_all" classname="Formatting_Functions_Check/>
 		<testcase name="Put_Formatted_Serials_into_Array" classname="Formatting_Functions_Check/>
-		<testcase name="Some_Text_Is_Single_Serials" classname="Formatting_Functions_Check.Check_For_Single_Serials/>
-		<testcase name="Text_Is_All_Single_Serials" classname="Formatting_Functions_Check.Check_For_Single_Serials/>
-		<testcase name="Text_no_Single_Serials" classname="Formatting_Functions_Check.Check_For_Single_Serials/>
-		<testcase name="Two_Different_Serial_Sets_Combine_Test" classname="Formatting_Functions_Check.Combin_Serials_Function_tests/>
-		<testcase name="Two_Different_Serials_No_Combine_Test" classname="Formatting_Functions_Check.Combin_Serials_Function_tests/>
-		<testcase name="Two_Serials_Combine_Test" classname="Formatting_Functions_Check.Combin_Serials_Function_tests/>
-		<testcase name="Test_Is_Selected_Test" classname="Formatting_Functions_Check.Copy_Selected_Text_Function/>
-		<testcase name="Text_Is_Not_Selected_Test" classname="Formatting_Functions_Check.Copy_Selected_Text_Function/>
+		<testcase name="Two_Different_Serials_Test" classname="Check_values_Function/>
+		<testcase name="Two_Serials_Test" classname="Check_values_Function/>
 	</testsuite>
 </testsuites>
