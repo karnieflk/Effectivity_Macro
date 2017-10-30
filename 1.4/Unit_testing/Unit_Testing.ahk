@@ -4,10 +4,12 @@
 #Include Unit_testing\JUnit.ahk
 #Include Unit_testing\OutputDebug.ahk
 
-Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug).Test(Folder_Function_Check, File_Function_Check,INI_File_Tests,temp_File_Functions_Check,Macro_Update_Check_Functions,Formatting_Functions_Check, Check_values_Function)
+Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug).Test(Folder_Function_Check, File_Function_Check,INI_File_Function_Tests,temp_File_Functions_Check,Macro_Update_Check_Functions,Formatting_Functions_Check,Editfield_Control,Exit_program)
 
 class Folder_Function_Check
 {
+	class Folder_Create
+	{
 	Folder_Create()
 	{
 		Result := Folder_Create("Macro_Test_Folder")
@@ -17,7 +19,7 @@ class Folder_Function_Check
 		FileRemoveDir, C:\Macro_Test_Folder, 1
 		Yunit.assert(Result !="" , "Did not create the folder")
 		Result.Destroy
-	}
+	}}
 
 	Class Folder_Exists_Function
 	{
@@ -40,7 +42,9 @@ class Folder_Function_Check
 
 		class File_Function_Check
 		{
-			File_Create()
+class File_Create
+{
+		File_Create()
 			{
 				Result := File_Create("Macro_Testing.ini" , "1")
 				Yunit.assert(Result == 0 , "Error Creating File")
@@ -48,7 +52,7 @@ class Folder_Function_Check
 				FileDelete, %A_Desktop%\Macro_Testing.ini
 				Yunit.assert(Result !="" , "Function not creating the file")
 				Result.Destroy
-			}
+			}}
 
 			Class File_Exist_Function
 			{
@@ -58,8 +62,6 @@ class Folder_Function_Check
 					Yunit.assert(Result == "Macro_Testing_not_exist.ini - File_Not_Exist")
 					Result.Destroy
 				}
-
-
 
 				File_Exist_Check()
 				{
@@ -72,6 +74,8 @@ class Folder_Function_Check
 
 				Class INI_File_Function_Tests
 				{
+					class INI_Read
+					{
 					Ini_File_Read()
 					{
 						Inifile := A_Desktop "\Macro_Testing.ini"
@@ -86,8 +90,10 @@ class Folder_Function_Check
 						Yunit.assert(Test_Section A_index == A_index)
 
 						inifile.Destroy
-					}
+					}}
 
+					class INI_Write
+					{
 					Ini_File_Write()
 					{
 						Inifile := A_Desktop "\Macro_Testing.ini"
@@ -105,10 +111,12 @@ class Folder_Function_Check
 						Yunit.assert(Test_Section A_index == A_index)
 
 						inifile.Destroy
-					}}
+					}}}
 
 					Class temp_File_Functions_Check
 					{
+						class Temp_Delete
+						{
 						Temp_File_Delete()
 						{
 							File_Location := A_Desktop
@@ -117,7 +125,7 @@ class Folder_Function_Check
 							sleep 500
 							Result := Temp_File_Delete(File_Location,File_Name)
 							Yunit.assert(Result == File_Name " - File Found and Deleted")
-						}
+						}}
 
 						Class Temp_File_Read_Function
 						{
@@ -192,15 +200,19 @@ class Folder_Function_Check
 											}}}
 
 
-											class Formatting_Functions_Check
+                    class Formatting_Functions_Check
 											{
+												class Combinecount
+												{
 												Combinecount()
 												{
 													Prefix_Store_Array := "one,two,six,ten,pat,sam,big,fog,dog,log,mog,mug,cat,"
 													Correct_answer := "13"
 													Result := Combinecount(Prefix_Store_Array)
 													Yunit.assert(Result == Correct_answer, "Did not add digits")
-												}
+												}}
+												class Add_Digits
+												{
 												Add_Digits()
 												{
 													Serial_number = 1-5`)
@@ -217,8 +229,10 @@ class Folder_Function_Check
 													Correct_answer = 00500-00550`)
 													Result:= Add_Digits(Serial_Number)
 													Yunit.assert(Result == Correct_answer, "Did not let variable pass through")
-												}
+												}}
 
+class Put_Formatted_Serials_into_Array
+{
 												Put_Formatted_Serials_into_Array()
 												{
 													Test_Serials := "TDK00001,`nTDK00002,`nTDK00003,`n"
@@ -226,7 +240,9 @@ class Folder_Function_Check
 													Result_array := Put_Formatted_Serials_into_Array(Test_Serials)
 													For Index, Element in Result_array
 													Yunit.assert(Element == "TDK0000" Index ","," Failed on Index" index  )
-												}
+												}}
+												class Extract_Serial_Array
+												{
 
 												Extract_Serial_Array()
 												{
@@ -234,19 +250,15 @@ class Folder_Function_Check
 													Loop, 5
 													Test_array.Insert("TRD0000"A_Index "-0000"A_Index)
 
-													Correct_answer =
-													(
-													TRD00001-00001,
-													TRD00002-00002,
-													TRD00003-00003,
-													TRD00004-00004,
-													TRD00005-00005,`n
-													)
+													Correct_answer := "TRD00001-00001,`nTRD00002-00002,`nTRD00003-00003,`nTRD00004-00004,`nTRD00005-00005,`n"
+
 													Result := Extract_Serial_Array(Test_Array)
 													;~ MsgBox, % result
 													Yunit.assert(REsult == Correct_answer )
-												}
+												}}
 
+class Formatted_Text_Serial_Count
+{
 												Formatted_Text_Serial_Count()
 												{
 													Test_Serials =
@@ -260,7 +272,10 @@ class Folder_Function_Check
 													Correct_answer := 5
 													Result := Formatted_Text_Serial_Count(Test_Serials)
 													Yunit.assert(REsult == Correct_answer )
-												}
+												}}
+
+		class One_Up_All
+												{
 
 												One_Up_all()
 												{
@@ -273,15 +288,19 @@ class Folder_Function_Check
 													For index, Element in Result_array
 													{
 														Yunit.assert(Element  == "TR" A_Index "00001-99999" )
-													}}
+													}}}
 
+class Extract_Prefix
+{
 													Extract_Prefix()
 													{
 														Serial_Number := "TST12345-67890"
 														Correct_answer:= "TST"
 														Result := Extract_Prefix(Serial_Number)
 														Yunit.assert(REsult == Correct_answer )
-													}
+													}}
+class Extract_First_Set_Of_Serial_Number
+													{
 
 													Extract_First_Set_Of_Serial_Number()
 													{
@@ -289,40 +308,26 @@ class Folder_Function_Check
 														Correct_answer:= "12345"
 														Result := Extract_First_Set_Of_Serial_Number(Serial_Number)
 														Yunit.assert(REsult == Correct_answer )
-													Extract_First_Set_Of_Serial_Number()
-													{
-													Serial_Number := "TST12345-67890"
-													Correct_answer:= "12345"
-													Result := Extract_First_Set_Of_Serial_Number(Serial_Number)
-													Yunit.assert(REsult == Correct_answer )
-												}
-
+												}}
+class Extract_Second_Set_Of_Serial_Number
+{
 												Extract_Second_Set_Of_Serial_Number()
 												{
 													Serial_Number := "TST12345-67890"
 													Correct_answer:= "67890"
 													Result := Extract_Second_Set_Of_Serial_Number(Serial_Number)
 													Yunit.assert(REsult == Correct_answer )
-												ract_Second_Set_Of_Serial_Number()
-												{
-												Serial_Number := "TST12345-67890"
-												Correct_answer:= "67890"
-												Result := Extract_Second_Set_Of_Serial_Number(Serial_Number)
-												Yunit.assert(REsult == Correct_answer )
-											}
 
+											}}
+
+class Extract_Serial_Dividing_Char
+{
 											Extract_Serial_Dividing_Char()
 											{
 												Serial_Number := "TST12345-67890"
 												Correct_answer:= "-"
 												Result :=   Extract_Serial_Dividing_Char(Serial_Number)
 												Yunit.assert(REsult == Correct_answer )
-											ract_Serial_Dividing_Char()
-											{
-											Serial_Number := "TST12345-67890"
-											Correct_answer:= "-"
-											Result :=   Extract_Serial_Dividing_Char(Serial_Number)
-											Yunit.assert(REsult == Correct_answer )
 										}}
 										class Check_values_Function
 										{
@@ -345,28 +350,7 @@ class Folder_Function_Check
 											For Index, Element In Result_array_combine_Check_Value
 											{
 											Yunit.assert(Element == Correct_answer )
-										s Check_values_Function
-										{
-										Two_Serials_Test()
-										{
-										;Set up the variables for testing
-										Reset_array := Object()
-										Result_array_combine_Check_Value := Reset_array
-										Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for  testing
-										Result_array_combine_Check_Value := Object()
-										Prefix_Store := "TSX"
-										First_Number_Set := "12345"
-										Second_Number_Set := "67890"
-										Correct_answer := "TSX12345-99999"
-										;Run the funciton
-										Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set)
-										First_Number_Set := "88888"
-										Second_Number_Set := "99999"
-										Result_array_combine_Check_Value := Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set)
-										For Index, Element In Result_array_combine_Check_Value
-										{
-										Yunit.assert(Element == Correct_answer )
-									}}
+											}}
 
 									Two_Different_Serials_Test()
 									{
@@ -389,28 +373,9 @@ class Folder_Function_Check
 
 										For index, Element in Test_Array1
 										Yunit.assert(Element == Correct_answer%Index%)
-									o_Different_Serials_Test()
-									{
-									Test_Array1 := Object()
-									Result_array := Object()
-									Reset_array := Object()
-									Result_array := Reset_array
-									Test_Array1 := Reset_array
-									Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
-									Prefix_Store := "TSX"
-									First_Number_Set := "12345"
-									Second_Number_Set := "67890"
-									Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set)
-									Prefix_Store := "RAT"
-									First_Number_Set := "00800"
-									Second_Number_Set := "01000"
-									Test_Array1 := Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set)
-									Correct_answer1 := "TSX12345-67890"
-									Correct_answer2 := "RAT00800-01000"
 
-									For index, Element in Test_Array1
-									Yunit.assert(Element == Correct_answer%Index%)
 								}}
+
 								class Copy_Selected_Text_Function
 								{
 									Test_Is_Selected_Test()
@@ -422,17 +387,6 @@ class Folder_Function_Check
 									REsult :=  Copy_selected_Text()
 									Gui, 6:Destroy
 									Yunit.assert(REsult == Correct_answer)
-								s Copy_Selected_Text_Function
-								{
-								Test_Is_Selected_Test()
-								{
-								Correct_answer = Test Window`,
-								Gui,6:add, Edit,,Test Window
-								gui 6:Show,w500, Copy Test
-								WinActivate Copy test
-								REsult :=  Copy_selected_Text()
-								Gui, 6:Destroy
-								Yunit.assert(REsult == Correct_answer)
 							}
 
 							Text_Is_Not_Selected_Test()
@@ -445,16 +399,6 @@ class Folder_Function_Check
 								REsult :=  Copy_selected_Text()
 								Gui, 6:Destroy
 								Yunit.assert(REsult == Correct_answer, "Result should be No_Text_Selected" )
-							t_Is_Not_Selected_Test()
-							{
-							Correct_answer = No_Text_Selected
-
-							Gui,6:add, Edit,,
-							gui 6:Show,w500, Copy Test
-							WinActivate Copy test
-							REsult :=  Copy_selected_Text()
-							Gui, 6:Destroy
-							Yunit.assert(REsult == Correct_answer, "Result should be No_Text_Selected" )
 						}}
 
 						class Check_For_Single_Serials
@@ -466,29 +410,6 @@ class Folder_Function_Check
 							Correct_answer := "TRD00001-00001,HAT00001-00001,FRT00001-00001,LFT00001-00001,RHT00001-00001,"
 							Result :=  Check_For_Single_Serials(PreFormatted_Text)
 							Yunit.assert(REsult == Correct_answer )
-							Text_Is_All_Single_Serials()
-							{
-							PreFormatted_Text := "TRD00001,HAT00001,FRT00001,LFT00001,RHT00001"
-
-							Correct_answer := "TRD00001-00001,HAT00001-00001,FRT00001-00001,LFT00001-00001,RHT00001-00001,"
-							Result :=  Check_For_Single_Serials(PreFormatted_Text)
-							Yunit.assert(REsult == Correct_answer )
-						ass Check_For_Single_Serials
-						{
-						Text_Is_All_Single_Serials()
-						{
-						PreFormatted_Text := "TRD00001,HAT00001,FRT00001,LFT00001,RHT00001"
-
-						Correct_answer := "TRD00001-00001,HAT00001-00001,FRT00001-00001,LFT00001-00001,RHT00001-00001,"
-						Result :=  Check_For_Single_Serials(PreFormatted_Text)
-						Yunit.assert(REsult == Correct_answer )
-						Text_Is_All_Single_Serials()
-						{
-						PreFormatted_Text := "TRD00001,HAT00001,FRT00001,LFT00001,RHT00001"
-
-						Correct_answer := "TRD00001-00001,HAT00001-00001,FRT00001-00001,LFT00001-00001,RHT00001-00001,"
-						Result :=  Check_For_Single_Serials(PreFormatted_Text)
-						Yunit.assert(REsult == Correct_answer )
 					}
 
 					Some_Text_Is_Single_Serials()
@@ -498,27 +419,6 @@ class Folder_Function_Check
 						Correct_answer := "TRD00001-00005,HAT00001-00001,FRT00001-00001,LFT00001-10002,RHT00001-00001,"
 						Result :=  Check_For_Single_Serials(PreFormatted_Text)
 						Yunit.assert(REsult == Correct_answer )
-						e_Text_Is_Single_Serials()
-						{
-						PreFormatted_Text := "TRD00001-00005,HAT00001,FRT00001,LFT00001-10002,RHT00001"
-
-						Correct_answer := "TRD00001-00005,HAT00001-00001,FRT00001-00001,LFT00001-10002,RHT00001-00001,"
-						Result :=  Check_For_Single_Serials(PreFormatted_Text)
-						Yunit.assert(REsult == Correct_answer )
-					e_Text_Is_Single_Serials()
-					{
-					PreFormatted_Text := "TRD00001-00005,HAT00001,FRT00001,LFT00001-10002,RHT00001"
-
-					Correct_answer := "TRD00001-00005,HAT00001-00001,FRT00001-00001,LFT00001-10002,RHT00001-00001,"
-					Result :=  Check_For_Single_Serials(PreFormatted_Text)
-					Yunit.assert(REsult == Correct_answer )
-					e_Text_Is_Single_Serials()
-					{
-					PreFormatted_Text := "TRD00001-00005,HAT00001,FRT00001,LFT00001-10002,RHT00001"
-
-					Correct_answer := "TRD00001-00005,HAT00001-00001,FRT00001-00001,LFT00001-10002,RHT00001-00001,"
-					Result :=  Check_For_Single_Serials(PreFormatted_Text)
-					Yunit.assert(REsult == Correct_answer )
 				}
 
 				Text_no_Single_Serials()
@@ -526,38 +426,10 @@ class Folder_Function_Check
 					PreFormatted_Text := "TRD00001-00005,HAT00001-00001,FRT00001-00001,LFT00001-10002,RHT00001-00001,"
 					Result :=  Check_For_Single_Serials(PreFormatted_Text)
 					Yunit.assert(REsult == PreFormatted_Text )
-					t_no_Single_Serials()
-					{
-					PreFormatted_Text := "TRD00001-00005,HAT00001-00001,FRT00001-00001,LFT00001-10002,RHT00001-00001,"
-					Result :=  Check_For_Single_Serials(PreFormatted_Text)
-					Yunit.assert(REsult == PreFormatted_Text )
-				t_no_Single_Serials()
-				{
-				PreFormatted_Text := "TRD00001-00005,HAT00001-00001,FRT00001-00001,LFT00001-10002,RHT00001-00001,"
-				Result :=  Check_For_Single_Serials(PreFormatted_Text)
-				Yunit.assert(REsult == PreFormatted_Text )
-				t_no_Single_Serials()
-				{
-				PreFormatted_Text := "TRD00001-00005,HAT00001-00001,FRT00001-00001,LFT00001-10002,RHT00001-00001,"
-				Result :=  Check_For_Single_Serials(PreFormatted_Text)
-				Yunit.assert(REsult == PreFormatted_Text )
-			}}
+                    }}
 
 			class Combine_Serials_Function_tests
 			{
-				Two_Serials_Combine_Test()
-				{
-				Result_array_combine1:= Object()
-				Test_Array3 := Object()
-				Correct_answer := "TAP00500-01000"
-				Test_Array3.Insert("TAP00500-00600")
-				Test_Array3.Insert("TAP00800-01000")
-				Result_array_combine1 := Combineserials(Test_Array3)
-				Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
-				For index, Element in Result_array_combine1
-				Yunit.assert(Element ==  Correct_answer)
-				ss Combine_Serials_Function_tests
-				{
 
 				Two_Serials_Combine_Test()
 				{
@@ -570,33 +442,6 @@ class Folder_Function_Check
 				Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
 				For index, Element in Result_array_combine1
 				Yunit.assert(Element ==  Correct_answer)
-			ass Combine_Serials_Function_tests
-			{
-			Two_Serials_Combine_Test()
-			{
-			Result_array_combine1:= Object()
-			Test_Array3 := Object()
-			Correct_answer := "TAP00500-01000"
-			Test_Array3.Insert("TAP00500-00600")
-			Test_Array3.Insert("TAP00800-01000")
-			Result_array_combine1 := Combineserials(Test_Array3)
-			Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
-			For index, Element in Result_array_combine1
-			Yunit.assert(Element ==  Correct_answer)
-			ss Combine_Serials_Function_tests
-			{
-
-			Two_Serials_Combine_Test()
-			{
-			Result_array_combine1:= Object()
-			Test_Array3 := Object()
-			Correct_answer := "TAP00500-01000"
-			Test_Array3.Insert("TAP00500-00600")
-			Test_Array3.Insert("TAP00800-01000")
-			Result_array_combine1 := Combineserials(Test_Array3)
-			Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
-			For index, Element in Result_array_combine1
-			Yunit.assert(Element ==  Correct_answer)
 		}
 
 		Two_Different_Serials_No_Combine_Test()
@@ -611,51 +456,13 @@ class Folder_Function_Check
 			Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
 			For index, Element in Result_array_combine2
 			Yunit.assert(Element == Correct_answer%Index%)
-			_Different_Serials_No_Combine_Test()
-			{
-
-			Test_Array1 := Object()
-
-			Correct_answer1 := "TAP00500-00600"
-			Correct_answer2 := "RAT00800-01000"
-			Test_Array1.Insert("TAP00500-00600")
-			Test_Array1.Insert("RAT00800-01000")
-			Result_array_combine2 := Combineserials(Test_Array1)
-			Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
-			For index, Element in Result_array_combine2
-			Yunit.assert(Element == Correct_answer%Index%)
-		_Different_Serials_No_Combine_Test()
-		{
-		Test_Array1 := Object()
-
-		Correct_answer1 := "TAP00500-00600"
-		Correct_answer2 := "RAT00800-01000"
-		Test_Array1.Insert("TAP00500-00600")
-		Test_Array1.Insert("RAT00800-01000")
-		Result_array_combine2 := Combineserials(Test_Array1)
-		Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
-		For index, Element in Result_array_combine2
-		Yunit.assert(Element == Correct_answer%Index%)
-		_Different_Serials_No_Combine_Test()
-		{
-
-		Test_Array1 := Object()
-
-		Correct_answer1 := "TAP00500-00600"
-		Correct_answer2 := "RAT00800-01000"
-		Test_Array1.Insert("TAP00500-00600")
-		Test_Array1.Insert("RAT00800-01000")
-		Result_array_combine2 := Combineserials(Test_Array1)
-		Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
-		For index, Element in Result_array_combine2
-		Yunit.assert(Element == Correct_answer%Index%)
 	}
 
 
 	Two_Different_Serial_Sets_Combine_Test()
 	{
 		Test_Array2 := Object()
-
+		Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
 		Correct_answer1 := "TAP00500-01000"
 		Correct_answer2 := "RAT00500-01000"
 		Test_Array2.Insert("TAP00500-00600")
@@ -666,48 +473,71 @@ class Folder_Function_Check
 		Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
 		For index, Element in Result_array_combine3
 		Yunit.assert(Element ==   Correct_answer%Index% )
-		Two_Different_Serial_Sets_Combine_Test()
-		{
+		}}}
 
-		Test_Array2 := Object()
 
-		Correct_answer1 := "TAP00500-01000"
-		Correct_answer2 := "RAT00500-01000"
-		Test_Array2.Insert("TAP00500-00600")
-		Test_Array2.Insert("TAP00800-01000")
-		Test_Array2.Insert("RAT00500-00600")
-		Test_Array2.Insert("RAT00800-01000")
-		Result_array_combine3 := Combineserials(Test_Array2)
-		Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
-		For index, Element in Result_array_combine3
-		Yunit.assert(Element ==   Correct_answer%Index% )
-	wo_Different_Serial_Sets_Combine_Test()
+        class Editfield_Control
+        {
+
+            Select_Editfield1()
+            {
+					global editfield, editfield2
+      	gui 6:add, Edit, x10 y50 w390 h240  vEditField,editfield
+		gui 6:add, Edit, xp yp w390 h240 vEditField2,editfield2
+        Gui, 6: Show, w400 h250, Testing
+
+
+
+        Correct_answer := "editfield"
+        	Editfield_Control("Editfield", "6")
+            clipboard =
+send ^a
+Sleep()
+Send ^c
+Sleep()
+Gui, 6: Destroy
+	Yunit.assert( Correct_answer ==   Clipboard )
+}
+
+         Select_Editfield2()
+            {
+					global editfield, editfield2
+      	gui 6:add, Edit, x10 y50 w390 h240  vEditField,editfield
+		gui 6:add, Edit, xp yp w390 h240 vEditField2,editfield2
+        Gui, 6: Show, w400 h250, Testing
+
+
+
+        Correct_answer := "editfield2"
+        	Editfield_Control("Editfield2", "6")
+            clipboard =
+send ^a
+Sleep()
+Send ^c
+Sleep()
+Gui, 6: Destroy
+	Yunit.assert( Correct_answer ==   Clipboard )
+} }
+
+class Exit_program
+{
+
+	Yes()
 	{
-	Test_Array2 := Object()
+			Correct_answer := "Yes"
+	SetTimer, ClickYes, 500
+Result :=  Exit_Program("1")
+	Yunit.assert( Result ==   Correct_answer )
+}
 
-	Correct_answer1 := "TAP00500-01000"
-	Correct_answer2 := "RAT00500-01000"
-	Test_Array2.Insert("TAP00500-00600")
-	Test_Array2.Insert("TAP00800-01000")
-	Test_Array2.Insert("RAT00500-00600")
-	Test_Array2.Insert("RAT00800-01000")
-	Result_array_combine3 := Combineserials(Test_Array2)
-	Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
-	For index, Element in Result_array_combine3
-	Yunit.assert(Element ==   Correct_answer%Index% )
-	Two_Different_Serial_Sets_Combine_Test()
+	no()
 	{
+		Correct_answer := "no"
+	SetTimer, Clickno, 500
+Result :=  Exit_Program("1")
+	Yunit.assert( Result ==   Correct_answer )
+}
 
-	Test_Array2 := Object()
+}
 
-	Correct_answer1 := "TAP00500-01000"
-	Correct_answer2 := "RAT00500-01000"
-	Test_Array2.Insert("TAP00500-00600")
-	Test_Array2.Insert("TAP00800-01000")
-	Test_Array2.Insert("RAT00500-00600")
-	Test_Array2.Insert("RAT00800-01000")
-	Result_array_combine3 := Combineserials(Test_Array2)
-	Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
-	For index, Element in Result_array_combine3
-	Yunit.assert(Element ==   Correct_answer%Index% )
-}}
+
