@@ -826,22 +826,39 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 		return
 	}
 
-	Exit_Program()
+	Exit_Program(Unit_Test := 0)
 	{
 		global Serialcount
-		Result := Move_Message_Box("262148",Effectivity_Macro, " The number of successful Serial additions to ACM is %Serialcount% `n`n Are you sure you want to Stop the macro?.`n`n Press YES to stop the Macro.`n`n No to keep going.")
+		Result := Move_Message_Box("262148",Effectivity_Macro, " The number of successful Serial additions to ACM is %Serialcount% `n`n Are you sure you want to Quit the macro?.`n`n Press YES to Quit the Macro.`n`n No to keep going.")
 
 		If Result = Yes
 		{
 			Stopactcheck = 1
 			Gui 1: -AlwaysOnTop
+            If (!unit_test)
 			Gui_Image_Show("Stopped")
+
 			Send {Shift Up}{Ctrl Up}
 			breakloop = 1
-			Exit
+            If (!Unit_Test)
+			ExitApp
 		}
-		return
+		return Result
 	}
+
+Clickyes:
+{
+Send {y}
+SetTimer, Clickyes, Off
+return
+}
+
+Clickno:
+{
+Send {n}
+SetTimer, Clickno, Off
+return
+}
 
 	restart_macro()
 	{
@@ -952,17 +969,19 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 		return
 	}
 
-	Editfield_Control(Textbox)
+	Editfield_Control(Textbox, Gui_Number := 1)
 	{
+      global editfield, editfield2
+
 		If Textbox = Editfield
 		{
-			Guicontrol,hide, Editfield2,
-			Guicontrol,show, Editfield,
-			Guicontrol, Focus, Editfield
+			Guicontrol,%Gui_Number%: hide, Editfield2,
+			Guicontrol,%Gui_Number%: show, Editfield,
+			Guicontrol,%Gui_Number%: Focus, Editfield
 		}else  {
-			Guicontrol,hide, Editfield,
-			Guicontrol,show, Editfield2,
-			Guicontrol, Focus, Editfield2
+			Guicontrol,%Gui_Number%: hide, Editfield,
+			Guicontrol,%Gui_Number%: show, Editfield2,
+			Guicontrol,%Gui_Number%: Focus, Editfield2
 		}
 		return
 	}
@@ -1215,6 +1234,7 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 				EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
 				Return Today
 			}
+
 			Versioncheck()
 			{
 				global Checkversion, Update_Check_URL, Program_Location_Link, Version_Number
@@ -1470,24 +1490,7 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 							INIstoretemp := Keytemp ":" Section
 							Ini_var_store_array.Insert(INIstoretemp)
 							IniRead,%keytemp%, %inifile%, %Section%, %keytemp%
-						}
-						else if A_LoopReadLine !=
-						{
-							StringGetPos, keytemppos, A_LoopReadLine, =,
-							StringLeft, keytemp, A_LoopReadLine,%keytemppos%
-							StringReplace, keytemp,keytemp,%A_SPace%,,All
-							INIstoretemp := Keytemp ":" Section
-							Ini_var_store_array.Insert(INIstoretemp)
-							IniRead,%keytemp%, %inifile%, %Section%, %keytemp%
-						else if A_LoopReadLine !=
-						{
-						StringGetPos, keytemppos, A_LoopReadLine, =,
-						StringLeft, keytemp, A_LoopReadLine,%keytemppos%
-						StringReplace, keytemp,keytemp,%A_SPace%,,All
-						INIstoretemp := Keytemp ":" Section
-						Ini_var_store_array.Insert(INIstoretemp)
-						IniRead,%keytemp%, %inifile%, %Section%, %keytemp%
-					}}
+						}}
 
 					return
 				}
@@ -1502,17 +1505,7 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 
 					Varname := INI_Write1
 					IniWrite ,% %INI_Write1%, %inifile%, %INI_Write2%, %INI_Write1%
-				te_ini_file(inifile)
-				{
-				global
-
-				for index, element in Ini_var_store_array
-				{
-				StringSplit, INI_Write,element, `:
-
-				Varname := INI_Write1
-				IniWrite ,% %INI_Write1%, %inifile%, %INI_Write2%, %INI_Write1%
-			}
+				}
 			return
 		}
 
@@ -1524,14 +1517,7 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 			{
 			OutputDebug, %Event%
 			Sleep(.5)
-		ug_Log_Event(Event)
-		{
-		global Log_Events
 
-		If (Log_Events)
-		{
-		OutputDebug, %Event%
-		Sleep(.5)
 	}
 	return
 }
