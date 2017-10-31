@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites failures=0 tests=26>
-	<testsuite failures=0 tests=26 name="AHK_YUnit">
-		<testcase name="Folder_Create" classname="Folder_Function_Check/>
+<testsuites failures=1 tests=43>
+	<testsuite failures=1 tests=43 name="AHK_YUnit">
+		<testcase name="Folder_Create" classname="Folder_Function_Check.Folder_Create/>
 		<testcase name="Folder_Exists_Check" classname="Folder_Function_Check.Folder_Exists_Function/>
 		<testcase name="Folder_Not_Exist_Check" classname="Folder_Function_Check.Folder_Exists_Function/>
-		<testcase name="File_Create" classname="File_Function_Check/>
+		<testcase name="File_Create" classname="File_Function_Check.File_Create/>
 		<testcase name="File_Exist_Check" classname="File_Function_Check.File_Exist_Function/>
 		<testcase name="No_File_Exist_Check" classname="File_Function_Check.File_Exist_Function/>
-		<testcase name="Temp_File_Delete" classname="temp_File_Functions_Check/>
+		<testcase name="Ini_File_Read" classname="INI_File_Function_Tests.INI_Read/>
+		<testcase name="Ini_File_Write" classname="INI_File_Function_Tests.INI_Write/>
+		<testcase name="Temp_File_Delete" classname="temp_File_Functions_Check.Temp_Delete/>
 		<testcase name="Test_For_Failure_to_Read" classname="temp_File_Functions_Check.Temp_File_Read_Function/>
 		<testcase name="Test_For_Successful_Read" classname="temp_File_Functions_Check.Temp_File_Read_Function/>
 		<testcase name="Calculate_Days_Since_Last_Update" classname="Macro_Update_Check_Functions.Calculations/>
@@ -15,17 +17,34 @@
 		<testcase name="Test_For__Not_Found_Title" classname="Macro_Update_Check_Functions.Check_Doc_Title/>
 		<testcase name="Test_For__Found_title" classname="Macro_Update_Check_Functions.Format_Serial_check_title/>
 		<testcase name="TEst_for__Not_found_title" classname="Macro_Update_Check_Functions.Format_Serial_check_title/>
-		<testcase name="Add_Digits" classname="Formatting_Functions_Check/>
-		<testcase name="Combinecount" classname="Formatting_Functions_Check/>
-		<testcase name="Extract_First_Set_Of_Serial_Number" classname="Formatting_Functions_Check/>
-		<testcase name="Extract_Prefix" classname="Formatting_Functions_Check/>
-		<testcase name="Extract_Second_Set_Of_Serial_Number" classname="Formatting_Functions_Check/>
-		<testcase name="Extract_Serial_Array" classname="Formatting_Functions_Check/>
-		<testcase name="Extract_Serial_Dividing_Char" classname="Formatting_Functions_Check/>
-		<testcase name="Formatted_Text_Serial_Count" classname="Formatting_Functions_Check/>
-		<testcase name="One_Up_all" classname="Formatting_Functions_Check/>
-		<testcase name="Put_Formatted_Serials_into_Array" classname="Formatting_Functions_Check/>
-		<testcase name="Two_Different_Serials_Test" classname="Check_values_Function/>
-		<testcase name="Two_Serials_Test" classname="Check_values_Function/>
+		<testcase name="Add_Digits" classname="Formatting_Functions_Check.Add_Digits>
+			<failure message="Line #58: Did not add digits" type ="failure"></failure>
+		</testcase>
+		<testcase name="Some_Text_Is_Single_Serials" classname="Formatting_Functions_Check.Check_For_Single_Serials/>
+		<testcase name="Text_Is_All_Single_Serials" classname="Formatting_Functions_Check.Check_For_Single_Serials/>
+		<testcase name="Text_no_Single_Serials" classname="Formatting_Functions_Check.Check_For_Single_Serials/>
+		<testcase name="Two_Different_Serials_Test" classname="Formatting_Functions_Check.Check_values_Function/>
+		<testcase name="Two_Serials_Test" classname="Formatting_Functions_Check.Check_values_Function/>
+		<testcase name="Two_Different_Serial_Sets_Combine_Test" classname="Formatting_Functions_Check.Combine_Serials_Function_tests/>
+		<testcase name="Two_Different_Serials_No_Combine_Test" classname="Formatting_Functions_Check.Combine_Serials_Function_tests/>
+		<testcase name="Two_Serials_Combine_Test" classname="Formatting_Functions_Check.Combine_Serials_Function_tests/>
+		<testcase name="Combinecount" classname="Formatting_Functions_Check.Combinecount/>
+		<testcase name="Test_Is_Selected_Test" classname="Formatting_Functions_Check.Copy_Selected_Text_Function/>
+		<testcase name="Text_Is_Not_Selected_Test" classname="Formatting_Functions_Check.Copy_Selected_Text_Function/>
+		<testcase name="Extract_First_Set_Of_Serial_Number" classname="Formatting_Functions_Check.Extract_First_Set_Of_Serial_Number/>
+		<testcase name="Extract_Prefix" classname="Formatting_Functions_Check.Extract_Prefix/>
+		<testcase name="Extract_Second_Set_Of_Serial_Number" classname="Formatting_Functions_Check.Extract_Second_Set_Of_Serial_Number/>
+		<testcase name="Extract_Serial_Array" classname="Formatting_Functions_Check.Extract_Serial_Array/>
+		<testcase name="Extract_Serial_Dividing_Char" classname="Formatting_Functions_Check.Extract_Serial_Dividing_Char/>
+		<testcase name="Formatted_Text_Serial_Count" classname="Formatting_Functions_Check.Formatted_Text_Serial_Count/>
+		<testcase name="One_Up_all" classname="Formatting_Functions_Check.One_Up_All/>
+		<testcase name="Combined_Only_Prefix_and_Not_solo_Prefix" classname="Formatting_Functions_Check.Prefix_Alone_Checking_and_add_One_up/>
+		<testcase name="No_Only_Prefix" classname="Formatting_Functions_Check.Prefix_Alone_Checking_and_add_One_up/>
+		<testcase name="Only_Prefix_No_Serial_Numbers" classname="Formatting_Functions_Check.Prefix_Alone_Checking_and_add_One_up/>
+		<testcase name="Put_Formatted_Serials_into_Array" classname="Formatting_Functions_Check.Put_Formatted_Serials_into_Array/>
+		<testcase name="Select_Editfield1" classname="Editfield_Control/>
+		<testcase name="Select_Editfield2" classname="Editfield_Control/>
+		<testcase name="no" classname="Exit_program/>
+		<testcase name="Yes" classname="Exit_program/>
 	</testsuite>
 </testsuites>

@@ -286,9 +286,8 @@ Format_Serial_Functions(Fullstring := "")
 
 
 	PreFormatted_Text := Check_For_Single_Serials(PreFormatted_Text)
-
-	PreFormatted_Text := Prefix_Number_Checking(PreFormatted_Text) ;  Take info from the PreFormatted_Text variable and checks to see of it it just the serial with no numbers attached to it. If is, then adds 00001-99999 to prefix. Also changes the Parseclip variable to the Number of non combined Serials
-
+	PreFormatted_Text := Prefix_Alone_Check_And_Add_One_UP(PreFormatted_Text) ;  Take info from the PreFormatted_Text variable and checks to see of it it just the serial with no numbers attached to it. If is, then adds 00001-99999 to prefix. Also changes the Parseclip variable to the Number of non combined Serials
+PreFormatted_Text := add_digits(PreFormatted_Text)
 	return PreFormatted_Text
 }
 
@@ -535,55 +534,46 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 		Return Full_Text
 	}
 
-	Prefix_Number_Checking(Text)
+	Prefix_Alone_Check_And_Add_One_UP(Text)
 	{
-		Serial_Add_Count = 0
-		Counter = 0
-		TextStore =
+;~ MsgBox, % "Test is `n" text
 		Loop, parse, Text, `,
 		{
-			If (a_loopfield = "") || (A_LoopField = "`n") || (A_LoopField = "`n")
+			If (a_loopfield = "") || (A_LoopField = "`n") || (A_LoopField = "`r")
 			{
-				Debug_Log_Event("Prefix_number_checking()  A_LoopField is "  A_LoopField "`n Continue")
+				Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  A_LoopField is "  A_LoopField "`n Continue")
 				Continue
 			}
-
-			Debug_Log_Event("Prefix_number_checking()  A_LoopField is "  A_LoopField )
-			Serial_Add_Count++
-			Counter++
+			Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  A_LoopField is "  A_LoopField )
 			add_comma = %A_LoopField%`,
 			StringGetPos, pos, add_comma, `,, 1
 
 			If pos = 3
 			{
-				StringReplace, Attach_Serial_Numbers,add_comma,`,,00001`-99999`,`n,all
+				StringReplace, Added_Serial_Numbers,add_comma,`,,00001`-99999`,`n,all
+			TextStore = %TextStore%%Added_Serial_Numbers%
 			}
 			Else if pos != 3
 			{
-				StringMid, Prefixstore, A_loopfield, 1, 3
-				StringTrimLeft, Serial_Numbers, A_loopfield, 3
+				;~ Prefix:= Extract_Prefix(A_loopfield)
+				;~ StringTrimLeft, Serial_Numbers, A_loopfield, 3
+				;~ Serial_Numbers := add_digits(Serial_Numbers)
+				;~ Serial_Numbers = %Prefix%%Serial_Numbers%
+				;~ StringReplace , Serial_Numbers,Serial_Numbers,`),`,`n,all
+				;~ TextStore = %TextStore%%Prefix%%Serial_Numbers%
+				TextStore = %TextStore%%A_LoopField%`,`n
+				}
 
-
-
-				StringTemp_end := add_digits(Serial_Numbers)
-
-				Stringtemp = %Prefixstore%%StringTemp_end%
-				StringReplace, StringTemp,StringTemp,`),`,`n,all
-
-
-				Attach_Serial_Numbers = %Stringtemp%
-			}
-			TextStore = %TextStore%%Attach_Serial_Numbers%
 		}
 
-		Debug_Log_Event("Prefix_Number_Checking()  Initial text is "  Text )
-		Debug_Log_Event("Prefix_Number_Checking()  Addcomma is "  Addcomma )
-		Debug_Log_Event("Prefix_Number_Checking()  pos is "  pos )
-		Debug_Log_Event("Prefix_Number_Checking()  Prefixstore is "  Prefixstore )
-		Debug_Log_Event("Prefix_Number_Checking()  Serial_Numbers is "  Serial_Numbers )
-		Debug_Log_Event("Prefix_Number_Checking()  StringTemp_end is "  StringTemp_end )
-		Debug_Log_Event("Prefix_Number_Checking()  Stringtemp is "  Stringtemp )
-		Debug_Log_Event("Prefix_Number_Checking()  Textstore is "  Textstore )
+		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Initial text is "  Text )
+		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Addcomma is "  Addcomma )
+		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  pos is "  pos )
+		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Prefixstore is "  Prefixstore )
+		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Serial_Numbers is "  Serial_Numbers )
+		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  StringTemp_end is "  StringTemp_end )
+		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Stringtemp is "  Stringtemp )
+		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Textstore is "  Textstore )
 
 		return Textstore
 	}
@@ -591,9 +581,13 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 
 	add_digits(Serial_Number)
 	{
-		Final_Combined_Digits =
+			Final_Combined_Digits =
 		combinestring =
-		Loop, Parse, Serial_Number, `-
+		Loop, Parse, Serial_Number,`,
+		{
+;~ MsgBox % A_LoopField
+
+		Loop, Parse, A_LoopField, `-
 		{
 			StringReplace, Remove_End_Parenthesis,A_LoopField,`),,
 			int = %Remove_End_Parenthesis%
@@ -602,7 +596,8 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 			combinestring = %combinestring%`-%Int%
 		}
 		combinestring := SubStr(combinestring, 2)
-		Final_Combined_Digits = %combinestring%`)
+		Final_Combined_Digits =%Final_Combined_Digits%%combinestring%`,
+}
 		return Final_Combined_Digits
 	}
 

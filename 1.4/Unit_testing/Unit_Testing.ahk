@@ -215,9 +215,10 @@ class File_Create
 												{
 												Add_Digits()
 												{
-													Serial_number = 1-5`)
-													Correct_answer = 00001-00005`)
+													Serial_number = TBD1-5`)TRT12345-67890`)
+													Correct_answer = TBD00001-00005`)TRT12345-67890`)
 													Result:= Add_Digits(Serial_Number)
+
 													Yunit.assert(Result == Correct_answer, "Did not add digits")
 
 													Serial_number = 10000-500000`)
@@ -473,7 +474,36 @@ class Extract_Serial_Dividing_Char
 		Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1") ; to reset for anymore testing
 		For index, Element in Result_array_combine3
 		Yunit.assert(Element ==   Correct_answer%Index% )
-		}}}
+		}}
+		class 	Prefix_Alone_Checking_and_add_One_up
+		{
+			Only_Prefix_No_Serial_Numbers()
+			{
+Text := "RHT,TBD,RAT"
+Correct_answer := "RHT00001-99999,`nTBD00001-99999,`nRAT00001-99999,`n"
+		Result:=Prefix_Alone_Check_And_Add_One_UP(Text)
+		Yunit.assert(Result ==  Correct_answer)
+			}
+
+		No_Only_Prefix()
+			{
+Text := "RHT00001-99999,TBD00001-99999,RAT00001-99999"
+Correct_answer := "RHT00001-99999,`nTBD00001-99999,`nRAT00001-99999,`n"
+		Result:=Prefix_Alone_Check_And_Add_One_UP(Text)
+			;~ MsgBox % "No_Only_Prefix result is `n "result
+		Yunit.assert(Result ==  Correct_answer)
+			}
+
+		Combined_Only_Prefix_and_Not_solo_Prefix()
+			{
+Text := "RHT,TBD12345-99999,RAT"
+Correct_answer := "RHT00001-99999,`nTBD12345-99999,`nRAT00001-99999,`n"
+		Result:=Prefix_Alone_Check_And_Add_One_UP(Text)
+			Yunit.assert(Result ==  Correct_answer)
+			}
+		}
+
+		}
 
 
         class Editfield_Control
