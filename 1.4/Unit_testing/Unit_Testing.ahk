@@ -213,24 +213,28 @@ class File_Create
 												}}
 												class Add_Digits
 												{
-												Add_Digits()
+												Combined_single_And_Full()
 												{
-													Serial_number = TBD1-5`)TRT12345-67890`)
-													Correct_answer = TBD00001-00005`)TRT12345-67890`)
+													Serial_number = TBD1`-5`,TRT12345`-67890`,
+													Correct_answer = TBD00001-00005`,`nTRT12345-67890`,`n
 													Result:= Add_Digits(Serial_Number)
-
 													Yunit.assert(Result == Correct_answer, "Did not add digits")
+													}
 
-													Serial_number = 10000-500000`)
-													Correct_answer = 10000-500000`)
+													Full_Digits_already()
+													{
+													Serial_number = TBD10000`-50000`,
+													Correct_answer = TBD10000`-50000`,`n
 													Result:= Add_Digits(Serial_Number)
 													Yunit.assert(Result == Correct_answer, "Did not let variable pass through")
-
-													Serial_number = 500-550`)
-													Correct_answer = 00500-00550`)
+													}
+														Single_3_digit_serial()
+														{
+													Serial_number = TBD500`-550`,
+													Correct_answer = TBD00500`-00550`,`n
 													Result:= Add_Digits(Serial_Number)
-													Yunit.assert(Result == Correct_answer, "Did not let variable pass through")
-												}}
+													Yunit.assert(Result == Correct_answer, "Did not add digits")
+														}}
 
 class Put_Formatted_Serials_into_Array
 {

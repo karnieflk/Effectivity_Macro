@@ -102,21 +102,21 @@ If Refreshrate = Error
 
 
 
-Result := Install_Requied_Files_Root(File_Install_Work_Folder)
-If (Result)
-	Move_Message_Box("0","Error","Error with installing How To PDF File. `n`nThis will not effect Program Operation")
+;~ Result := Install_Requied_Files_Root(File_Install_Work_Folder)
+;~ If (Result)
+	;~ Move_Message_Box("0","Error","Error with installing How To PDF File. `n`nThis will not effect Program Operation")
 
-Result := Install_Requied_Files_Icons(File_Install_Work_Folder)
-If (Result)
-	Move_Message_Box("0","Error","Error with installing Program Icons. `n`nThis will not Effect Program Operation")
+;~ Result := Install_Requied_Files_Icons(File_Install_Work_Folder)
+;~ If (Result)
+	;~ Move_Message_Box("0","Error","Error with installing Program Icons. `n`nThis will not Effect Program Operation")
 
-Install_Requied_Files_Images(File_Install_Work_Folder)
-If (Result)
-{
-	Move_Message_Box("0","Error","Error with installing Images needed for screen searching.`n`n Program will not run without these files.`n`n Please restart Program and if error occurs agian, Contact Jarett Karnia for assisstance")
-	If (!unit_test)
-		ExitApp
-}
+;~ Install_Requied_Files_Images(File_Install_Work_Folder)
+;~ If (Result)
+;~ {
+	;~ Move_Message_Box("0","Error","Error with installing Images needed for screen searching.`n`n Program will not run without these files.`n`n Please restart Program and if error occurs agian, Contact Jarett Karnia for assisstance")
+	;~ If (!unit_test)
+		;~ ExitApp
+;~ }
 
 Create_Tray_Menu()
 Create_Main_GUI_Menu()
@@ -179,8 +179,8 @@ $^1::
 	*/
 
 	;~ SerialbreakquestionGUI() ; Goes to the Serialsgui.ahk and into the SerialbreakquestionGUI subroutine
-	combine = 1
-	Oneupserial = 0
+	combine = 0
+	Oneupserial = 1
 
 	/*
 	Stop for testing
@@ -267,7 +267,7 @@ Format_Serial_Functions(Fullstring := "")
 	newline = `n
 	sleep()
 	If (Unit_test) ; For testing
-	Fullstring := "621s (SN: 8KD00001-00663,8KD00669,8KD00825,TRD00123, TRD00124-00165, TRD00100)"
+	Fullstring := "621s (SN: 8KD1-00663,8KD00669,8KD00825,TRD00123, TRD00124-00165, TRD"
 	Else
 		FullString := Copy_selected_Text()
 
@@ -279,15 +279,19 @@ Format_Serial_Functions(Fullstring := "")
 
 
 	Format_Removed_Text := Remove_Formatting(Fullstring) ; Goes to the Remove_Formatting funciton and stores the completed result into the Format_Removed_Text varialbe
-	PreFormatted_Text := PreFormat_Text(Format_Removed_Text) ; Goes to the PreFormat_Text function and stors the completed result into the Preformatted_text variable
+		Debug_Log_Event("Format_Serials() Format_Removed_Text is " Format_Removed_Text)
 
-	Debug_Log_Event("Format_Serials() Format_Removed_Text is " Format_Removed_Text)
+	PreFormatted_Text := PreFormat_Text(Format_Removed_Text) ; Goes to the PreFormat_Text function and stors the completed result into the Preformatted_text variable
 	Debug_Log_Event("Format_Serials() PreFormatted_Text is " PreFormatted_Text)
 
 
 	PreFormatted_Text := Check_For_Single_Serials(PreFormatted_Text)
+Debug_Log_Event("Check_For_Single_Serials() PreFormatted_Text is " PreFormatted_Text)
+
 	PreFormatted_Text := Prefix_Alone_Check_And_Add_One_UP(PreFormatted_Text) ;  Take info from the PreFormatted_Text variable and checks to see of it it just the serial with no numbers attached to it. If is, then adds 00001-99999 to prefix. Also changes the Parseclip variable to the Number of non combined Serials
+	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP() PreFormatted_Text is " PreFormatted_Text)
 PreFormatted_Text := add_digits(PreFormatted_Text)
+Debug_Log_Event("add_digits() PreFormatted_Text is " PreFormatted_Text)
 	return PreFormatted_Text
 }
 
@@ -298,11 +302,12 @@ Check_For_Single_Serials(PreFormatted_Text)
 {
 	Loop, Parse, PreFormatted_Text, `,  ; loop to divide the Formatted_Text variable by the carraige returns
 	{
+		Debug_Log_Event("Check_For_Single_Serials() Loopfield is " A_LoopField)
 		Prefix_Extract := Extract_Prefix(A_LoopField)
+		Debug_Log_Event("Check_for_single_Serials() Prefix_Extract is " Prefix_Extract)
 
 		If (Prefix_Extract = "`," or Prefix_Extract ="" or Prefix_Extract = "`n" or Prefix_Extract = "`r") ; checks to see if the Prefix_Store variable is a comma
 		{
-			Debug_Log_Event("Check_for_single_Serials() Prefix_Extract is " Prefix_Extract)
 			Debug_Log_Event("Check_For_Single_Serials() continue")
 
 			;msgbox, nothing there
@@ -310,25 +315,23 @@ Check_For_Single_Serials(PreFormatted_Text)
 			Second_Number_set =  ; sets the Second_Number_Set variable to nothirng
 			Continue ; skips over the rest of the loop and starts at the top of the parse loop
 		}
+If A_LoopField contains `-
+{
+Revised_PreFormatted_Text = %Revised_PreFormatted_Text%%A_LoopField%`,
+Debug_Log_Event("Check_For_Single_Serials() Revised_PreFormatted_Text is " Revised_PreFormatted_Text)
+continue
+}
+	StringTrimLeft, First_Number_Set,A_LoopField,3
+	If First_Number_Set =
+		Combine_Serials_together := Prefix_Extract
 
-		First_Number_Set := Extract_First_Set_Of_Serial_Number(A_LoopField)
-		Middle_Char := Extract_Serial_Dividing_Char(A_LoopField)
+	else
+		Combine_Serials_together := Prefix_Extract First_Number_Set "-" First_Number_Set
 
-		If Middle_Char = `- ; checks if Middle_Char variable is a hyphen
-		Second_Number_set := Extract_Second_Set_Of_Serial_Number(A_LoopField)
+		Revised_PreFormatted_Text = %Revised_PreFormatted_Text%%Combine_Serials_together%`,
 
-		else If (Middle_Char = "`," || Middle_char = "")  ; if the Middle_Char variable is a comma
-		{
-			Middle_Char = `- ; makes the Middle_Char variable a hyphen
-			Second_Number_set = %First_Number_Set%
-		}
 
-		Revised_PreFormatted_Text = %Revised_PreFormatted_Text%%Prefix_Extract%%First_Number_Set%%Middle_Char%%Second_Number_set%`,
-
-		Debug_Log_Event("Check_For_Single_Serials() Prefix_Extract is " Prefix_Extract)
 		Debug_Log_Event("Check_For_Single_Serials() First_Number_Set is " First_Number_Set)
-		Debug_Log_Event("Check_For_Single_Serials() Middle_Char is " Middle_Char)
-		Debug_Log_Event("Check_For_Single_Serials() Second_Number_set is " Second_Number_set)
 		Debug_Log_Event("Check_For_Single_Serials() Revised_PreFormatted_Text is " Revised_PreFormatted_Text)
 		Debug_Log_Event("Check_For_Single_Serials() New Parse" )
 	}
@@ -581,23 +584,33 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 
 	add_digits(Serial_Number)
 	{
+;~ MsgBox, % "Serial is "Serial_Number
 			Final_Combined_Digits =
 		combinestring =
-		Loop, Parse, Serial_Number,`,
+		Loop, Parse, Serial_Number,`,`n
 		{
-;~ MsgBox % A_LoopField
+			;~ MsgBox, % "Loopfield is  " A_LoopField
+			If A_LoopField =
+				continue
 
-		Loop, Parse, A_LoopField, `-
-		{
+			Prefix  := Extract_Prefix(A_LoopField)
 			StringReplace, Remove_End_Parenthesis,A_LoopField,`),,
-			int = %Remove_End_Parenthesis%
-			Loop, % 5-StrLen(int)
-			int = 0%int%
-			combinestring = %combinestring%`-%Int%
+			StringTrimLeft, Remove_End_Parenthesis,Remove_End_Parenthesis,3
+			;~ MsgBox % "Remove end is " Remove_End_Parenthesis
+			StringSplit, Serial_Temp, Remove_End_Parenthesis, `-
+		Loop, 2
+		{
+		index := A_Index
+   Loop % 5 - StrLen(Serial_Temp%A_index%)
+       Serial_Temp%index% :="0"  Serial_Temp%index%
 		}
-		combinestring := SubStr(combinestring, 2)
-		Final_Combined_Digits =%Final_Combined_Digits%%combinestring%`,
-}
+
+		;~ combinestring := SubStr(combinestring, 2)
+
+		Final_Combined_Digits =%Final_Combined_Digits%%Prefix%%Serial_temp1%`-%Serial_temp2%`,`n
+		;~ MsgBox, % "final is  " Final_Combined_Digits
+	}
+
 		return Final_Combined_Digits
 	}
 

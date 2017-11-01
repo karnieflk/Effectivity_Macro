@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites failures=1 tests=43>
-	<testsuite failures=1 tests=43 name="AHK_YUnit">
+<testsuites failures=0 tests=45>
+	<testsuite failures=0 tests=45 name="AHK_YUnit">
 		<testcase name="Folder_Create" classname="Folder_Function_Check.Folder_Create/>
 		<testcase name="Folder_Exists_Check" classname="Folder_Function_Check.Folder_Exists_Function/>
 		<testcase name="Folder_Not_Exist_Check" classname="Folder_Function_Check.Folder_Exists_Function/>
@@ -17,9 +17,9 @@
 		<testcase name="Test_For__Not_Found_Title" classname="Macro_Update_Check_Functions.Check_Doc_Title/>
 		<testcase name="Test_For__Found_title" classname="Macro_Update_Check_Functions.Format_Serial_check_title/>
 		<testcase name="TEst_for__Not_found_title" classname="Macro_Update_Check_Functions.Format_Serial_check_title/>
-		<testcase name="Add_Digits" classname="Formatting_Functions_Check.Add_Digits>
-			<failure message="Line #58: Did not add digits" type ="failure"></failure>
-		</testcase>
+		<testcase name="Combined_single_And_Full" classname="Formatting_Functions_Check.Add_Digits/>
+		<testcase name="Full_Digits_already" classname="Formatting_Functions_Check.Add_Digits/>
+		<testcase name="Single_3_digit_serial" classname="Formatting_Functions_Check.Add_Digits/>
 		<testcase name="Some_Text_Is_Single_Serials" classname="Formatting_Functions_Check.Check_For_Single_Serials/>
 		<testcase name="Text_Is_All_Single_Serials" classname="Formatting_Functions_Check.Check_For_Single_Serials/>
 		<testcase name="Text_no_Single_Serials" classname="Formatting_Functions_Check.Check_For_Single_Serials/>
