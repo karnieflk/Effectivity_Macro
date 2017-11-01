@@ -408,6 +408,16 @@ class Extract_Serial_Dividing_Char
 
 						class Check_For_Single_Serials
 						{
+
+							Not_All_5_digit_serials()
+							{
+									PreFormatted_Text := "TRD1,HAT00001,FRT,LFT00001,RHT00001"
+
+							Correct_answer := "TRD1-1,HAT00001-00001,FRT,LFT00001-00001,RHT00001-00001,"
+							Result :=  Check_For_Single_Serials(PreFormatted_Text)
+							Yunit.assert(REsult == Correct_answer )
+
+							}
 							Text_Is_All_Single_Serials()
 							{
 							PreFormatted_Text := "TRD00001,HAT00001,FRT00001,LFT00001,RHT00001"
