@@ -46,9 +46,6 @@ Serialzcounter2 = 0
 Serialzcounter = 0
 Prefixcount = 5
 TotalPrefixes = 0
-Textaddbutton = Please Shift + mouse button click on the "Add Button" in the ACM effectivity screen to get its position.
-Textprefixbutton = Please Shift + mouse button click in the "prefix" edit field in the ACM effectivity screen to get it's location.
-Textapplybutton = Please Shift + mouse button click on the "Apply button" in the ACM effectivity screen to get it's location.
 Radiobutton = 1
 
 Unit_Test = 1 ; Set this to 1 to perform unit tests and logging.
@@ -659,18 +656,23 @@ IniRead(inifile)
 
  Enter_Serials_Variable_Setup()
 
-   Move_Message_Box("262144","Click on the ACM window that you want to add effectivity to and then press the OK button","Select ACM Screen")
-   ;~ Msgbox,262144,, Click on the ACM window that you want to add effectivity to and then press the OK button
-   sleep(5)
-   WinGet,  Active_ID, ID,A
-   Monitorprogram := Title
-   sleep(3)
+   Move_Message_Box("262144","Select ACM Screen","Click on the ACM window that you want to add effectivity to and then press the OK button")
+     sleep(5)
 
+   WinGet,  Active_ID, ID,A
+   ;~ Monitorprogram := Title
+   ;~ sleep(3)
 SerialFullScreen(Active_ID)
 GUI_Image_Set ("Run") ; options are Stop, Run, Pause, Start
 
-   Gosub, Getmousepositions
-   gosub, Createtab
+Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
+
+   WinGetTitle, Title, A
+   Current_Monitor := GetCurrentMonitor(Title)
+Get_Prefix_Button_Screen_Position(prefixx, prefixy)
+Get_Apply_Button_Screen_Position(Applyx, Applyy)
+
+   ;~ gosub, Createtab
 
    Comma_Check(Effectivity_Macro)
 
@@ -751,9 +753,68 @@ Result :=   Searchend()
       Enterserials()
    }
 
+Wait_For_Shift_Mouse_Click()
+{
+
+   Keywait, Shift,D
+   Keywait, Lbutton, D
+	return "Done"
+}
 
 
 
+
+Get_App_Button_Screen_Position(ByRef X_Location, ByRef Y_Location)
+{
+
+	Textaddbutton = Please Shift + mouse button click on the "Add Button" in the ACM effectivity screen to get its position.
+
+   SetTimer, ToolTipTimerbutton, 10  ;timer routine will occur every 10ms..
+
+Wait_For_Shift_Mouse_Click()
+
+   MouseGetPos, X_Location, Y_Location
+
+   SetTimer, ToolTipTimerbutton,Off
+   Textaddbutton =
+   Tooltip,
+   return
+}
+
+Get_Prefix_Button_Screen_Position(ByRef X_Location, ByRef Y_Location)
+{
+
+Textprefixbutton = Please Shift + mouse button click in the "prefix" edit field in the ACM effectivity screen to get it's location.
+
+   settimer, ToolTipTimerprefix,10
+
+Wait_For_Shift_Mouse_Click()
+
+   MouseGetPos, X_Location, Y_Location
+
+    settimer, ToolTipTimerprefix,Off
+   Textprefixbutton =
+   Tooltip,
+   return
+}
+
+
+Get_Apply_Button_Screen_Position(ByRef X_Location, ByRef Y_Location)
+{
+
+Textapplybutton = Please Shift + mouse button click on the "Apply button" in the ACM effectivity screen to get it's location.
+
+   SetTimer, ToolTipTimerapply, 10  ;timer routine will occur every 10ms..
+
+Wait_For_Shift_Mouse_Click()
+
+   MouseGetPos, X_Location, Y_Location
+
+   SetTimer, ToolTipTimerapply,Off
+   Textapplybutton =
+   Tooltip,
+   return
+}
 
 
 /*
