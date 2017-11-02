@@ -17,7 +17,7 @@ DetectHiddenText on
 #InstallKeybdHook
 #InstallMouseHook
 
-#include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
+;~ #include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
 /*
 ****************************************************************************************************************************************************
 ************ Variable Setup *******************************************************************************
@@ -634,7 +634,129 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 		Stringthree =
 		return
 	}
-	/*
+
+/*
+Below is the enter serials section
+*/
+Enter_Serials_Variable_Setup()
+{
+	global
+   Prefixcount = 5
+   addtime = 0
+   Badlist =
+    Stoptimer = 0
+   Serialzcounter2 = 0
+   Serialzcounter = 0
+     StartTime := A_TickCount
+ }
+
+Enterallserials()
+{
+   global
+   ; Initial setup before the macro starts to output to the screen
+
+IniRead(inifile)
+
+ Enter_Serials_Variable_Setup()
+
+   Move_Message_Box("262144","Click on the ACM window that you want to add effectivity to and then press the OK button","Select ACM Screen")
+   ;~ Msgbox,262144,, Click on the ACM window that you want to add effectivity to and then press the OK button
+   sleep(5)
+   WinGet,  Active_ID, ID,A
+   Monitorprogram := Title
+   sleep(3)
+
+SerialFullScreen(Active_ID)
+GUI_Image_Set ("Run") ; options are Stop, Run, Pause, Start
+
+   Gosub, Getmousepositions
+   gosub, Createtab
+
+   Comma_Check(Effectivity_Macro)
+
+Result :=   Searchend()
+          If (Result = Failure) or (Result = Timedout)
+            Exit
+
+    Tabcount = 0
+   runcount = 21
+
+   Loop
+   {
+      tabcount++
+      IniRead, refreshrate,  C:\Serialmacro\Settings.ini,refreshrate,refreshrate
+      checkforactivity()
+
+      	  ;~ If Runcount > 20
+	  ;~ {
+	  ;~ runcount = 1
+	  ;~ Gosub, GetSerial
+	  ;~ Gosub, Copy_SerialTester
+	  ;~ }
+
+	  Send {ctrl down} %Tabcount% {Ctrl up}
+
+	  if tabcount = 2
+	  tabcount = 0
+
+      ;**********************************
+      ;**** For when Esc is pressed *****
+      ;**********************************
+
+      If breakloop = 1
+      {
+         Gui 1: -AlwaysOnTop
+         SplashTextOn,,,Macro Stopped
+         GUI_Image_Set ("Stop") ; options are Stop, Run, Pause, Start
+         Sleep(10)
+          SplashTextOff
+         Break
+      }
+
+      LoopCount++
+      If LoopCount >= %Refreshrate%
+       {
+         Click, %Applyx%,%Applyy%
+         Click, %Applyx%,%Applyy%
+         sleep(10)
+          Needrefresh = 0
+         ;msgbox, refresh
+         sleep(3)
+         Result :=   Searchend()
+          If (Result = Failure) or (Result = Timedout)
+            Exit
+
+        Win_check(Active_ID)
+         sleep()
+         Send {F5}
+         sleep(20)
+             Searchcountser = 0
+         Gosub Refreshpage
+         Loopcount = 0
+         Searchcountser = 0
+         Needrefresh = 0
+         sleep(10)
+      }
+
+
+      sleep()
+      Prefix_Number_Location_Check=0
+       Searchcountser = 0
+      ;Settimer, checkforactivity, Off
+      Modifier =
+     Prefiix := Get_Prefix()
+     If Prefix = Complete
+   {
+      Complete = 1
+      Enterserials()
+   }
+
+
+
+
+
+
+/*
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Below are the functions from the Autorun section Before it gets to Serials_GUI_Screen()i \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
