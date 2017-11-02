@@ -50,8 +50,12 @@ Textaddbutton = Please Shift + mouse button click on the "Add Button" in the ACM
 Textprefixbutton = Please Shift + mouse button click in the "prefix" edit field in the ACM effectivity screen to get it's location.
 Textapplybutton = Please Shift + mouse button click on the "Apply button" in the ACM effectivity screen to get it's location.
 Radiobutton = 1
-inifile = c:\Serialmacro\config.ini
 
+Unit_Test = 1 ; Set this to 1 to perform unit tests and logging.
+Log_Events = 0 ;Set this to 1 to perform logging
+
+
+inifile = c:\Serialmacro\config.ini
 File_Install_Root_Folder = C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files
 
 File_Install_Work_Folder = C:\SerialMacro
@@ -60,8 +64,6 @@ Image_Red_Exclamation_Point = %File_Install_Work_Folder%\red_image.png
 IMage_Actve_Add_Button = %File_Install_Work_Folder%\Active_plus.png
 Image_Active_Apply_Button = %File_Install_Work_Folder%\orange_button.png
 
-Unit_Test = 1 ; Set this to 1 to perform unit tests and logging.
-Log_Events = 0 ;Set this to 1 to perform logging
 
 
 Result = Folder_Exist_Check("SerialMacro")
@@ -280,7 +282,7 @@ Format_Serial_Functions(Fullstring := "")
 
 	Format_Removed_Text := Remove_Formatting(Fullstring) ; Goes to the Remove_Formatting funciton and stores the completed result into the Format_Removed_Text varialbe
 		Debug_Log_Event("Format_Serials() Format_Removed_Text is " Format_Removed_Text)
-
+MsgBox, % "Format removed is " Format_Removed_Text
 	PreFormatted_Text := PreFormat_Text(Format_Removed_Text) ; Goes to the PreFormat_Text function and stors the completed result into the Preformatted_text variable
 	Debug_Log_Event("Format_Serials() PreFormatted_Text is " PreFormatted_Text)
 
@@ -534,7 +536,7 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 			Debug_Log_Event("Preformat_Text()  Format_Text is "  Format_Text)
 			Debug_Log_Event("Preformat_Text()  New_Format_Text is "  New_Format_Text)
 		}
-		Return Full_Text
+			Return Full_Text
 	}
 
 	Prefix_Alone_Check_And_Add_One_UP(Text)

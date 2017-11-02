@@ -4,7 +4,7 @@
 #Include Unit_testing\JUnit.ahk
 #Include Unit_testing\OutputDebug.ahk
 
-Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug).Test(Folder_Function_Check, File_Function_Check,INI_File_Function_Tests,temp_File_Functions_Check,Macro_Update_Check_Functions,Formatting_Functions_Check,Editfield_Control,Exit_program)
+Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug).Test(Folder_Function_Check, File_Function_Check,INI_File_Function_Tests,temp_File_Functions_Check,Macro_Update_Check_Functions,Formatting_Functions_Check,Editfield_Control,Exit_program,Preformat_Text, Remove_Formatting)
 
 class Folder_Function_Check
 {
@@ -304,6 +304,7 @@ class Extract_Prefix
 														Result := Extract_Prefix(Serial_Number)
 														Yunit.assert(REsult == Correct_answer )
 													}}
+
 class Extract_First_Set_Of_Serial_Number
 													{
 
@@ -334,6 +335,7 @@ class Extract_Serial_Dividing_Char
 												Result :=   Extract_Serial_Dividing_Char(Serial_Number)
 												Yunit.assert(REsult == Correct_answer )
 										}}
+
 										class Check_values_Function
 										{
 											Two_Serials_Test()
@@ -580,7 +582,31 @@ Result :=  Exit_Program("1")
 	SetTimer, Clickno, 500
 Result :=  Exit_Program("1")
 	Yunit.assert( Result ==   Correct_answer )
+}}
+
+class Preformat_Text
+{
+
+Basic_Test()
+{
+
+Test_String := "621s(SN:8KD1-00663,8KD00669,8KD00825,TRD00123,TRD00124-00165,TXT1-up)"
+Correct_Answer := "8KD1-00663,8KD00669,8KD00825,TRD00123,TRD00124-00165,TXT,`n`,"
+Result := PreFormat_Text(Test_String)
+	Yunit.assert( Result ==   Correct_answer )
+}
+}
+
+class Remove_Formatting
+{
+Basic_Test()
+{
+	Test_String := "621s(SN:8KD1-00663,8KD00669,8KD00825,TRD00123,TRD00124-00165,TXT1-up)"
+Correct_Answer := "621s(SN:8KD1-00663,8KD00669,8KD00825,TRD00123,TRD00124-00165,TXT)`n"
+Result := Remove_Formatting(Test_String)
+	Yunit.assert( Result ==   Correct_answer )
 }
 
 }
+
 
