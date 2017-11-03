@@ -672,7 +672,7 @@ Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
 Get_Prefix_Button_Screen_Position(prefixx, prefixy)
 Get_Apply_Button_Screen_Position(Applyx, Applyy)
 
-   ;~ gosub, Createtab
+   ;~ gosub, Createtab ;for later use with mult-tab
 
    Comma_Check(Effectivity_Macro)
 
@@ -680,13 +680,13 @@ Result :=   Searchend()
           If (Result = Failure) or (Result = Timedout)
             Exit
 
-    Tabcount = 0
-   runcount = 21
+    ;~ Tabcount = 0 ; for multitab
+   ;~ runcount = 21
 
    Loop
    {
       tabcount++
-      IniRead, refreshrate,  C:\Serialmacro\Settings.ini,refreshrate,refreshrate
+IniRead(inifile)
       checkforactivity()
 
       	  ;~ If Runcount > 20
@@ -696,16 +696,16 @@ Result :=   Searchend()
 	  ;~ Gosub, Copy_SerialTester
 	  ;~ }
 
-	  Send {ctrl down} %Tabcount% {Ctrl up}
+	  ;~ Send {ctrl down} %Tabcount% {Ctrl up}
 
-	  if tabcount = 2
-	  tabcount = 0
+	  ;~ if tabcount = 2
+	  ;~ tabcount = 0
 
       ;**********************************
       ;**** For when Esc is pressed *****
       ;**********************************
 
-      If breakloop = 1
+      If (breakloop)
       {
          Gui 1: -AlwaysOnTop
          SplashTextOn,,,Macro Stopped
@@ -718,12 +718,11 @@ Result :=   Searchend()
       LoopCount++
       If LoopCount >= %Refreshrate%
        {
-         Click, %Applyx%,%Applyy%
-         Click, %Applyx%,%Applyy%
+
+		Double_click_Position(Applyx, Applyy)
+
          sleep(10)
-          Needrefresh = 0
          ;msgbox, refresh
-         sleep(3)
          Result :=   Searchend()
           If (Result = Failure) or (Result = Timedout)
             Exit
@@ -733,14 +732,12 @@ Result :=   Searchend()
          Send {F5}
          sleep(20)
              Searchcountser = 0
-         Gosub Refreshpage
+          Refreshpage()
          Loopcount = 0
          Searchcountser = 0
          Needrefresh = 0
          sleep(10)
       }
-
-
       sleep()
       Prefix_Number_Location_Check=0
        Searchcountser = 0
@@ -751,7 +748,14 @@ Result :=   Searchend()
    {
       Complete = 1
       Enterserials()
-   }
+   }}}
+
+Double_click_Position(x,y)
+{
+    Click, %x%,%y%
+Click, %x%,%y%
+		 return
+	 }
 
 Wait_For_Shift_Mouse_Click()
 {
