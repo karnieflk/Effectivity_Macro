@@ -674,12 +674,12 @@ Load_ini_file(inifile)
    Move_Message_Box("262144","Select ACM Screen","Click on the ACM window that you want to add effectivity to and then press the OK button")
      sleep(5)
 
-   WinGet,  Active_ID, ID,A
+   WinGetTitle, Title,A
    ;~ Monitorprogram := Title
    ;~ sleep(3)
-SerialFullScreen(Active_ID)
+SerialFullScreen(Title)
 GUI_Image_Set ("Run") ; options are Stop, Run, Pause, Start
-
+CoordMode, mouse, Screen
 Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
 
    WinGetTitle, Title, A
@@ -696,15 +696,15 @@ Get_Apply_Button_Screen_Position(Applyx, Applyy)
           ;~ If (Result = Failure) or (Result = Timedout)
             ;~ Exit
 sleep(10)
-    Tabcount = 0
-   runcount = 21
+    ;~ Tabcount = 0
+   ;~ runcount = 21
 
    Loop
    {
       ;~ tabcount++
 Load_ini_file(inifile)
 
-      checkforactivity()
+      ;~ checkforactivity()
 
       	  ;~ If Runcount > 20
 	  ;~ {
@@ -741,7 +741,7 @@ Load_ini_file(inifile)
           ;~ If (Result = Failure) or (Result = Timedout)
             ;~ Exit
 
-        ;~ Win_check(Active_ID)
+        ;~ Win_check(Active_ID)000	066
          ;~ sleep()
          ;~ Send {F5}
          ;~ sleep(20)
@@ -755,9 +755,9 @@ Load_ini_file(inifile)
 
 
       sleep()
-      Prefix_Number_Location_Check=0
-       Searchcountser = 0
-       Modifier =
+      ;~ Prefix_Number_Location_Check=0
+       ;~ Searchcountser = 0
+       ;~ Modifier =
 	  Serial_number := Get_Serial_Numbers()
 
      Prefiix := Extract_Prefix(Serial_Number)
@@ -767,8 +767,11 @@ Load_ini_file(inifile)
    {
       Complete = 1
     }
+	ToolTip  % Prefiix First_Effectivity_Numbers Second_Effectivity_Numbers
       Enterserials(Prefiix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-   }}
+   }
+   return
+   }
 
 
 milli2hms(milli, ByRef hours=0, ByRef mins=0, ByRef secs=0, secPercision=0)
@@ -786,9 +789,9 @@ milli2hms(milli, ByRef hours=0, ByRef mins=0, ByRef secs=0, secPercision=0)
    return hours . ":" . mins . ":" . secs
 }
 
-Win_check(ID)
+Win_check(Title)
 {
-	WinGetTitle, Title,  ahk_id %ID%
+
    IfWinNotActive , %Title%
    {
       WinActivate, %Title%
@@ -1010,7 +1013,8 @@ checkforactivity()
    COntrolSEnd,,{Shift Down}{End}{Shift Up}, %Effectivity_Macro%
    Sleep()
    ControlGet,Serial_Number,Selected,,,%Effectivity_Macro%
-   Send {Del 2}
+
+   COntrolSEnd,,{Del 2}, %Effectivity_Macro%
 return Serial_Number
 }
 
@@ -1137,6 +1141,7 @@ Searchend()
 
 Get_Add_Button_Screen_Position(ByRef X_Location, ByRef Y_Location)
 {
+	CoordMode, mouse, Screen
 
 	Textaddbutton = Please Shift + mouse button click on the "Add Button" in the ACM effectivity screen to get its position.
 	ToolTip, Please Shift + mouse button click on the "Add Button" in the ACM effectivity screen to get its position.
@@ -1155,7 +1160,7 @@ sleep()
 
 Get_Prefix_Button_Screen_Position(ByRef X_Location, ByRef Y_Location)
 {
-
+CoordMode, mouse, Screen
 Textprefixbutton = Please Shift + mouse button click in the "prefix" edit field in the ACM effectivity screen to get it's location.
 ToolTip Please Shift + mouse button click in the "prefix" edit field in the ACM effectivity screen to get it's location.
 
@@ -1174,7 +1179,7 @@ sleep()
 
 Get_Apply_Button_Screen_Position(ByRef X_Location, ByRef Y_Location)
 {
-
+CoordMode, mouse, Screen
 Textapplybutton = Please Shift + mouse button click on the "Apply button" in the ACM effectivity screen to get it's location.
 ToolTip, Please Shift + mouse button click on the "Apply button" in the ACM effectivity screen to get it's location.
 
