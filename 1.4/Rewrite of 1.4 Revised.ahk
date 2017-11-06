@@ -52,35 +52,41 @@ Unit_Test = 1 ; Set this to 1 to perform unit tests and logging.
 Log_Events = 0 ;Set this to 1 to perform logging
 
 
-inifile = c:\Serialmacro\config.ini
+inifile = config.ini
+
 File_Install_Root_Folder = C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files
 
+
+Configuration_File_Location = %File_install_Icon_Folder%\%inifile%
+
 File_Install_Work_Folder = C:\SerialMacro
+File_install_Image_Folder = %File_Install_Work_Folder%\images
+File_install_Icon_Folder = %File_Install_Work_Folder%\icons
 
-Image_Red_Exclamation_Point = %File_Install_Work_Folder%\red_image.png
-IMage_Actve_Add_Button = %File_Install_Work_Folder%\Active_plus.png
-Image_Active_Apply_Button = %File_Install_Work_Folder%\orange_button.png
+Image_Red_Exclamation_Point = %File_install_Image_Folder%\red_image.png
+IMage_Actve_Add_Button = %File_install_Image_Folder%\Active_plus.png
+Image_Active_Apply_Button = %File_install_Image_Folder%\orange_button.png
 
 
 
-Result = Folder_Exist_Check("SerialMacro")
+Result := Folder_Exist_Check(File_Install_Work_Folder)
 If Result contains Folder_Not_Exist
-Folder_Create("SerialMacro")
+Folder_Create(File_Install_Work_Folder)
 
-Result := Folder_Exist_Check("SerialMacro\Images")
+Result := Folder_Exist_Check(File_install_Image_Folder)
 If Result contains  Folder_Not_Exist
-Folder_Create("SerialMacro\Images")
+Folder_Create(File_install_Image_Folder)
 
-Result := Folder_Exist_Check("SerialMacro\icons")
+Result := Folder_Exist_Check(File_install_Icon_Folder)
 If Result contains Folder_Not_Exist
-Folder_Create("SerialMacro\icons")
+Folder_Create(File_install_Icon_Folder)
 
-Result := File_Exist_Check("config.ini")
+Result := File_Exist_Check(Configuration_File_Location)
 If Result  contains File_Not_Exist
 {
-	File_Create("Config.ini")
+	File_Create(Configuration_File_Location)
 	sleep(5)
-	IniWrite, 20,  %inifile%,refreshrate,refreshrate
+	IniWrite, 20,  %Configuration_File_Location%,refreshrate,refreshrate
 	Sleep()
 }
 
@@ -101,21 +107,21 @@ If Refreshrate = Error
 
 
 
-;~ Result := Install_Requied_Files_Root(File_Install_Work_Folder)
-;~ If (Result)
-	;~ Move_Message_Box("0","Error","Error with installing How To PDF File. `n`nThis will not effect Program Operation")
+Result := Install_Requied_Files_Root(File_Install_Work_Folder)
+If (Result)
+	Move_Message_Box("0","Error","Error with installing How To PDF File. `n`nThis will not effect Program Operation")
 
-;~ Result := Install_Requied_Files_Icons(File_Install_Work_Folder)
-;~ If (Result)
-	;~ Move_Message_Box("0","Error","Error with installing Program Icons. `n`nThis will not Effect Program Operation")
+Result := Install_Requied_Files_Icons(File_Install_Work_Folder)
+If (Result)
+	Move_Message_Box("0","Error","Error with installing Program Icons. `n`nThis will not Effect Program Operation")
 
-;~ Install_Requied_Files_Images(File_Install_Work_Folder)
-;~ If (Result)
-;~ {
-	;~ Move_Message_Box("0","Error","Error with installing Images needed for screen searching.`n`n Program will not run without these files.`n`n Please restart Program and if error occurs agian, Contact Jarett Karnia for assisstance")
-	;~ If (!unit_test)
-		;~ ExitApp
-;~ }
+Install_Requied_Files_Images(File_Install_Work_Folder)
+If (Result)
+{
+	Move_Message_Box("0","Error","Error with installing Images needed for screen searching.`n`n Program will not run without these files.`n`n Please restart Program and if error occurs agian, Contact Jarett Karnia for assisstance")
+	If (!unit_test)
+		ExitApp
+}
 
 Create_Tray_Menu()
 Create_Main_GUI_Menu()
@@ -667,6 +673,7 @@ Enterallserials()
 {
    global
    ; Initial setup before the macro starts to output to the screen
+      Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
 Load_ini_file(inifile)
 
  Enter_Serials_Variable_Setup()
@@ -674,30 +681,20 @@ Load_ini_file(inifile)
    Move_Message_Box("262144","Select ACM Screen","Click on the ACM window that you want to add effectivity to and then press the OK button")
      sleep(5)
 
-   WinGetTitle, Title,A
+   WinGet, Active_ID, Id, A
 
-SerialFullScreen(Title)
-GUI_Image_Set ("Run") ; options are Stop, Run, Pause, Start
+SerialFullScreen(Active_ID)
+Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
 CoordMode, mouse, Screen
 Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
 
-   WinGetTitle, Title, A
-   Current_Monitor := GetCurrentMonitor()
 
+   WinGet, Active_ID, Id, A
 Get_Prefix_Button_Screen_Position(prefixx, prefixy)
 Get_Apply_Button_Screen_Position(Applyx, Applyy)
-
-
-
    ;~ gosub, Createtab
 
    ;~ Comma_Check(Effectivity_Macro)
-
-;~ Result :=   Searchend()
-          ;~ If (Result = Failure) or (Result = Timedout)
-            ;~ Exit
-
-sleep(10)
 
     ;~ Tabcount = 0
    ;~ runcount = 21
@@ -720,12 +717,20 @@ Load_ini_file(inifile)
 
 	  ;~ if tabcount = 2
 	  ;~ tabcount = 0
+	  Result :=   Searchend()
+          If (Result = "Not_Found")
+            Exit
+			If (Result = "Timedout")
+
+
+sleep(10)
+
 
       If breakloop = 1
       {
          Gui 1: -AlwaysOnTop
          SplashTextOn,,,Macro Stopped
-         GUI_Image_Set ("Stop") ; options are Stop, Run, Pause, Start
+         Gui_Image_Show("Stop") ; options are Stop, Run, Pause, Start
          Sleep(10)
           SplashTextOff
          Break
@@ -765,11 +770,213 @@ Load_ini_file(inifile)
    {
       Complete = 1
     }
-      Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Complete)
+	      Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Complete)
+		  Serial_count := Added_Serial_Count()
+		  GuiControl,,serialsentered, Number of Effectivity successfully added to ACM = %Serial_count%
    }
    return
    }
 
+   acmlong()
+   {
+      pause, off
+      Gui 1: +AlwaysOnTop
+      ;~ gosub, radio1h
+      Guicontrol,hide, Start
+      Guicontrol,hide, paused
+      Guicontrol,hide, paused
+      Guicontrol,hide, Stopped
+      Guicontrol,show, Running
+      Gui 1:Submit, NoHide
+	  GuiControlGet,sleep_delay,,editfield20
+	  IniWrite, %Sleep_Delay%, C:\Serialmacro\Settings.ini,sleep_delay,sleep_delay
+      Gui, 3:Destroy
+      Click %Applyx%, %Applyy%
+      Click %Applyx%, %Applyy%
+      if addtime = 0
+      {
+         Addtimetemp++
+         If addtimetemp = 2
+         {
+            Addtime = 1
+            Addtimetemp = 0
+            Return
+         }}
+      If addtime = 1
+      {
+         Addtimetemp++
+         If addtimetemp = 2
+         {
+            Addtime = 2
+            Addtimetemp = 0
+            Return
+         }}
+      If addtime = 2
+      {
+         Addtimetemp++
+         If addtimetemp = 2
+         {
+            Refreshrate /= 2
+            Addtimetemp = 0
+            addtime = 3
+            SplashTextOn,350,50,Refresh time reduced, Macro will refresh ACM every 10 Serials to help reduce the amount of timeouts from a slow ACM
+            sleep(50)
+            SplashTextOff
+            Return
+         }}
+
+      Return
+   }
+
+Anarchy()
+{
+   Gui, 3:Destroy
+Result := Move_Message_Box("262148",Effectivity_Macro, "Press Yes button if you found the issue and to Resume the Macro, No button to Stop macro")
+   If Result =  Yes
+   {
+   Gui_Image_Show("Run")
+      Pause, Off
+   }else  {
+  Gui_Image_Show("Stop")
+      Pause, Off
+      Exit
+   }
+   return
+}
+
+Serialnogo()
+{
+static Badlist
+	global Editfield2, prefix, Active_ID
+
+   Gui, 3:Destroy
+   Modifier := **Serial Not in ACM**
+   Serialcount--
+   ;noacmPrefix = %PrefixStore1%
+   ;msgbox, noprefix is %noacmPrefix%
+   Badlist = %badlist%%PrefixStore1%`,
+
+   ;msgbox, badlist after nogo is %badlist%
+
+   SplashTextOn,,25,Serial Macro, Macro will resume in 3
+   sleep(5)
+   SplashTextOn,,25,Serial Macro, Macro will resume in 2
+   sleep(5)
+   SplashTextOn,,25,Serial Macro, Macro will resume in 1
+   sleep(5)
+   SplashTextOff
+
+
+   Guicontrol,hide, Start
+   Guicontrol,hide, paused
+   Guicontrol,hide, Stopped
+   Guicontrol,show, Running
+   Gui, 1:Submit, NoHide
+   Pause, Off
+ win_check(Active_ID)
+   Click, %prefixx%, %prefixy%
+   sleep(5)
+   Send {ctrl down}{a}{Ctrl up}
+   sleep()
+   Send {Del}{Tab}
+   Send {Del}{Tab}
+   Send {Del}{Tab}
+   Click, %prefixx%, %prefixy%
+   Send {Del}
+
+   Modifier = -*Serial Not in ACM*
+   ;msgbox, Beforetrim:`n %EditField2%
+   StringTrimRight, EditField2, Editfield2,1
+   ;msgbox, after trim :`n %EditField2%`n Prefixstore is %PrefixStore1%`nSerial is %Serialstore1%-%Serialstore3% Mod is %Modifier%
+
+   Editfield2n = %Editfield2%%Modifier%`n
+   EditField2 = %EditField2n%
+
+
+   Guicontrol, 1:,Editfield2, %Editfield2%
+   Gui 1: +alwaysontop
+   Modifier =
+   Return
+}
+
+
+Added_Serial_Count(Add_Or_Subtract := "1")
+{
+	static Add_Count
+	Add_count += %Add_Or_Subtract%
+return Add_count
+}
+
+Engmodel()
+{
+	global Editfield2, Active_ID
+	static DualENG
+   warned = 1
+   Gui, 3:Destroy
+   Modifier = **Multiple Engineering Models**
+   DUalACMCheck = 1
+   DualENG = %DualENG%%PrefixStore1%`,
+   StringTrimRight, EditField2, Editfield2,1
+   ;msgbox, after trim :`n %EditField2%`n Prefixstore is %PrefixStore1%`nSerial is %Serialstore1%-%Serialstore3% Mod is %Modifier%
+   Editfield2n = %Editfield2%%Modifier%`n
+   EditField2 = %EditField2n%
+   Guicontrol, 1:,Editfield2, %Editfield2%
+   Gui 1: +alwaysontop
+Move_Message_Box("262144", Effectivity_Macro, "Select the engeering model and then press the OK button on this window. `n`n The prefix will be logged for this session to prevent more timouts of the same prefix.")
+   sleep()
+win_check(Active_ID)
+   Click, %prefixx%, %prefixy%
+   Send {Tab 3}
+   Loop, 3
+{
+timeleft := (4 - A_Index)
+   SplashTextOn,,25,Serial Macro, Macro will resume in %timeleft%
+   sleep(3)
+}
+
+   SplashTextOff
+   Gui_Image_Show("Run")
+  Gui, Submit, NoHide
+   Pause, Off
+   Click, %Applyx%,%Applyy%
+   Click, %Applyx%,%Applyy%
+   Click, %Applyx%,%Applyy%
+Searchend()
+   Return
+}
+
+
+Macrotimedout()
+{
+global inifile, Effectivity_Macro
+
+Load_ini_file(inifile)
+    activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+    ;msgbox, Prefix is %Guitextlocation%`n Serial is %Second_Effectivity_Numbers%-%Second_Effectivity_Numbers%`n Mod is %Modifier%
+   Gui, 3:Add, Picture, x0 y0 w385 h215 +0x4000000, C:\SerialMacro\background.png
+   gui, -alwaysontop
+   gui, 3:add, Text, x10 y10 w360  h20 BackgroundTrans,  The delay is most likely due to one of the following:
+   gui, 3:add, Text, xp yp+21 w360  h20 BackgroundTrans,  - The Eng Model needs to be manually added with the drop down menu.
+   gui, 3:add, Text, xp yp+21 w360  h20 BackgroundTrans,  - Effectivity # Does not Exist in ACM
+   gui, 3:add, Text, xp yp+21 w360  h20 BackgroundTrans,  - ACM is running slow
+   gui, 3:add, Text, xp yp+21 w360  h20 BackgroundTrans,  - Something bad happened and the effectivity page is no more.
+
+   gui, 3:add, Text, xp yp+21 w360  h40 BackgroundTrans,  Please press the one of the buttons below after you Idenitify the cause. This action will reflect in the Effectivity Added Screen.
+   gui, 3:add, Button, xp+1 yp+45 w80 h50 BackgroundTrans gEngmodel,  More than one Engineering Model
+   gui, 3:add, Button, xp+90 yp w80 h50 BackgroundTrans gSerialnogo,  Effectivity Does Not Exist
+   gui, 3:add, Button, xp+90 yp w80 h50 BackgroundTrans gacmlong,  ACM Took to long
+   gui, 3:add, Button, xp+90 yp w80 h50 BackgroundTrans  gAnarchy,  Something else happened :(
+    Gui, 3:add, Text, xp-270 yp+55, ACM Delay (10 = 1 second):
+   Gui, 3:add, Edit, xp+140 yp-3 w30 veditfield20 gsavevalue, %Sleep_Delay%
+   Gui, 3:add, Text, xp+35 yp+3, <-- Make this Value Higher if Acm is running slow
+   Gui, 3:Show, x%amonx% y%amony%, Macro Timed Out %Effectivity_Macro%
+   Guicontrol,3:, editfield20, %Sleep_Delay%
+   Gui_Image_Show("Pause")
+   Gui, Submit, NoHide
+   gui, 3: +alwaysontop
+   Pausescript()
+   return
+}
 
 milli2hms(milli, ByRef hours=0, ByRef mins=0, ByRef secs=0, secPercision=0)
 {
@@ -786,9 +993,9 @@ milli2hms(milli, ByRef hours=0, ByRef mins=0, ByRef secs=0, secPercision=0)
    return hours . ":" . mins . ":" . secs
 }
 
-Win_check(Title)
+Win_check(Active_ID)
 {
-
+WinGetTitle, Title, ahk_id %Active_ID%
    IfWinNotActive , %Title%
    {
       WinActivate, %Title%
@@ -803,7 +1010,7 @@ Win_check(Title)
 Enterserials(Prefix_Holder_for_ACM_Input,First_Effectivity_Numbers,Second_Effectivity_Numbers, Complete)
 {
 
-	global  prefixx, prefixy, Applyx, Applyy, Add_Button_X_Location, Add_Button_Y_Location
+	global  prefixx, prefixy, Applyx, Applyy, Add_Button_X_Location, Add_Button_Y_Location, Active_ID
    win_check(Active_ID) ; checks to make sure the ACm window is the top one
 
 
@@ -859,10 +1066,7 @@ Enterserials(Prefix_Holder_for_ACM_Input,First_Effectivity_Numbers,Second_Effect
        Move_Message_Box("0",""," The number of successful Serial additions to ACM is "  Serialcount "`n`nMacro Finished due to no more Serials to add. `n`n It took the macro " Total_Time " to perform tasks. `n`n Please close Serial Macro Window after checking to ensure serials were entered correctly.")
       Guicontrol,1:, Editfield,
       ;~ gosub, radio2h
-      Guicontrol,hide, Start
-      Guicontrol,hide, paused
-      Guicontrol,show, Stopped
-      Guicontrol,hide, Running
+  Gui_Image_Show("Stop")
       Exit
       Return
    }
@@ -907,7 +1111,6 @@ CoordMode, mouse, Screen
       ;~ SleepStill = 0
       ;~ sleep(3)
    ;~ }
-
    Sleep(Sleep_Delay)
    Send {enter 2}
    Sleep(2)
@@ -918,95 +1121,58 @@ CoordMode, mouse, Screen
    sleep()
    Searchcount = 0
    Searchcountser = 0
+   Return
 }
 
 checkforactivity()
 {
-   if A_TimeIdlePhysical < 4999 ; meaning there has been user activity
+	global breakloop, Active_ID
+   while A_TimeIdlePhysical < 4999 ; meaning there has been user activity
    {
       Gui 1: -AlwaysOnTop
 
       {
-         If Stopactcheck = 1
+         If breakloop = 1
          {
             SplashTextOff
             Return
          }
+
          If (A_TimeIdlePhysical > 0) and (A_TimeIdlePhysical < 1000)
          Timeleft = 5
-
-         If Stopactcheck = 1
-         {
-            SplashTextOff
-            Return
-         }
          If (A_TimeIdlePhysical > 1000) and (A_TimeIdlePhysical < 2000)
          Timeleft = 4
-
-         If Stopactcheck = 1
-         {
-            SplashTextOff
-            Return
-         }
-         If (A_TimeIdlePhysical > 2000) and (A_TimeIdlePhysical < 3000)
+           If (A_TimeIdlePhysical > 2000) and (A_TimeIdlePhysical < 3000)
          Timeleft = 3
-
-         If Stopactcheck = 1
-         {
-            SplashTextOff
-            Return
-         }
          If (A_TimeIdlePhysical > 3000) and (A_TimeIdlePhysical < 4000)
          Timeleft = 2
-
-         If Stopactcheck = 1
-         {
-            SplashTextOff
-            Return
-         }
-
          If (A_TimeIdlePhysical > 4000) and (A_TimeIdlePhysical < 5000)
          Timeleft = 1
-
-         If Stopactcheck = 1
-         {
-            SplashTextOff
-            Return
-         }}
+}
          SplashTextOn,350,50,Macro paused, Macro is now paused due to user activity.`n Macro will resume after %timeleft% seconds of no user input
-         pausedstate = yes
-         Guicontrol,hide, Start
-         Guicontrol,show, paused
-         Guicontrol,hide, Stopped
-         Guicontrol,hide, Running
+		        Gui_Image_Show("Pause") ; options are Stop, Run, Pause, Start
          Gui, Submit, NoHide
          sleep(10)
       }
+
       if A_TimeIdlePhysical > 5000 ; meaning there has been no user activity
       {
-         If pausedstate = yes
-         {
-            splashtextoff
+           splashtextoff
             Gui 1: +AlwaysOnTop
-          win_check(Active_ID)
-            pausedstate = no
-            Guicontrol,hide, Start
-            Guicontrol,hide, paused
-            Guicontrol,hide, Stopped
-            Guicontrol,show, Running
+			win_check(Active_ID)
+		       Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
             ;~ gosub, radio1h
             Gui, Submit, NoHide
             ;~ gosub, SerialFullScreen
             sleep(10)
          }
-         return
-      }
       return
    }
 
 
  Get_Serial_Numbers()
  {
+	global Effectivity_Macro
 	 COntrolSEnd,,{Ctrl Down}{Home}{Ctrl Up}, %Effectivity_Macro% ;note that the controlsend has two commas after the function call (THis always messed me up)
    sleep()
    COntrolSEnd,,{Shift Down}{End}{Shift Up}, %Effectivity_Macro%
@@ -1022,6 +1188,7 @@ Wait_For_Shift_Mouse_Click()
 
    Keywait, Shift,D
    Keywait, Lbutton, D
+   KeyWait, Shift
 	return "Done"
 }
 
@@ -1029,15 +1196,17 @@ Wait_For_Shift_Mouse_Click()
    {
       WinGetPos, Xarbor,yarbor,warbor,harbor, ahk_id %Active_ID%
       CurrmonAM := GetCurrentMonitor()
-      SysGet,Aarea,MonitorWorkArea,%currmonAM%
+      SysGet,Aarea,MonitorWorkArea,%CurrmonAM%
       WidthA := AareaRight- AareaLeft
       HeightA := aareaBottom - aAreaTop
-      leftt := aAreaLeft - 4
-      topp := AAreaTop - 4
+      leftt := (aAreaLeft - 4)
+      topp := (AAreaTop - 4)
+;~ MsgBox % WidthA HeightA
+	  ;~ MsgBox, % "Left is "leftt " top is " topp "`nxarbor is " xarbor " yarbor is " yarbor
       MouseGetPos mmx,mmy
-      If yarbor = %topp%
+      If (yarbor = topp)
       {
-         If xarbor = %leftt%
+         If (xarbor = leftt)
          ;Msgbox, win maxed
          Return
       }
@@ -1045,8 +1214,8 @@ Wait_For_Shift_Mouse_Click()
          ;msgbox, not maxed
       CoordMode, mouse, Relative
       MouseMove 300,10
-      Click
-      Click
+      Click 2
+      ;~ Click
       Coordmode, mouse, screen
       ;MouseMove, mmx, mmy
       return
@@ -1087,14 +1256,22 @@ Comma_Check(Effectivity_Macro)
 
 Searchend()
 {
-
+global Image_Red_Exclamation_Point, Timeout_Code
+searchcount = 0
    ;msgbox, searchend
    listlines off
+   while searchcount <= 7
+{
+	searchcount++
+	Current_Monitor := GetCurrentMonitor()
+	pToken := Gdip_Startup()
+	bmpNeedle1 := Gdip_CreateBitmapFromFile(Image_Red_Exclamation_Point)
    bmpHaystack := Gdip_BitmapFromScreen(Current_Monitor)
    sleep()
    RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,5,0,0,0)
    sleep()
-   ;listlines on
+   Gdip_Shutdown(pToken)
+      ;listlines on
    If RETSearch < 0
    {
       if RETSearch = -1001
@@ -1107,7 +1284,7 @@ Searchend()
       RETSearch = Unable to lock needle bitmap bits
       if RETSearch = -1005
       RETSearch = Cannot find monitor for screen capture
-  Move_Message_Box("262144", Effectivity_Macro, "Error Searchend (bmpNeedle1)") RETSearch
+  Move_Message_Box("262144", Effectivity_Macro, "Error Searchend (bmpNeedle1)" RETSearch)
       Exit
    }
 
@@ -1117,24 +1294,18 @@ Searchend()
       Refreshchecks = 0
       SleepStill = 0
       ;Msgbox, found
+	  Return "Found"
+	  Break
    }
 
-
-
-   If RETSearch = 0
-   {
-      If Searchcount = 7
+      If Searchcount >= 7
       {
-         Timeout = Yes
-         ;~ gosub, Macrotimedout
+         Macrotimedout()
+		 Return Timeout_Code
       }
-      ;Msgbox, notfound
-      Sleepstill = 1
-      sleep(5)
-      searchcount++
-      ;~ Gosub, Searchend
    }
-   Return
+
+   Return "Not_Found"
 }
 
 
@@ -1200,11 +1371,9 @@ sleep()
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
-
-
 	Folder_Exist_Check(Folder)
 	{
-		Result := FileExist("C:\" Folder)
+		Result := FileExist(Folder)
 		If Result =
 		Result = Folder_Not_Exist
 		else
@@ -1217,7 +1386,7 @@ sleep()
 
 	Folder_Create(Folder)
 	{
-		FileCreateDir, C:\%Folder%
+		FileCreateDir, %Folder%
 
 		Debug_Log_Event("Folder_Create() .... " Folder "..... Result is " Result)
 		sleep(5)
@@ -1227,11 +1396,7 @@ sleep()
 
 	File_Exist_Check(File, Unit_test := 0)
 	{
-		If (Unit_test)
-			Result := FileExist(A_Desktop "\" File)
-		else
-			Result := FileExist("C:\SerialMacro\" File)
-
+		Result := FileExist(File)
 		If Result =
 		Result = File_Not_Exist
 		else
@@ -1242,13 +1407,9 @@ sleep()
 
 	File_Create(File, Unit_test := 0)
 	{
-		;~ MsgBox %Unit_test% is unit test
-		If (Unit_test)
-			FileAppend,,%A_Desktop%\%File%
-		else
-			FileAppend,, C:\SerialMacro\%File%
+				FileAppend,,%File%
 
-		Debug_Log_Event("File_Create() ......C:\SerialMacro\" File)
+		Debug_Log_Event("File_Create() ......" File)
 		return ErrorLevel
 	}
 
