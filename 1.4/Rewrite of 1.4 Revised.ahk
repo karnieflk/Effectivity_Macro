@@ -54,7 +54,8 @@ Log_Events = 0 ;Set this to 1 to perform logging
 
 inifile = config.ini
 
-File_Install_Root_Folder = C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files
+;~ File_Install_Root_Folder = C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files ; for testing at work
+File_Install_Root_Folder = E:\Git\Effectivity_Macro\1.4\Install_Files ; for when testing at home
 
 
 Configuration_File_Location = %File_install_Icon_Folder%\%inifile%
