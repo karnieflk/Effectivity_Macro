@@ -12,10 +12,11 @@ class Folder_Function_Check
 	{
 	Folder_Create()
 	{
-		Result := Folder_Create("Macro_Test_Folder")
+		Folder_Test := "C:\Macro_Test_Folder"
+		Result := Folder_Create(Folder_Test)
 		Yunit.assert(Result == 0, "Error Creating Folder on Root C drive")
 
-		Result := FileExist("C:\Macro_Test_Folder")
+		Result := FileExist(Folder_Test)
 		FileRemoveDir, C:\Macro_Test_Folder, 1
 		Yunit.assert(Result !="" , "Did not create the folder")
 		Result.Destroy
@@ -25,18 +26,20 @@ class Folder_Function_Check
 	{
 		Folder_Not_Exist_Check()
 		{
-			Result := Folder_Exist_Check("Macro_Test_Folder_Not_Exist")
-			Yunit.assert(Result == "Macro_Test_Folder_Not_Exist - Folder_Not_Exist")
+					Folder_Test := "C:\Macro_Test_Folder_not_exist"
+			Result := Folder_Exist_Check(Folder_Test)
+			Yunit.assert(Result == "C:\Macro_Test_Folder_not_exist - Folder_Not_Exist")
 			Result.Destroy
 		}
 
 		Folder_Exists_Check()
 		{
-			FileCreateDir, C:\Macro_Test_Folder
+				Folder_Test := "C:\Macro_Test_Folder"
+			FileCreateDir, %Folder_Test%
 			sleep 500
-			Result := Folder_Exist_Check("Macro_Test_Folder")
+			Result := Folder_Exist_Check(Folder_Test)
 			FileRemoveDir, C:\Macro_Test_Folder, 1
-			Yunit.assert(Result == "Macro_Test_Folder - Folder_Exist")
+			Yunit.assert(Result == "C:\Macro_Test_Folder - Folder_Exist")
 			Result.Destroy
 		}}}
 
@@ -46,7 +49,7 @@ class File_Create
 {
 		File_Create()
 			{
-				Result := File_Create("Macro_Testing.ini" , "1")
+				Result := File_Create(A_desktop "\Macro_Testing.ini")
 				Yunit.assert(Result == 0 , "Error Creating File")
 				Result := FileExist(A_Desktop "\Macro_Testing.ini")
 				FileDelete, %A_Desktop%\Macro_Testing.ini
@@ -58,15 +61,15 @@ class File_Create
 			{
 				No_File_Exist_Check()
 				{
-					Result := File_Exist_Check("Macro_Testing_not_exist.ini")
-					Yunit.assert(Result == "Macro_Testing_not_exist.ini - File_Not_Exist")
+					Result := File_Exist_Check(A_desktop "\Macro_Testing_not_exist.ini")
+					Yunit.assert(Result == "C:\Users\Karnia\Desktop\Macro_Testing_not_exist.ini - File_Not_Exist")
 					Result.Destroy
 				}
 
 				File_Exist_Check()
 				{
 					FileAppend, test, %A_Desktop%\Macro_Testing.ini
-					Result := File_Exist_Check("Macro_Testing.ini", "1")
+					Result := File_Exist_Check("Macro_Testing.ini")
 					FileDelete, %A_Desktop%\Macro_Testing.ini
 					Yunit.assert(Result == "Macro_Testing.ini - File_Exist")
 					Result.Destroy

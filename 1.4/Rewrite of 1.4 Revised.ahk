@@ -17,7 +17,7 @@ DetectHiddenText on
 #InstallKeybdHook
 #InstallMouseHook
 
-;~ #include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
+#include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
 /*
 ****************************************************************************************************************************************************
 ************ Variable Setup *******************************************************************************
@@ -50,6 +50,7 @@ Radiobutton = 1
 
 Unit_Test = 1 ; Set this to 1 to perform unit tests and logging.
 Log_Events = 0 ;Set this to 1 to perform logging
+At_home = 1
 
 
 inifile = config.ini
@@ -108,15 +109,15 @@ If Refreshrate = Error
 
 
 
-Result := Install_Requied_Files_Root(File_Install_Work_Folder)
+Result := Install_Requied_Files_Root(File_Install_Work_Folder, At_home)
 If (Result)
 	Move_Message_Box("0","Error","Error with installing How To PDF File. `n`nThis will not effect Program Operation")
 
-Result := Install_Requied_Files_Icons(File_Install_Work_Folder)
+Result := Install_Requied_Files_Icons(File_Install_Work_Folder, At_home)
 If (Result)
 	Move_Message_Box("0","Error","Error with installing Program Icons. `n`nThis will not Effect Program Operation")
 
-Install_Requied_Files_Images(File_Install_Work_Folder)
+Install_Requied_Files_Images(File_Install_Work_Folder, At_home)
 If (Result)
 {
 	Move_Message_Box("0","Error","Error with installing Images needed for screen searching.`n`n Program will not run without these files.`n`n Please restart Program and if error occurs agian, Contact Jarett Karnia for assisstance")
@@ -1395,7 +1396,7 @@ sleep()
 	}
 
 
-	File_Exist_Check(File, Unit_test := 0)
+	File_Exist_Check(File)
 	{
 		Result := FileExist(File)
 		If Result =
@@ -1416,49 +1417,85 @@ sleep()
 
 
 
-	Install_Requied_Files_Root( File_Install_Work_Folder)
+	Install_Requied_Files_Root( File_Install_Work_Folder, At_home:= 0)
 	{
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
+		If (at_home)
+					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
+					else
+					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
 		return errorlevel
 	}
 
-	Install_Requied_Files_Icons( File_Install_Work_Folder)
+	Install_Requied_Files_Icons( File_Install_Work_Folder, at_home := 0)
 	{
 		Problems = 0
+		If (at_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
+		else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
 		If (Errorlevel)
 			Problems = 1
+
+		if (At_home)
+				FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
+		else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
+
 		If (Errorlevel)
 			Problems = 1
 
 		return Problems
 	}
 
-	Install_Requied_Files_Images( File_Install_Work_Folder)
+	Install_Requied_Files_Images( File_Install_Work_Folder, at_home := 0)
 	{
 		Problems = 0
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
+		if (At_home)
+					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
+					else
+					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
 		If (Errorlevel)
 			Problems = 1
+
+		If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
+		else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
 		If (Errorlevel)
 			Problems = 1
+		If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
+		else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
 		If (Errorlevel)
 			Problems = 1
+		If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
+		else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
 		If (Errorlevel)
 			Problems = 1
+		If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
+		else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
 		If (Errorlevel)
 			Problems = 1
+		If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
+		else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
 		If (Errorlevel)
 			Problems = 1
+		If (At_home)
+		FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
+		else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
 		If (Errorlevel)
 			Problems = 1
+		If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
+		else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
 		If (Errorlevel)
 			Problems = 1
