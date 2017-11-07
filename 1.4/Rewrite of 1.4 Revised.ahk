@@ -17,14 +17,14 @@ DetectHiddenText on
 #InstallKeybdHook
 #InstallMouseHook
 
-#include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
+;~ #include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
 /*
 ****************************************************************************************************************************************************
 ************ Variable Setup *******************************************************************************
 *****************************************************************************************
 */
 
-Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, sleepstill, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser
+Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, sleepstill, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID
 
 Version_Number = 1.4 beta
 Effectivity_Macro :=  "Effectivity Macro V" Version_Number
@@ -50,18 +50,16 @@ Radiobutton = 1
 
 Unit_Test = 1 ; Set this to 1 to perform unit tests and logging.
 Log_Events = 0 ;Set this to 1 to perform logging
-At_home = 1
+At_home = 0
 
 
 inifile = config.ini
+File_Install_Root_Folder = C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files ; for testing at work
+;~ File_Install_Root_Folder = E:\Git\Effectivity_Macro\1.4\Install_Files ; for when testing at home
 
-;~ File_Install_Root_Folder = C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files ; for testing at work
-File_Install_Root_Folder = E:\Git\Effectivity_Macro\1.4\Install_Files ; for when testing at home
-
-
-Configuration_File_Location = %File_install_Icon_Folder%\%inifile%
 
 File_Install_Work_Folder = C:\SerialMacro
+Configuration_File_Location = %File_Install_Work_Folder%\%inifile%
 File_install_Image_Folder = %File_Install_Work_Folder%\images
 File_install_Icon_Folder = %File_Install_Work_Folder%\icons
 
@@ -83,30 +81,30 @@ Result := Folder_Exist_Check(File_install_Icon_Folder)
 If Result contains Folder_Not_Exist
 Folder_Create(File_install_Icon_Folder)
 
-Result := File_Exist_Check(Configuration_File_Location)
+Result := Config_File_Check(Configuration_File_Location)
+
 If Result  contains File_Not_Exist
 {
-	File_Create(Configuration_File_Location)
+	Config_File_Create(Configuration_File_Location)
 	sleep(5)
 	IniWrite, 20,  %Configuration_File_Location%,refreshrate,refreshrate
+		IniWrite, 3,  %Configuration_File_Location%,Sleep_Delay,Sleep_Delay
 	Sleep()
 }
 
-
-Load_ini_file(inifile)
-
 If Sleep_Delay = Error
 {
-	IniWrite, 3,  %inifile%,Sleep_Delay,Sleep_Delay
-	Load_ini_file(inifile)
+
+	IniWrite, 3,  %Configuration_File_Location%,Sleep_Delay,Sleep_Delay
+	Load_ini_file(Configuration_File_Location)
 }
 
 If Refreshrate = Error
 {
-	IniWrite, 20,  %inifile%,refreshrate,refreshrate
-	Load_ini_file(inifile)
+	IniWrite, 20,  %Configuration_File_Location%,refreshrate,refreshrate
+	Load_ini_file(Configuration_File_Location)
 }
-
+	Load_ini_file(Configuration_File_Location)
 
 
 Result := Install_Requied_Files_Root(File_Install_Work_Folder, At_home)
@@ -145,13 +143,12 @@ If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null")
 }
 If(!Unit_test)
 {
-	Days := Calculate_Days_Since_Last_Update(updatestatus)
+	Days := Calculate_Days_Since_Last_Update(updaterate)
 	If Days > %Updaterate%	; More than speficied days
 	{
 		Msg_Box_Result_Update := Move_Message_Box("4","Effectivity Macro Updater", "Would you like to check for a new update?" )
 		lastupdate = %A_now%
-		IniWrite, %updatestatus%,  %inifile%,update,updaterate
-		IniWrite, %A_now%,  %inifile%, update,lastupdate
+		Write_ini_file(Configuration_File_Location)
 	}
 	If Msg_Box_Result_Update = Yes
 	Versioncheck()
@@ -220,6 +217,11 @@ StringReplace, Editfield, Editfield, `,,,All
 	return
 }
 
+/*
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+Formatting functions
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+*/
 
 Put_Formatted_Serials_into_Array(Formatted_Text)
 {
@@ -643,15 +645,8 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 
 
 
-/*
-Below is the enter serials section
-*/
-/*
-*************************************************************************
-*************************************************************************
-*************************************************************************
-*************************************************************************
-*/
+
+
 
 ESC::
 {
@@ -659,6 +654,11 @@ breakloop=1
 return
 }
 
+/*
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+ENter Serias Section
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+*/
 Enter_Serials_Variable_Setup()
 {
 	global
@@ -671,29 +671,24 @@ Enter_Serials_Variable_Setup()
      StartTime := A_TickCount
  }
 
-Enterallserials()
+Start_Macro()
 {
-   global
-   ; Initial setup before the macro starts to output to the screen
+	global
+; Initial setup before the macro starts to output to the screen
       Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
-Load_ini_file(inifile)
-
  Enter_Serials_Variable_Setup()
-
-   Move_Message_Box("262144","Select ACM Screen","Click on the ACM window that you want to add effectivity to and then press the OK button")
-     sleep(5)
-
-   WinGet, Active_ID, Id, A
-
+Move_Message_Box("262144","Select ACM Screen","Click on the ACM window that you want to add effectivity to and then press the OK button`n`nNote that is the window is not full screen, the macro will make it full screen to increase macro reliability. ")
+sleep(5)
+WinGet, Active_ID, Id, A
 SerialFullScreen(Active_ID)
-Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
 CoordMode, mouse, Screen
 Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
-
-
    WinGet, Active_ID, Id, A
 Get_Prefix_Button_Screen_Position(prefixx, prefixy)
 Get_Apply_Button_Screen_Position(Applyx, Applyy)
+Enter_Effectivity_Loop()
+return
+}
    ;~ gosub, Createtab
 
    ;~ Comma_Check(Effectivity_Macro)
@@ -701,32 +696,31 @@ Get_Apply_Button_Screen_Position(Applyx, Applyy)
     ;~ Tabcount = 0
    ;~ runcount = 21
 
-   Loop
+Enter_Effectivity_Loop()
+{
+global breakloop
+
+ Loop
    {
       ;~ tabcount++
-Load_ini_file(inifile)
+Load_ini_file(Configuration_File_Location)
+checkforactivity()
 
-      checkforactivity()
-
-      	  ;~ If Runcount > 20
+;~ If Runcount > 20
 	  ;~ {
 	  ;~ runcount = 1
 	  ;~ Gosub, GetSerial
 	  ;~ Gosub, Copy_SerialTester
 	  ;~ }
-
 	  ;~ Send {ctrl down} %Tabcount% {Ctrl up}
-
 	  ;~ if tabcount = 2
 	  ;~ tabcount = 0
-	  Result :=   Searchend()
+
+Result :=   Searchend()
           If (Result = "Not_Found")
             Exit
 			If (Result = "Timedout")
-
-
 sleep(10)
-
 
       If breakloop = 1
       {
@@ -772,13 +766,141 @@ sleep(10)
    {
       Complete = 1
     }
-	      Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Complete)
+	      Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
 		  Serial_count := Added_Serial_Count()
 		  GuiControl,,serialsentered, Number of Effectivity successfully added to ACM = %Serial_count%
    }
    return
    }
 
+Added_Serial_Count(Add_Or_Subtract := "1")
+{
+	static Add_Count
+	Add_count += %Add_Or_Subtract%
+return Add_count
+}
+
+
+Enterserials(Prefix_Holder_for_ACM_Input,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
+{
+
+	global  prefixx, prefixy, Applyx, Applyy, Add_Button_X_Location, Add_Button_Y_Location, StartTime
+
+   ;~ Loop, parse, Badlist, `,,all ; Loops through the Bad prefix list so it skips the prefix if the prefix that is about to be entered is already known to not be in ACM
+   ;~ {
+      ;~ ;msgbox, loopfield is %A_LoopField%
+      ;~ If prefixes = %A_LoopField%
+      ;~ {
+         ;~ ;msgbox, bad acm  match in enter serials to %A_LoopField%
+         ;~ noacmPrefix = %prefixes%
+         ;~ Skipserial = 1
+         ;~ Break
+      ;~ }
+      ;~ else
+         ;~ Skipserial = 0
+   ;~ }
+
+   ;~ Loop, parse, DualENG, `,,all ; Loops though the known Dual Eng prefixes to see if it a know dual prefix
+   ;~ {
+      ;~ ;msgbox, loopfield is %A_LoopField%
+
+      ;~ If prefixes = %A_LoopField%
+      ;~ {
+         ;~ ;msgbox,  serial number match
+         ;~ DUalACMCheck = 1
+         ;~ DualACMPrefix = %prefixes%
+         ;~ Break
+      ;~ }else  {
+         ;~ ;msgbox, no match
+         ;~ DUalACMCheck = 0
+      ;~ }}
+
+
+   ;~ if Skipserial = 1 ; If skipSerial equals to 1, it adds a modifier to the serial during the Effecticity added screen.
+   ;~ {
+      ;~ ;msgbox, no acm skip
+      ;~ Modifier = -*Serial Not in ACM*
+      ;~ Guicontrol,1:,Editfield2, %Editfield2%%PrefixStore%%First_Effectivity_Numbers%-%Second_Effectivity_Numbers%%Modifier%`n
+      ;~ Guicontrol,hide, Editfield2,
+      ;~ GuiControl,1:,serialsentered, Number of Serials successfully added to ACM = %Serialcount%
+      ;~ Modifier =
+      ;~ Skipserial = 0
+       ;~ return
+   ;~ }
+
+   If Complete = 1 ; If the complete variable is equal to 1, the macro stops.
+   {
+      ElapsedTime := A_TickCount - StartTime
+      Total_Time := milli2hms(ElapsedTime, h, m, s)
+      sleep(5)
+      Send {f5}
+       Move_Message_Box("0",""," The number of successful Serial additions to ACM is "  Serialcount "`n`nMacro Finished due to no more Serials to add. `n`n It took the macro " Total_Time " to perform tasks. `n`n Please close Serial Macro Window after checking to ensure serials were entered correctly.")
+      Guicontrol,1:, Editfield,
+      ;~ gosub, radio2h
+  Gui_Image_Show("Stop")
+      Exit
+      Return
+   }
+
+;---------------------------------------------
+; THis starts the part that actually enters the info to the ACM screen
+;----------------------------------------------
+CoordMode, mouse, Screen
+   ;listlines on
+    ;~ win_check(Active_ID)
+   Click, %prefixx%, %prefixy%
+   sleep()
+   mousemove 300,300
+   sleep()
+   SEndRaw, %Prefix_Holder_for_ACM_Input%
+   sleep()
+   Send {Tab}
+ ;~ win_check(Active_ID)
+   Sendraw, %First_Effectivity_Numbers%
+   sleep(3)
+   Send {Tab}
+  ;~ win_check(Active_ID)
+   SendRaw, %Second_Effectivity_Numbers%
+   sleep(3)
+   Send {Tab}
+   sleep(7)
+   ;~ If DUalACMCheck = 1
+   ;~ {
+      ;~ Modifier = -**Multiple Engineering Models**
+       ;~ Move_Message_Box("262144", Effectivity_Macro,  "This Serial has multiple Engineering Models. Please select the model in ACM and press the OK button in this window.")
+      ;~ SplashTextOn,,25,Serial Macro, Macro will resume in 2
+      ;~ sleep(10)
+      ;~ SplashTextOn,,25,Serial Macro, Macro will resume in 1
+      ;~ sleep(10)
+      ;~ SplashTextOff
+      ;~ win_check(Active_ID)
+      ;~ Click, %prefixx%, %prefixy%
+      ;~ sleep(5)
+      ;~ Send {Tab 3}
+      ;~ sleep(5)
+      ;~ DualACMCheck = 0
+      ;~ SleepStill = 0
+      ;~ sleep(3)
+   ;~ }
+   Sleep(Sleep_Delay)
+   Send {enter 2}
+   Sleep(2)
+   Click, %Applyx%,%Applyy%
+   Click, %Applyx%,%Applyy%
+   ;SetTimer, refreshcheck, 250
+   Serialcount +=1
+   sleep()
+   Searchcount = 0
+   Searchcountser = 0
+   Return
+}
+
+
+/*
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+Macro Timeout Functions and GUI
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+*/
    acmlong()
    {
       pause, off
@@ -848,9 +970,8 @@ Result := Move_Message_Box("262148",Effectivity_Macro, "Press Yes button if you 
 
 Serialnogo()
 {
-static Badlist
 	global Editfield2, prefix, Active_ID
-
+static Badlist
    Gui, 3:Destroy
    Modifier := **Serial Not in ACM**
    Serialcount--
@@ -902,22 +1023,27 @@ static Badlist
 }
 
 
-Added_Serial_Count(Add_Or_Subtract := "1")
+
+Multiple_Eng_Model_Check_Add(ByRef Multiple_Eng_Array)
 {
-	static Add_Count
-	Add_count += %Add_Or_Subtract%
-return Add_count
+global Prefix, Time_code
+MsgBox % "prefix is " Prefix
+;~ static Multiple_Eng_Array := Object()
+Multiple_Eng_Array[1] =  Multiple_Eng_Models
+Gui, 3:Destroy
+Multiple_Eng_Array.Insert(Prefix)
+UnPausescript()
+Time_code :=  "Eng add" Prefix
+Return
 }
 
-Engmodel()
+
+Multiple_Eng_Model_Check()
 {
-	global Editfield2, Active_ID
-	static DualENG
    warned = 1
-   Gui, 3:Destroy
+
    Modifier = **Multiple Engineering Models**
    DUalACMCheck = 1
-   DualENG = %DualENG%%PrefixStore1%`,
    StringTrimRight, EditField2, Editfield2,1
    ;msgbox, after trim :`n %EditField2%`n Prefixstore is %PrefixStore1%`nSerial is %Serialstore1%-%Serialstore3% Mod is %Modifier%
    Editfield2n = %Editfield2%%Modifier%`n
@@ -950,9 +1076,9 @@ Searchend()
 
 Macrotimedout()
 {
-global inifile, Effectivity_Macro, editfield20
+global Configuration_File_Location, Effectivity_Macro, editfield20, Time_code
 
-Load_ini_file(inifile)
+Load_ini_file(Configuration_File_Location)
     activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
     ;msgbox, Prefix is %Guitextlocation%`n Serial is %Second_Effectivity_Numbers%-%Second_Effectivity_Numbers%`n Mod is %Modifier%
    Gui, 3:Add, Picture, x0 y0 w385 h215 +0x4000000, C:\SerialMacro\background.png
@@ -964,7 +1090,7 @@ Load_ini_file(inifile)
    gui, 3:add, Text, xp yp+21 w360  h20 BackgroundTrans,  - Something bad happened and the effectivity page is no more.
 
    gui, 3:add, Text, xp yp+21 w360  h40 BackgroundTrans,  Please press the one of the buttons below after you Idenitify the cause. This action will reflect in the Effectivity Added Screen.
-   gui, 3:add, Button, xp+1 yp+45 w80 h50 BackgroundTrans gEngmodel,  More than one Engineering Model
+   gui, 3:add, Button, xp+1 yp+45 w80 h50 BackgroundTrans gMultiple_Eng_Model_Check_Add,  More than one Engineering Model
    gui, 3:add, Button, xp+90 yp w80 h50 BackgroundTrans gSerialnogo,  Effectivity Does Not Exist
    gui, 3:add, Button, xp+90 yp w80 h50 BackgroundTrans gacmlong,  ACM Took to long
    gui, 3:add, Button, xp+90 yp w80 h50 BackgroundTrans  gAnarchy,  Something else happened :(
@@ -977,9 +1103,17 @@ Load_ini_file(inifile)
    Gui, Submit, NoHide
    gui, 3: +alwaysontop
    Pausescript()
+
+   MsgBox, %Time_code%
    return
 }
 
+
+/*
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+Supporting Functions
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+*/
 milli2hms(milli, ByRef hours=0, ByRef mins=0, ByRef secs=0, secPercision=0)
 {
    SetFormat, FLOAT, 0.%secPercision%
@@ -1008,123 +1142,6 @@ WinGetTitle, Title, ahk_id %Active_ID%
    return
 }
 
-
-Enterserials(Prefix_Holder_for_ACM_Input,First_Effectivity_Numbers,Second_Effectivity_Numbers, Complete)
-{
-
-	global  prefixx, prefixy, Applyx, Applyy, Add_Button_X_Location, Add_Button_Y_Location, Active_ID
-   win_check(Active_ID) ; checks to make sure the ACm window is the top one
-
-
-
-   ;~ Loop, parse, Badlist, `,,all ; Loops through the Bad prefix list so it skips the prefix if the prefix that is about to be entered is already known to not be in ACM
-   ;~ {
-      ;~ ;msgbox, loopfield is %A_LoopField%
-      ;~ If prefixes = %A_LoopField%
-      ;~ {
-         ;~ ;msgbox, bad acm  match in enter serials to %A_LoopField%
-         ;~ noacmPrefix = %prefixes%
-         ;~ Skipserial = 1
-         ;~ Break
-      ;~ }
-      ;~ else
-         ;~ Skipserial = 0
-   ;~ }
-
-   ;~ Loop, parse, DualENG, `,,all ; Loops though the known Dual Eng prefixes to see if it a know dual prefix
-   ;~ {
-      ;~ ;msgbox, loopfield is %A_LoopField%
-
-      ;~ If prefixes = %A_LoopField%
-      ;~ {
-         ;~ ;msgbox,  serial number match
-         ;~ DUalACMCheck = 1
-         ;~ DualACMPrefix = %prefixes%
-         ;~ Break
-      ;~ }else  {
-         ;~ ;msgbox, no match
-         ;~ DUalACMCheck = 0
-      ;~ }}
-
-
-   ;~ if Skipserial = 1 ; If skipSerial equals to 1, it adds a modifier to the serial during the Effecticity added screen.
-   ;~ {
-      ;~ ;msgbox, no acm skip
-      ;~ Modifier = -*Serial Not in ACM*
-      ;~ Guicontrol,1:,Editfield2, %Editfield2%%PrefixStore%%First_Effectivity_Numbers%-%Second_Effectivity_Numbers%%Modifier%`n
-      ;~ Guicontrol,hide, Editfield2,
-      ;~ GuiControl,1:,serialsentered, Number of Serials successfully added to ACM = %Serialcount%
-      ;~ Modifier =
-      ;~ Skipserial = 0
-       ;~ return
-   ;~ }
-
-   If Complete = 1 ; If the complete variable is equal to 1, the macro stops.
-   {
-      ElapsedTime := A_TickCount - StartTime
-      Total_Time := milli2hms(ElapsedTime, h, m, s)
-      sleep(5)
-      Send {f5}
-       Move_Message_Box("0",""," The number of successful Serial additions to ACM is "  Serialcount "`n`nMacro Finished due to no more Serials to add. `n`n It took the macro " Total_Time " to perform tasks. `n`n Please close Serial Macro Window after checking to ensure serials were entered correctly.")
-      Guicontrol,1:, Editfield,
-      ;~ gosub, radio2h
-  Gui_Image_Show("Stop")
-      Exit
-      Return
-   }
-
-;---------------------------------------------
-; THis starts the part that actually enters the info to the ACM screen
-;----------------------------------------------
-CoordMode, mouse, Screen
-   ;listlines on
-    win_check(Active_ID)
-   Click, %prefixx%, %prefixy%
-   sleep()
-   mousemove 300,300
-   sleep()
-   SEndRaw, %Prefix_Holder_for_ACM_Input%
-   sleep()
-   Send {Tab}
- win_check(Active_ID)
-   Sendraw, %First_Effectivity_Numbers%
-   sleep(3)
-   Send {Tab}
-  win_check(Active_ID)
-   SendRaw, %Second_Effectivity_Numbers%
-   sleep(3)
-   Send {Tab}
-   sleep(7)
-   ;~ If DUalACMCheck = 1
-   ;~ {
-      ;~ Modifier = -**Multiple Engineering Models**
-       ;~ Move_Message_Box("262144", Effectivity_Macro,  "This Serial has multiple Engineering Models. Please select the model in ACM and press the OK button in this window.")
-      ;~ SplashTextOn,,25,Serial Macro, Macro will resume in 2
-      ;~ sleep(10)
-      ;~ SplashTextOn,,25,Serial Macro, Macro will resume in 1
-      ;~ sleep(10)
-      ;~ SplashTextOff
-      ;~ win_check(Active_ID)
-      ;~ Click, %prefixx%, %prefixy%
-      ;~ sleep(5)
-      ;~ Send {Tab 3}
-      ;~ sleep(5)
-      ;~ DualACMCheck = 0
-      ;~ SleepStill = 0
-      ;~ sleep(3)
-   ;~ }
-   Sleep(Sleep_Delay)
-   Send {enter 2}
-   Sleep(2)
-   Click, %Applyx%,%Applyy%
-   Click, %Applyx%,%Applyy%
-   ;SetTimer, refreshcheck, 250
-   Serialcount +=1
-   sleep()
-   Searchcount = 0
-   Searchcountser = 0
-   Return
-}
 
 checkforactivity()
 {
@@ -1185,14 +1202,6 @@ checkforactivity()
 return Serial_Number
 }
 
-Wait_For_Shift_Mouse_Click()
-{
-
-   Keywait, Shift,D
-   Keywait, Lbutton, D
-   KeyWait, Shift
-	return "Done"
-}
 
    SerialFullScreen(Active_ID)
    {
@@ -1237,21 +1246,6 @@ GetCurrentMonitor()
    }
    SysGet, MonitorPrimary, MonitorPrimary
    return "No Monitor Found"
-}
-
-
-Comma_Check(Effectivity_Macro)
-{
-   COntrolSEnd,, {Shift Down}{Right}{SHift Up},%Effectivity_Macro%
-   ControlGet,Commacheck,Selected,,,%Effectivity_Macro%
-   If Commacheck = ,
-   {
-      ;Msgbox, COmmafound
-   }else  {
-      ;msgbox, comma not found
-      COntrolSEnd,, {Left}{BackSpace 2}, %Effectivity_Macro%
-   }
-   Return
 }
 
 
@@ -1303,11 +1297,42 @@ searchcount = 0
       If Searchcount >= 7
       {
          Macrotimedout()
+		 ;~ Figure out timeout Code
 		 Return Timeout_Code
       }
    }
 
    Return "Not_Found"
+}
+
+/*
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+Below is the Functions to support the initial starting before entering the seirals
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+*/
+
+Comma_Check(Effectivity_Macro)
+{
+   COntrolSEnd,, {Shift Down}{Right}{SHift Up},%Effectivity_Macro%
+   ControlGet,Commacheck,Selected,,,%Effectivity_Macro%
+   If Commacheck = ,
+   {
+      ;Msgbox, COmmafound
+   }else  {
+      ;msgbox, comma not found
+      COntrolSEnd,, {Left}{BackSpace 2}, %Effectivity_Macro%
+   }
+   Return
+}
+
+
+Wait_For_Shift_Mouse_Click()
+{
+
+   Keywait, Shift,D
+   Keywait, Lbutton, D
+   KeyWait, Shift
+	return "Done"
 }
 
 
@@ -1396,7 +1421,7 @@ sleep()
 	}
 
 
-	File_Exist_Check(File)
+	Config_File_Check(File)
 	{
 		Result := FileExist(File)
 		If Result =
@@ -1407,9 +1432,12 @@ sleep()
 		return File " - "  Result
 	}
 
-	File_Create(File, Unit_test := 0)
+	Config_File_Create(File, At_home:= 0)
 	{
-				FileAppend,,%File%
+			If (at_home)
+					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini, %File%1
+					else
+					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\Config.ini, %File%,1
 		Debug_Log_Event("File_Create() ......" File)
 		return ErrorLevel
 	}
@@ -1555,7 +1583,7 @@ sleep()
 		Menu, BBBB, Add, &Check For Update , Versioncheck
 		Menu, BBBB, Add, &Options, OptionsGui
 		Menu, BBBB, Add,
-		Menu, CCCC, Add, &Run							(Crtl + 2), Enterallserials
+		Menu, CCCC, Add, &Run							(Crtl + 2), Start_Macro
 		Menu, CCCC, Add, &Pause/Unpause 				(Pause / Insert), pausesub
 		Menu, CCCC, Add, &Stop Macro					(ESC), Exit_Program
 		Menu, CCCC, Add, &Reload Macro, restart_macro
@@ -1684,7 +1712,7 @@ return
 		gui 1:add, Edit, x10 y50 w390 h240  vEditField,%editfield%
 		gui 1:add, Edit, xp yp w390 h240 vEditField2,%editfield2%
 
-		Gui 1:Add, Picture, x315 y310 w50 h50 +0x4000000  BackGroundTrans vStarting gstartmacro , C:\SerialMacro\images\Start.png
+		Gui 1:Add, Picture, x315 y310 w50 h50 +0x4000000  BackGroundTrans vStarting gstart_macro , C:\SerialMacro\images\Start.png
 		Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vRunning, C:\SerialMacro\images\Running.png
 		Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vpaused  gpausesub, C:\SerialMacro\images\Paused.png
 		Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vStopped grestart_macro, C:\SerialMacro\images\Stopped.png
@@ -1754,41 +1782,34 @@ return
 		return
 	}
 
-	startmacro:
-	{
-		skipbox = 0
-		enterallserials()
-		return
-	}
-
 
 	Gui_Image_Show(Image)
 	{
-		If ( image = Paused)
+		If ( image = "Paused")
 		{
-			Guicontrol,hide, Start
 			Guicontrol,show, paused
+			Guicontrol,hide, Starting
 			Guicontrol,hide, Stopped
 			Guicontrol,hide, Running
 		}
 
-		If (image = Running)
+		If (image = "Running")
 		{
-			Guicontrol,Show, Start
+			Guicontrol,Show, Running
 			Guicontrol,Hide, paused
 			Guicontrol,hide, Stopped
-			Guicontrol,hide, Running
+			Guicontrol,hide, Starting
 		}
-		If (image = Stopped)
+		If (image = "Stopped")
 		{
-			Guicontrol,hide, Start
-			Guicontrol,hide, paused
 			Guicontrol,Show, Stopped
+			Guicontrol,hide, Starting
+			Guicontrol,hide, paused
 			Guicontrol,hide, Running
 		}
-		If (image = start)
+		If (image = "start")
 		{
-			Guicontrol,show, Start
+			Guicontrol,show, Starting
 			Guicontrol,hide, paused
 			Guicontrol,hide, Stopped
 			Guicontrol,hide, Running
@@ -1978,6 +1999,7 @@ return
 
 			boxlink()
 			{
+				global Program_Location_Link
 				Run, %Program_Location_Link%
 				return
 			}
@@ -1991,17 +2013,18 @@ return
 			}
 
 
-			Calculate_Days_Since_Last_Update(updatestatus)
+			Calculate_Days_Since_Last_Update(Last_Update)
 			{
 				Today := A_Now		; Set to the current date first
-				EnvSub, Today, %updatestatus%, Days 	; this does a date calc, in days
+				EnvSub, Today, %Last_Update%, Days 	; this does a date calc, in days
 				Return Today
 			}
 
 			Versioncheck()
 			{
-				global Checkversion, Update_Check_URL, Program_Location_Link, Version_Number
-				Load_ini_file(inifile)
+				global Checkversion, Update_Check_URL, Version_Number, Configuration_File_Location
+
+				Load_ini_file(Configuration_File_Location)
 				Progress,  w200, Updating..., Gathering Information, Effectivity Macro Updater
 				Progress, 0
 				sleep(2)
@@ -2023,8 +2046,6 @@ return
 
 				Progress,  w200, Updating...,Gathering Current Version From Server, Effectivity Macro Updater
 				Progress, 50
-
-
 				sleep(2)
 
 				while wb.busy
@@ -2034,15 +2055,11 @@ return
 
 				Progress,  w200,Updating..., Comparing Version Information, Effectivity Macro Updater
 				Progress, 60
-				;~ Progress, Off
-
 
 				Doc_Title := Check_Doc_Title()
 
 				update_Version:=  Format_Serial_Check_Title(Doc_Title)
-
-
-				;~ msgbox, Checkversion is %Checkversion%
+;~ msgbox, Checkversion is %Checkversion%
 				If update_Version = Not_Found
 				{
 					Progress,  w200,Updating..., Error Occured. Update Not Able To Complete, Effectivity Macro Updater
@@ -2073,8 +2090,7 @@ return
 					Run, %Program_Location_Link%
 				}
 
-				IniWrite, %updaterate%, %inifile%,update,updaterate
-				IniWrite, %A_now%,  %inifile%, update,lastupdate
+			Write_ini_file(Configuration_File_Location)
 				Progress, w200,,Disconnecting From Server..., Effectivity Macro Updater
 				Progress,25
 				Sleep()
@@ -2175,7 +2191,7 @@ return
 				{
 					activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
 
-					Load_ini_file(inifile)
+					Load_ini_file(Configuration_File_Location)
 					gui 10: +alwaysontop
 					Gui , 1: -AlwaysOnTop
 					gui 10:add, text, x5 y5 w320 h20 ,Refreash ACM Rate (After how many entered effectivity)
@@ -2215,12 +2231,20 @@ return
 					gui 10:submit, nohide
 					GuiControlGet,Refreshrate,,editfield5
 					GuiControlGet,sleep_delay,,editfield10
-					Write_ini_file(inifile)
+					Write_ini_file(Configuration_File_Location)
 					gui 10:destroy
 					return
 				}
 
-				Load_ini_file(inifile)
+savevalue:
+{
+GuiControlGet,Sleep_Delay,,EditField20
+IniWrite, %Sleep_Delay%, %Configuration_File_Location%,Sleep_Delay,Sleep_Delay
+return
+}
+
+
+				Load_ini_file(Configuration_File_Location)
 				{
 					global
 					Ini_var_store_array:= Object()
@@ -2258,7 +2282,7 @@ return
 					return
 				}
 
-				Write_ini_file(inifile)
+				Write_ini_file(Configuration_File_Location)
 				{
 					global
 
