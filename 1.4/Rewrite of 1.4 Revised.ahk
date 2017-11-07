@@ -950,7 +950,7 @@ Searchend()
 
 Macrotimedout()
 {
-global inifile, Effectivity_Macro
+global inifile, Effectivity_Macro, editfield20
 
 Load_ini_file(inifile)
     activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
@@ -1410,7 +1410,6 @@ sleep()
 	File_Create(File, Unit_test := 0)
 	{
 				FileAppend,,%File%
-
 		Debug_Log_Event("File_Create() ......" File)
 		return ErrorLevel
 	}
