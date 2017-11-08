@@ -9,7 +9,7 @@ SetDefaultMouseSpeed, 0
 SetWinDelay, 0
 SetControlDelay, 0
 CoordMode, Mouse, Screen
-CoordMode, Pixel, Screen
+;~ CoordMode, Pixel, Screen
 #SingleInstance Force
 ++SetTitleMatchMode, 2
 DetectHiddenWindows On
@@ -17,14 +17,22 @@ DetectHiddenText on
 #InstallKeybdHook
 #InstallMouseHook
 
-;~ #include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
+Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, sleepstill, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home
+
+Result := Move_Message_Box("4", "home","Are you at home?")
+If Result = Yes
+At_home = 1
+else
+At_home = 0
+
+
+#include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
 /*
 ****************************************************************************************************************************************************
 ************ Variable Setup *******************************************************************************
 *****************************************************************************************
 */
 
-Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, sleepstill, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID
 
 Version_Number = 1.4 beta
 Effectivity_Macro :=  "Effectivity Macro V" Version_Number
@@ -50,12 +58,12 @@ Radiobutton = 1
 
 Unit_Test = 1 ; Set this to 1 to perform unit tests and logging.
 Log_Events = 0 ;Set this to 1 to perform logging
-At_home = 0
+;~ At_home = 1
 
 
 inifile = config.ini
-File_Install_Root_Folder = C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files ; for testing at work
-;~ File_Install_Root_Folder = E:\Git\Effectivity_Macro\1.4\Install_Files ; for when testing at home
+;~ File_Install_Root_Folder = C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files ; for testing at work
+File_Install_Root_Folder = E:\Git\Effectivity_Macro\1.4\Install_Files ; for when testing at home
 
 
 File_Install_Work_Folder = C:\SerialMacro
@@ -85,7 +93,7 @@ Result := Config_File_Check(Configuration_File_Location)
 
 If Result  contains File_Not_Exist
 {
-	Config_File_Create(Configuration_File_Location)
+	Config_File_Create(Configuration_File_Location, At_home)
 	sleep(5)
 	IniWrite, 20,  %Configuration_File_Location%,refreshrate,refreshrate
 		IniWrite, 3,  %Configuration_File_Location%,Sleep_Delay,Sleep_Delay
@@ -698,13 +706,13 @@ return
 
 Enter_Effectivity_Loop()
 {
-global breakloop
+global breakloop, serialsentered
 
  Loop
    {
       ;~ tabcount++
 Load_ini_file(Configuration_File_Location)
-checkforactivity()
+;~ checkforactivity()
 
 ;~ If Runcount > 20
 	  ;~ {
@@ -716,10 +724,7 @@ checkforactivity()
 	  ;~ if tabcount = 2
 	  ;~ tabcount = 0
 
-Result :=   Searchend()
-          If (Result = "Not_Found")
-            Exit
-			If (Result = "Timedout")
+
 sleep(10)
 
       If breakloop = 1
@@ -767,8 +772,23 @@ sleep(10)
       Complete = 1
     }
 	      Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
+
+		  Result :=   Searchend_Isssue_Check()
+          If (Result = "Not_Found")
+            Exit
+			If (Result = "Dual_Eng")
+			{
+		Multiple_Eng_Model_Check_Add(Multiple_Eng_Array, Prefix)
+		 Modifier = **Multiple Engineering Models**
+	 }
+			if (Result = "Bad Prefix")
+			{
+				   Modifier := **Serial Not in ACM**
+		Added_Serial_Count("-1")
+	  }
 		  Serial_count := Added_Serial_Count()
 		  GuiControl,,serialsentered, Number of Effectivity successfully added to ACM = %Serial_count%
+		  Gui,1:Submit,NoHide
    }
    return
    }
@@ -970,32 +990,15 @@ Result := Move_Message_Box("262148",Effectivity_Macro, "Press Yes button if you 
 
 Serialnogo()
 {
-	global Editfield2, prefix, Active_ID
+	;~ Cleaning This Up
+	global Editfield2, prefix, Active_ID, prefixx, prefixy
 static Badlist
-   Gui, 3:Destroy
-   Modifier := **Serial Not in ACM**
-   Serialcount--
-   ;noacmPrefix = %PrefixStore1%
-   ;msgbox, noprefix is %noacmPrefix%
-   Badlist = %badlist%%PrefixStore1%`,
+badlist := Object()
+   ;~ Gui, 3:Destroy
 
-   ;msgbox, badlist after nogo is %badlist%
+   Badlist.Insert(Prefix)
 
-   SplashTextOn,,25,Serial Macro, Macro will resume in 3
-   sleep(5)
-   SplashTextOn,,25,Serial Macro, Macro will resume in 2
-   sleep(5)
-   SplashTextOn,,25,Serial Macro, Macro will resume in 1
-   sleep(5)
-   SplashTextOff
-
-
-   Guicontrol,hide, Start
-   Guicontrol,hide, paused
-   Guicontrol,hide, Stopped
-   Guicontrol,show, Running
-   Gui, 1:Submit, NoHide
-   Pause, Off
+Pause, Off
  win_check(Active_ID)
    Click, %prefixx%, %prefixy%
    sleep(5)
@@ -1006,42 +1009,31 @@ static Badlist
    Send {Del}{Tab}
    Click, %prefixx%, %prefixy%
    Send {Del}
-
-   Modifier = -*Serial Not in ACM*
    ;msgbox, Beforetrim:`n %EditField2%
    StringTrimRight, EditField2, Editfield2,1
    ;msgbox, after trim :`n %EditField2%`n Prefixstore is %PrefixStore1%`nSerial is %Serialstore1%-%Serialstore3% Mod is %Modifier%
 
    Editfield2n = %Editfield2%%Modifier%`n
    EditField2 = %EditField2n%
-
-
    Guicontrol, 1:,Editfield2, %Editfield2%
    Gui 1: +alwaysontop
    Modifier =
    Return
 }
 
-
-
-Multiple_Eng_Model_Check_Add(ByRef Multiple_Eng_Array)
+Multiple_Eng_Model_Check_Add(Multiple_Eng_Array,Prefix)
 {
-global Prefix, Time_code
-MsgBox % "prefix is " Prefix
+MsgBox % " Multiple_Eng_Model_Check_Add prefix is " Prefix
 ;~ static Multiple_Eng_Array := Object()
 Multiple_Eng_Array[1] =  Multiple_Eng_Models
-Gui, 3:Destroy
+;~ Gui, 3:Destroy
 Multiple_Eng_Array.Insert(Prefix)
-UnPausescript()
-Time_code :=  "Eng add" Prefix
-Return
+Return Multiple_Eng_Array
 }
-
 
 Multiple_Eng_Model_Check()
 {
    warned = 1
-
    Modifier = **Multiple Engineering Models**
    DUalACMCheck = 1
    StringTrimRight, EditField2, Editfield2,1
@@ -1061,7 +1053,6 @@ timeleft := (4 - A_Index)
    SplashTextOn,,25,Serial Macro, Macro will resume in %timeleft%
    sleep(3)
 }
-
    SplashTextOff
    Gui_Image_Show("Run")
   Gui, Submit, NoHide
@@ -1253,18 +1244,18 @@ GetCurrentMonitor()
 Searchend()
 {
 global Image_Red_Exclamation_Point, Timeout_Code
-searchcount = 0
    ;msgbox, searchend
    listlines off
-   while searchcount <= 7
+   while A_Index <= 7
 {
-	searchcount++
 	Current_Monitor := GetCurrentMonitor()
 	pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Image_Red_Exclamation_Point)
-   bmpHaystack := Gdip_BitmapFromScreen(Current_Monitor)
+   ;~ bmpHaystack := Gdip_BitmapFromScreen(Current_Monitor)
+   bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
+
    sleep()
-   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,5,0,0,0)
+   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,50,0,0,0)
    sleep()
    Gdip_Shutdown(pToken)
       ;listlines on
@@ -1284,6 +1275,7 @@ searchcount = 0
       Exit
    }
 
+
    If RETSearch > 0
    {
       ;~ SetTimer, refreshcheck, Off
@@ -1291,20 +1283,71 @@ searchcount = 0
       SleepStill = 0
       ;Msgbox, found
 	  Return "Found"
-	  Break
-   }
+	}
 
-      If Searchcount >= 7
+If A_Index = 3
+{
+Result := Searchend_Isssue_Check()
+If Result = Dual_Eng
+	Return Result
+If Result = Bad Prefix
+	Return Result
+
+
+}
+      If A_Index >= 7
       {
          Macrotimedout()
 		 ;~ Figure out timeout Code
 		 Return Timeout_Code
       }
+
+	  sleep(5)
    }
 
-   Return "Not_Found"
+   Return
 }
 
+
+Searchend_Isssue_Check()
+{
+global Image_Red_Exclamation_Point
+   listlines off
+	Current_Monitor := GetCurrentMonitor()
+	pToken := Gdip_Startup()
+	bmpNeedle1 := Gdip_CreateBitmapFromFile(Image_Red_Exclamation_Point)
+   bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
+   sleep()
+   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,50,0,0,0)
+   sleep()
+   Gdip_Shutdown(pToken)
+      ;listlines on
+   If RETSearch < 0
+   {
+      if RETSearch = -1001
+      RETSearch = invalid haystack or needle bitmap pointer
+      if RETSearch = -1002
+      RETSearch = invalid variation value
+      if RETSearch = -1003
+      RETSearch = Unable to lock haystack bitmap bits
+      if RETSearch = -1004
+      RETSearch = Unable to lock needle bitmap bits
+      if RETSearch = -1005
+      RETSearch = Cannot find monitor for screen capture
+  Move_Message_Box("262144", Effectivity_Macro, "Error Searchend (bmpNeedle1)" RETSearch)
+      Exit
+   }
+   If RETSearch = 1
+   {
+	  Return "Dual_Eng"
+   }
+    If RETSearch > 1
+   {
+	  Return "Bad Prefix"
+	}
+	else
+   Return "Not_found"
+}
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 Below is the Functions to support the initial starting before entering the seirals
@@ -1435,8 +1478,8 @@ sleep()
 	Config_File_Create(File, At_home:= 0)
 	{
 			If (at_home)
-					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini, %File%1
-					else
+					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini, %File%,1
+			else
 					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\Config.ini, %File%,1
 		Debug_Log_Event("File_Create() ......" File)
 		return ErrorLevel
@@ -1785,6 +1828,7 @@ return
 
 	Gui_Image_Show(Image)
 	{
+		global
 		If ( image = "Paused")
 		{
 			Guicontrol,show, paused
