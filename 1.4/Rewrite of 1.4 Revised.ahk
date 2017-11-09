@@ -17,7 +17,7 @@ DetectHiddenText on
 #InstallKeybdHook
 #InstallMouseHook
 
-Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, sleepstill, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home
+Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, sleepstill, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image
 
 Result := Move_Message_Box("4", "home","Are you at home?")
 If Result = Yes
@@ -26,7 +26,7 @@ else
 At_home = 0
 
 
-#include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
+;~ #include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
 /*
 ****************************************************************************************************************************************************
 ************ Variable Setup *******************************************************************************
@@ -56,7 +56,7 @@ Prefixcount = 5
 TotalPrefixes = 0
 Radiobutton = 1
 
-Unit_Test = 1 ; Set this to 1 to perform unit tests and logging.
+Unit_Test = 1 ; Set this to 1 to perform unit tests  and offline testing
 Log_Events = 0 ;Set this to 1 to perform logging
 ;~ At_home = 1
 
@@ -74,6 +74,7 @@ File_install_Icon_Folder = %File_Install_Work_Folder%\icons
 Image_Red_Exclamation_Point = %File_install_Image_Folder%\red_image.png
 IMage_Actve_Add_Button = %File_install_Image_Folder%\Active_plus.png
 Image_Active_Apply_Button = %File_install_Image_Folder%\orange_button.png
+Issues_Image = %File_install_Image_Folder%\Issues_Image.png
 
 
 
@@ -706,7 +707,7 @@ return
 
 Enter_Effectivity_Loop()
 {
-global breakloop, serialsentered
+global breakloop, serialsentered, Applyx, Applyy
 
  Loop
    {
@@ -773,20 +774,38 @@ sleep(10)
     }
 	      Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
 
-		  Result :=   Searchend_Isssue_Check()
-          If (Result = "Not_Found")
-            Exit
+Sleep(5)
+
+Loop, 7
+{
+	Result := Searchend()
+		If Result = Found
+			Break
+Sleep()
+Result :=   Searchend_Isssue_Check()
 			If (Result = "Dual_Eng")
 			{
-		Multiple_Eng_Model_Check_Add(Multiple_Eng_Array, Prefix)
+				;~ MsgBox, Dual eng
+		Multiple_Eng_Array := Multiple_Eng_Model_Check_Add(Prefix)
 		 Modifier = **Multiple Engineering Models**
-	 }
+		 Multiple_Eng_Model_Check()
+		  }
 			if (Result = "Bad Prefix")
 			{
-				   Modifier := **Serial Not in ACM**
-		Added_Serial_Count("-1")
+			;~ MsgBox, Bad Prefix
+			Modifier := **Serial Not in ACM**
+			Serialnogo()
+			Added_Serial_Count("-1")
+			Break
 	  }
-		  Serial_count := Added_Serial_Count()
+
+		  If A_Index   >= 7
+			      Macrotimedout()
+
+				    Click, %Applyx%,%Applyy%
+					Click, %Applyx%,%Applyy%
+   }
+     Serial_count := Added_Serial_Count()
 		  GuiControl,,serialsentered, Number of Effectivity successfully added to ACM = %Serial_count%
 		  Gui,1:Submit,NoHide
    }
@@ -1021,12 +1040,11 @@ Pause, Off
    Return
 }
 
-Multiple_Eng_Model_Check_Add(Multiple_Eng_Array,Prefix)
+Multiple_Eng_Model_Check_Add(Prefix)
 {
-MsgBox % " Multiple_Eng_Model_Check_Add prefix is " Prefix
-;~ static Multiple_Eng_Array := Object()
-Multiple_Eng_Array[1] =  Multiple_Eng_Models
-;~ Gui, 3:Destroy
+	static Multiple_Eng_Array
+	 Multiple_Eng_Array := Object()
+;~ MsgBox % " Multiple_Eng_Model_Check_Add prefix is " Prefix
 Multiple_Eng_Array.Insert(Prefix)
 Return Multiple_Eng_Array
 }
@@ -1051,7 +1069,7 @@ win_check(Active_ID)
 {
 timeleft := (4 - A_Index)
    SplashTextOn,,25,Serial Macro, Macro will resume in %timeleft%
-   sleep(3)
+   sleep()
 }
    SplashTextOff
    Gui_Image_Show("Run")
@@ -1243,11 +1261,10 @@ GetCurrentMonitor()
 
 Searchend()
 {
-global Image_Red_Exclamation_Point, Timeout_Code
+global Image_Red_Exclamation_Point
    ;msgbox, searchend
    listlines off
-   while A_Index <= 7
-{
+
 	Current_Monitor := GetCurrentMonitor()
 	pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Image_Red_Exclamation_Point)
@@ -1255,7 +1272,7 @@ global Image_Red_Exclamation_Point, Timeout_Code
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
 
    sleep()
-   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,50,0,0,0)
+   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,10,0,0,0)
    sleep()
    Gdip_Shutdown(pToken)
       ;listlines on
@@ -1284,41 +1301,21 @@ global Image_Red_Exclamation_Point, Timeout_Code
       ;Msgbox, found
 	  Return "Found"
 	}
-
-If A_Index = 3
-{
-Result := Searchend_Isssue_Check()
-If Result = Dual_Eng
-	Return Result
-If Result = Bad Prefix
-	Return Result
-
-
-}
-      If A_Index >= 7
-      {
-         Macrotimedout()
-		 ;~ Figure out timeout Code
-		 Return Timeout_Code
-      }
-
-	  sleep(5)
-   }
-
-   Return
+	else
+   Return "Not_Found"
 }
 
 
 Searchend_Isssue_Check()
 {
-global Image_Red_Exclamation_Point
+global Issues_Image
    listlines off
 	Current_Monitor := GetCurrentMonitor()
 	pToken := Gdip_Startup()
-	bmpNeedle1 := Gdip_CreateBitmapFromFile(Image_Red_Exclamation_Point)
+	bmpNeedle1 := Gdip_CreateBitmapFromFile(Issues_Image)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
    sleep()
-   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,50,0,0,0)
+   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,0,0,0,0)
    sleep()
    Gdip_Shutdown(pToken)
       ;listlines on
@@ -1337,11 +1334,12 @@ global Image_Red_Exclamation_Point
   Move_Message_Box("262144", Effectivity_Macro, "Error Searchend (bmpNeedle1)" RETSearch)
       Exit
    }
-   If RETSearch = 1
+
+   If RETSearch = 4
    {
 	  Return "Dual_Eng"
    }
-    If RETSearch > 1
+    If (RETSearch = "5") or (RETSearch = "6")
    {
 	  Return "Bad Prefix"
 	}
@@ -1567,6 +1565,13 @@ sleep()
 		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
 		else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
+		If (Errorlevel)
+			Problems = 1
+
+			If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
+		else
+		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
 		If (Errorlevel)
 			Problems = 1
 
