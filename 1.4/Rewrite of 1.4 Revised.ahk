@@ -1068,6 +1068,7 @@ Sleep(5)
 
 If (Stop_Issue_checks)
 {
+Modifier = **Multiple Engineering Models**
 Create_Dual_Instructions_GUI()
 loop
 {
@@ -1080,8 +1081,7 @@ If (Result_check =" Issues_found") or (Result_check = "Dual_Eng")
 If (Result = "Not_found") && (Result_check = "Not_found")
 {
 	sleep(5)
-Click %Applyx%, %Applyy%
-Click %Applyx%, %Applyy%
+	Double_Click(Applyx,Applyy)
 Gui, 70:Destroy
 break
 }
@@ -1089,13 +1089,10 @@ Gui 70: Flash
 Sleep(10)
 }
 until (Result = "Found")
-
 Sleep(5)
-
 Loop
 {
-Click %Applyx%, %Applyy%
-Click %Applyx%, %Applyy%
+Double_Click(Applyx,Applyy)
 Result := Searchend()
 If  Result = Found
 	break
@@ -1110,6 +1107,12 @@ Serial_count := Added_Serial_Count()
    }
    return
    }
+
+	Double_Click(x,y)
+	{
+Click %x%, %y%
+Click %x%, %y%
+}
 
 Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 {
@@ -1127,9 +1130,8 @@ Sleep(.5)
 Result :=   Searchend_Isssue_Check()
 			If (Result = "Dual_Eng")
 			{
-		Multiple_Eng_Array := Multiple_Eng_Model_Check_Add(Prefix)
-		 Modifier = **Multiple Engineering Models**
-		 Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+		;~ Multiple_Eng_Array := Multiple_Eng_Model_Check_Add(Prefix)
+			 Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 		 Added_Serial_Count("-1")
 		 break
 		  }
@@ -1141,8 +1143,7 @@ Result :=   Searchend_Isssue_Check()
 			Added_Serial_Count("-1")
 			Break
 	  }
-	  Click, %Applyx%,%Applyy%
-	Click, %Applyx%,%Applyy%
+Double_Click(Applyx,Applyy)
 	}
 
    Return Modifier
@@ -1226,8 +1227,7 @@ CoordMode, mouse, Screen
    Sleep(Sleep_Delay)
    Send {enter 2}
    Sleep(2)
-   Click, %Applyx%,%Applyy%
-   Click, %Applyx%,%Applyy%
+Double_Click(Applyx,Applyy)
    ;SetTimer, refreshcheck, 250
    Serialcount +=1
    sleep()
@@ -1269,8 +1269,7 @@ Macro Timeout Functions and GUI
 	  GuiControlGet,sleep_delay,,editfield20
 	  IniWrite, %Sleep_Delay%, C:\Serialmacro\Settings.ini,sleep_delay,sleep_delay
       Gui, 3:Destroy
-      Click %Applyx%, %Applyy%
-      Click %Applyx%, %Applyy%
+Double_Click(Applyx,Applyy)
       if addtime = 0
       {
          Addtimetemp++
@@ -1361,14 +1360,14 @@ win_check(Active_ID)
    Return
 }
 
-Multiple_Eng_Model_Check_Add(Prefix)
-{
-	static Multiple_Eng_Array
-	 Multiple_Eng_Array := Object()
-;~ MsgBox % " Multiple_Eng_Model_Check_Add prefix is " Prefix
-Multiple_Eng_Array.Insert(Prefix)
-Return Multiple_Eng_Array
-}
+;~ Multiple_Eng_Model_Check_Add(Prefix)
+;~ {
+	;~ static Multiple_Eng_Array
+	 ;~ Multiple_Eng_Array := Object()
+MsgBox % " Multiple_Eng_Model_Check_Add prefix is " Prefix
+;~ Multiple_Eng_Array.Insert(Prefix)
+;~ Return Multiple_Eng_Array
+;~ }
 
 Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 {
@@ -1378,7 +1377,6 @@ Loop, Parse, Editfield, `n
 {
 	If A_LoopField contains  - - - -
 	{
-		;~ EditfieldStore := EditfieldStore - - - - - - - - - - - - - - - - - - - - - - - - - -  "`n"
 		Stop_Check = 1
 			EditfieldStore := EditfieldStore A_LoopField
 			continue
@@ -1399,34 +1397,6 @@ Guicontrol,,Editfield, %EditfieldStore%`n%Afterloop%
 Clear_ACM_Fields()
 return
 }
-
-   ;~ StringTrimRight, EditField2, Editfield2,1
-   ;~ ;msgbox, after trim :`n %EditField2%`n Prefixstore is %PrefixStore1%`nSerial is %Serialstore1%-%Serialstore3% Mod is %Modifier%
-   ;~ Editfield2n = %Editfield2%%Modifier%`n
-   ;~ EditField2 = %EditField2n%
-   ;~ Guicontrol, 1:,Editfield2, %Editfield2%
-   ;~ Gui 1: +alwaysontop
-;~ Move_Message_Box("262144", Effectivity_Macro, "Select the engeering model and then press the OK button on this window. `n`n The prefix will be logged for this session to prevent more timouts of the same prefix.")
-   ;~ sleep()
-;~ win_check(Active_ID)
-   ;~ Click, %prefixx%, %prefixy%
-   ;~ Send {Tab 3}
-   ;~ Loop, 3
-;~ {
-;~ timeleft := (4 - A_Index)
-   ;~ SplashTextOn,,25,Serial Macro, Macro will resume in %timeleft%
-   ;~ sleep()
-;~ }
-   ;~ SplashTextOff
-   ;~ Gui_Image_Show("Run")
-  ;~ Gui, Submit, NoHide
-   ;~ Pause, Off
-   ;~ Click, %Applyx%,%Applyy%
-   ;~ Click, %Applyx%,%Applyy%
-   ;~ Click, %Applyx%,%Applyy%
-;~ Searchend()
-   ;~ Return
-;~ }
 
 
 Macrotimedout()
