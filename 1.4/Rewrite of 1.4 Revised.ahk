@@ -19,11 +19,11 @@ DetectHiddenText on
 
 Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, sleepstill, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image
 
-Result := Move_Message_Box("4", "home","Are you at home?")
-If Result = Yes
-At_home = 1
-else
+; below is for testing between home and work computer
+If A_UserName = karnijs
 At_home = 0
+else
+At_home = 1
 
 
 ;~ #include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
@@ -58,12 +58,10 @@ Radiobutton = 1
 
 Unit_Test = 1 ; Set this to 1 to perform unit tests  and offline testing
 Log_Events = 0 ;Set this to 1 to perform logging
-;~ At_home = 1
-
 
 inifile = config.ini
 ;~ File_Install_Root_Folder = C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files ; for testing at work
-File_Install_Root_Folder = E:\Git\Effectivity_Macro\1.4\Install_Files ; for when testing at home
+;~ File_Install_Root_Folder = E:\Git\Effectivity_Macro\1.4\Install_Files ; for when testing at home
 
 
 File_Install_Work_Folder = C:\SerialMacro
@@ -113,8 +111,8 @@ If Refreshrate = Error
 	IniWrite, 20,  %Configuration_File_Location%,refreshrate,refreshrate
 	Load_ini_file(Configuration_File_Location)
 }
-	Load_ini_file(Configuration_File_Location)
 
+Load_ini_file(Configuration_File_Location)
 
 Result := Install_Requied_Files_Root(File_Install_Work_Folder, At_home)
 If (Result)
@@ -172,10 +170,291 @@ If (Unit_test)
 	Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1")
 return
 
+/*
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Hotkeys \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	*/
+
+
+ESC::
+{
+breakloop=1
+return
+}
 
 ;Sets the hotkey for Ctrl + 1 or Ctrl + numpad 1
 $^Numpad1::
 $^1::
+{
+Copy_text_and_Format()
+return
+}
+
+/*
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Below are the functions from the Autorun section Before it gets to Serials_GUI_Screen()i \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	*/
+
+	Folder_Exist_Check(Folder)
+	{
+		Result := FileExist(Folder)
+		If Result =
+		Result = Folder_Not_Exist
+		else
+			Result = Folder_Exist
+
+		Debug_Log_Event("Folder_Exist_Check() .... " Folder "..... Result is " Result)
+
+		return  Folder " - " Result
+	}
+
+	Folder_Create(Folder)
+	{
+		FileCreateDir, %Folder%
+
+		Debug_Log_Event("Folder_Create() .... " Folder "..... Result is " Result)
+		sleep(5)
+		return ErrorLevel
+	}
+
+
+	Config_File_Check(File)
+	{
+		Result := FileExist(File)
+		If Result =
+		Result = File_Not_Exist
+		else
+			Result = File_Exist
+		Debug_Log_Event("File_Exist_Check() ......C:\SerialMacro\" File "..... Result is " Result)
+		return File " - "  Result
+	}
+
+	Config_File_Create(File, At_home:= 0)
+	{
+			If (at_home)
+					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini, %File%,1
+			else
+					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\Config.ini, %File%,1
+		Debug_Log_Event("File_Create() ......" File)
+		return ErrorLevel
+	}
+
+
+
+	Install_Requied_Files_Root( File_Install_Work_Folder, At_home:= 0)
+	{
+		If (at_home)
+					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
+					else
+					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
+		return errorlevel
+	}
+
+	Install_Requied_Files_Icons( File_Install_Work_Folder, at_home := 0)
+	{
+		Problems = 0
+		If (at_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
+		else
+		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
+		If (Errorlevel)
+			Problems = 1
+
+		if (At_home)
+				FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
+		else
+		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
+
+		If (Errorlevel)
+			Problems = 1
+
+		return Problems
+	}
+
+	Install_Requied_Files_Images( File_Install_Work_Folder, at_home := 0)
+	{
+		Problems = 0
+		if (At_home)
+					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
+					else
+					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
+		If (Errorlevel)
+			Problems = 1
+
+		If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
+		else
+		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
+		If (Errorlevel)
+			Problems = 1
+		If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
+		else
+		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
+		If (Errorlevel)
+			Problems = 1
+		If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
+		else
+		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
+		If (Errorlevel)
+			Problems = 1
+		If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
+		else
+		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
+		If (Errorlevel)
+			Problems = 1
+		If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
+		else
+		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
+		If (Errorlevel)
+			Problems = 1
+		If (At_home)
+		FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
+		else
+		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
+		If (Errorlevel)
+			Problems = 1
+		If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
+		else
+		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
+		If (Errorlevel)
+			Problems = 1
+
+			If (At_home)
+		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
+		else
+		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
+		If (Errorlevel)
+			Problems = 1
+
+		return Problems
+	}
+
+
+
+
+
+				Load_ini_file(Configuration_File_Location)
+				{
+					global
+					Ini_var_store_array:= Object()
+					Tab_placeholder  =
+					loop,read,%inifile%
+					{
+						If A_LoopReadLine =
+						continue
+
+						if regexmatch(A_Loopreadline,"\[(.*)?]")
+						{
+							Section :=regexreplace(A_loopreadline,"(\[)(.*)?(])","$2")
+							StringReplace, Section,Section, %a_space%,,All
+
+							If Tab_PLaceholder =
+							{
+								Tab_placeholder := Section
+							}
+							Else
+								Tab_placeholder := Tab_placeholder "|" Section
+
+							continue
+						}
+
+						else if A_LoopReadLine !=
+						{
+							StringGetPos, keytemppos, A_LoopReadLine, =,
+							StringLeft, keytemp, A_LoopReadLine,%keytemppos%
+							StringReplace, keytemp,keytemp,%A_SPace%,,All
+							INIstoretemp := Keytemp ":" Section
+							Ini_var_store_array.Insert(INIstoretemp)
+							IniRead,%keytemp%, %inifile%, %Section%, %keytemp%
+						}}
+
+					return
+				}
+
+				Write_ini_file(Configuration_File_Location)
+				{
+					global
+
+					for index, element in Ini_var_store_array
+					{
+					StringSplit, INI_Write,element, `:
+
+					Varname := INI_Write1
+					IniWrite ,% %INI_Write1%, %inifile%, %INI_Write2%, %INI_Write1%
+				}
+			return
+		}
+
+		Debug_Log_Event(Event)
+		{
+			global Log_Events
+
+			If (Log_Events)
+			{
+			OutputDebug, %Event%
+			Sleep(.5)
+
+	}
+	return
+}
+
+
+/*
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Below is the Create_Tray_Menu funciton along with some of the functions it calls to .\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	*/
+
+	Create_Tray_Menu()
+	{
+		Menu, Tray, NoStandard
+		Menu, Tray, Add, How to use, HowTo
+		Menu Tray, Add, Check For update, Versioncheck
+		Menu, Tray, Add, Quit, Quitapp
+		return
+	}
+
+
+	Howto()
+	{
+		splashtexton,,Effectivity Macro, Loading PDF
+		Run, C:\SerialMacro\How to use Effectivity Macro.pdf
+		sleep(20)
+		SplashTextOff
+		return
+	}
+
+	Quitapp:
+	{
+		Result := 	Move_Message_Box("262148","Quit " Effectivity_Macro, "Are you sure you want to quit?")
+
+		If result =  Yes
+		{
+			Stopactcheck = 1
+			Gui 1: -AlwaysOnTop
+			Gui_Image_Show("Stopped") ; Options are Start, Paused, Running, Stopped
+			Gui, Submit, NoHide
+			Send {Shift Up}{Ctrl Up}
+			breakloop = 1
+			ExitApp
+		}
+		Return
+	}
+
+/*
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. BEgin_Macro() from the Ctrl 1 grab text hotkey .\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	*/
+
+Copy_text_and_Format()
 {
 	Formatted_Text := Format_Serial_Functions() ; Goes to the Formatserials subroutine
 	Sort, Formatted_Text ; Sorts the prefixes in order
@@ -210,11 +489,11 @@ $^1::
 
 		Editfield := Extract_Serial_Array(Combined_Serial_Array)
 StringReplace, Editfield, Editfield, `,,,All
-		Guicontrol,1:, Editfield, %Editfield% ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
+		Guicontrol,1:, Editfield, %Editfield% - - - - - - - - - - - - - - - - - - - - - - - - - - ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
 	}else  {
 		Prefix_Count :=  Formatted_Text_Serial_Count(Formatted_Text)
 	StringReplace, Formatted_Text, Formatted_Text, `,,,All
-		Guicontrol,1:, Editfield, %Formatted_Text% ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
+		Guicontrol,1:, Editfield, %Formatted_Text% - - - - - - - - - - - - - - - - - - - - - - - - - - ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
 	}
 	totalprefixes = %Prefix_Count% ; Sets the totalprefixes variables to the Prefixcombinecount variable
 	Guicontrol,, reloadprefixtext, There are a total of %totalprefixes% Serial Numbers to add to ACM ; Changes the valuse in the main GUI screen
@@ -231,6 +510,42 @@ StringReplace, Editfield, Editfield, `,,,All
 Formatting functions
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+Format_Serial_Functions(Fullstring := "")
+{
+	Clear_Format_Variables()
+	newline = `n
+	sleep()
+	If (Unit_test) ; For testing
+	;~ Fullstring := "621s (SN: 8KD1-00663,8KD00669,8KD00825,TRD00123, TRD00124-00165, TRD"
+	Fullstring := "621s (SN: TRD00123, TRD00124-00165, TRD00001-00002"
+	Else
+		FullString := Copy_selected_Text()
+
+	If FullString = No_Text_Selected
+	{
+		Move_Message_Box("0","Error","Please ensure that text is selected before pressing Ctrl + 1.")
+		Exit
+	}
+
+
+	Format_Removed_Text := Remove_Formatting(Fullstring) ; Goes to the Remove_Formatting funciton and stores the completed result into the Format_Removed_Text varialbe
+		Debug_Log_Event("Format_Serials() Format_Removed_Text is " Format_Removed_Text)
+;~ MsgBox, % "Format removed is " Format_Removed_Text
+	PreFormatted_Text := PreFormat_Text(Format_Removed_Text) ; Goes to the PreFormat_Text function and stors the completed result into the Preformatted_text variable
+	Debug_Log_Event("Format_Serials() PreFormatted_Text is " PreFormatted_Text)
+
+
+	PreFormatted_Text := Check_For_Single_Serials(PreFormatted_Text)
+Debug_Log_Event("Check_For_Single_Serials() PreFormatted_Text is " PreFormatted_Text)
+
+	PreFormatted_Text := Prefix_Alone_Check_And_Add_One_UP(PreFormatted_Text) ;  Take info from the PreFormatted_Text variable and checks to see of it it just the serial with no numbers attached to it. If is, then adds 00001-99999 to prefix. Also changes the Parseclip variable to the Number of non combined Serials
+	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP() PreFormatted_Text is " PreFormatted_Text)
+PreFormatted_Text := add_digits(PreFormatted_Text)
+Debug_Log_Event("add_digits() PreFormatted_Text is " PreFormatted_Text)
+	return PreFormatted_Text
+}
+
+
 
 Put_Formatted_Serials_into_Array(Formatted_Text)
 {
@@ -243,6 +558,57 @@ Put_Formatted_Serials_into_Array(Formatted_Text)
 	}
 	return Formatted_Array
 }
+
+Combineserials(Formatted_Serial_Array)
+{
+	Local Prefix_Combine_array := Object()
+
+
+	For index, element in Formatted_Serial_Array
+	{
+		;~ MsgBox, Formatted serial is %element%
+		Prefix_Extract := Extract_Prefix(element)
+		If (Prefix_Extract = "`," or Prefix_Extract ="" or Prefix_Extract = "`n" or Prefix_Extract = "`r") ; checks to see if the Prefix_Store variable is a comma
+		{
+			Debug_Log_Event("Combine_Serials() Prefix_Extract is " Prefix_Extract)
+			Debug_Log_Event("Combine_Serials() Continue" )
+			Prefix_Extract = ; sets the Prefix_Store variable to nothing
+			Second_Number_set =  ; sets the Second_Number_Set variable to nothirng
+			Continue ; skips over the rest of the loop and starts at the top of the parse loop
+		}
+
+		First_Number_Set := Extract_First_Set_Of_Serial_Number(element)
+		Middle_Char := Extract_Serial_Dividing_Char(element)
+
+		If Middle_Char = `- ; checks if Middle_Char variable is a hyphen
+		Second_Number_set := Extract_Second_Set_Of_Serial_Number(element)
+
+		else If Middle_Char = `, ; if the Middle_Char variable is a comma
+		{
+			Middle_Char = `- ; makes the Middle_Char variable a hyphen
+			Second_Number_set = %First_Number_Set%
+		}
+		Prefix_Combine_array := (Checkvalues(Prefix_Extract,First_Number_Set,Second_Number_set)) ; goes to the Checkvalues subroutine
+
+		;~ For index, element in Prefix_Combine_array
+		;~ MsgBox, % element " Is element`n index is " index
+
+		Debug_Log_Event("Combine_Serials() Prefix_Extract is "  Prefix_Extract)
+		Debug_Log_Event("Combine_Serials() First_Number_Set is "  First_Number_Set)
+		Debug_Log_Event("Combine_Serials() Middle_Char is "  Middle_Char)
+		Debug_Log_Event("Combine_Serials() Second_Number_set is "  Second_Number_set)
+	}
+	Return Prefix_Combine_array
+}
+
+
+
+
+
+
+
+
+
 
 Extract_Serial_Array(Combined_Serial_Array)
 {
@@ -277,40 +643,6 @@ Copy_selected_Text()
 	return "No_Text_Selected"
 	else
 		return Clipboard ","
-}
-
-Format_Serial_Functions(Fullstring := "")
-{
-	Clear_Format_Variables()
-	newline = `n
-	sleep()
-	If (Unit_test) ; For testing
-	Fullstring := "621s (SN: 8KD1-00663,8KD00669,8KD00825,TRD00123, TRD00124-00165, TRD"
-	Else
-		FullString := Copy_selected_Text()
-
-	If FullString = No_Text_Selected
-	{
-		Move_Message_Box("0","Error","Please ensure that text is selected before pressing Ctrl + 1.")
-		Exit
-	}
-
-
-	Format_Removed_Text := Remove_Formatting(Fullstring) ; Goes to the Remove_Formatting funciton and stores the completed result into the Format_Removed_Text varialbe
-		Debug_Log_Event("Format_Serials() Format_Removed_Text is " Format_Removed_Text)
-;~ MsgBox, % "Format removed is " Format_Removed_Text
-	PreFormatted_Text := PreFormat_Text(Format_Removed_Text) ; Goes to the PreFormat_Text function and stors the completed result into the Preformatted_text variable
-	Debug_Log_Event("Format_Serials() PreFormatted_Text is " PreFormatted_Text)
-
-
-	PreFormatted_Text := Check_For_Single_Serials(PreFormatted_Text)
-Debug_Log_Event("Check_For_Single_Serials() PreFormatted_Text is " PreFormatted_Text)
-
-	PreFormatted_Text := Prefix_Alone_Check_And_Add_One_UP(PreFormatted_Text) ;  Take info from the PreFormatted_Text variable and checks to see of it it just the serial with no numbers attached to it. If is, then adds 00001-99999 to prefix. Also changes the Parseclip variable to the Number of non combined Serials
-	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP() PreFormatted_Text is " PreFormatted_Text)
-PreFormatted_Text := add_digits(PreFormatted_Text)
-Debug_Log_Event("add_digits() PreFormatted_Text is " PreFormatted_Text)
-	return PreFormatted_Text
 }
 
 
@@ -393,47 +725,6 @@ One_Up_All(Serial_Store_Array)
 }
 
 
-Combineserials(Formatted_Serial_Array)
-{
-	Local Prefix_Combine_array := Object()
-
-
-	For index, element in Formatted_Serial_Array
-	{
-		;~ MsgBox, Formatted serial is %element%
-		Prefix_Extract := Extract_Prefix(element)
-		If (Prefix_Extract = "`," or Prefix_Extract ="" or Prefix_Extract = "`n" or Prefix_Extract = "`r") ; checks to see if the Prefix_Store variable is a comma
-		{
-			Debug_Log_Event("Combine_Serials() Prefix_Extract is " Prefix_Extract)
-			Debug_Log_Event("Combine_Serials() Continue" )
-			Prefix_Extract = ; sets the Prefix_Store variable to nothing
-			Second_Number_set =  ; sets the Second_Number_Set variable to nothirng
-			Continue ; skips over the rest of the loop and starts at the top of the parse loop
-		}
-
-		First_Number_Set := Extract_First_Set_Of_Serial_Number(element)
-		Middle_Char := Extract_Serial_Dividing_Char(element)
-
-		If Middle_Char = `- ; checks if Middle_Char variable is a hyphen
-		Second_Number_set := Extract_Second_Set_Of_Serial_Number(element)
-
-		else If Middle_Char = `, ; if the Middle_Char variable is a comma
-		{
-			Middle_Char = `- ; makes the Middle_Char variable a hyphen
-			Second_Number_set = %First_Number_Set%
-		}
-		Prefix_Combine_array := (Checkvalues(Prefix_Extract,First_Number_Set,Second_Number_set)) ; goes to the Checkvalues subroutine
-
-		;~ For index, element in Prefix_Combine_array
-		;~ MsgBox, % element " Is element`n index is " index
-
-		Debug_Log_Event("Combine_Serials() Prefix_Extract is "  Prefix_Extract)
-		Debug_Log_Event("Combine_Serials() First_Number_Set is "  First_Number_Set)
-		Debug_Log_Event("Combine_Serials() Middle_Char is "  Middle_Char)
-		Debug_Log_Event("Combine_Serials() Second_Number_set is "  Second_Number_set)
-	}
-	Return Prefix_Combine_array
-}
 
 Extract_Prefix(Serial_Number)
 {
@@ -654,15 +945,6 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 
 
 
-
-
-
-ESC::
-{
-breakloop=1
-return
-}
-
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ENter Serias Section
@@ -672,17 +954,19 @@ Enter_Serials_Variable_Setup()
 {
 	global
    Prefixcount = 5
-   addtime = 0
-   Badlist =
-    Stoptimer = 0
-   Serialzcounter2 = 0
-   Serialzcounter = 0
      StartTime := A_TickCount
  }
 
 Start_Macro()
 {
 	global
+	GuiControlGet,Editfield
+If Editfield =
+{
+Move_Message_Box("0","We Got A Problem","Oops! `nThere is no effectivity to input.`n`nPlease select the effectivity and press Ctrl +1. `nThank You!")
+Exit
+}
+
 ; Initial setup before the macro starts to output to the screen
       Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
  Enter_Serials_Variable_Setup()
@@ -707,7 +991,7 @@ return
 
 Enter_Effectivity_Loop()
 {
-global breakloop, serialsentered, Applyx, Applyy
+global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro
 
  Loop
    {
@@ -764,7 +1048,13 @@ sleep(10)
       ;~ }
       sleep()
 	Serial_number := Get_Serial_Numbers()
+	if Serial_Number  contains  - - - - -
+		{
+		Stop_Issue_checks = 1
+		Serial_number := Get_Serial_Numbers()
+	}
      Prefix := Extract_Prefix(Serial_Number)
+
 	 First_Effectivity_Numbers := Extract_First_Set_Of_Serial_Number(Serial_Number)
 	 Second_Effectivity_Numbers := Extract_Second_Set_Of_Serial_Number(Serial_Number)
 
@@ -776,19 +1066,72 @@ sleep(10)
 
 Sleep(5)
 
-Loop, 7
+If (Stop_Issue_checks)
 {
+Create_Dual_Instructions_GUI()
+loop
+{
+	if breakloop = 1
+		Break
+Result := Searchend()
+Result_check := Searchend_Isssue_Check()
+If (Result_check =" Issues_found") or (Result_check = "Dual_Eng")
+	Result = no
+If (Result = "Not_found") && (Result_check = "Not_found")
+{
+	sleep(5)
+Click %Applyx%, %Applyy%
+Click %Applyx%, %Applyy%
+Gui, 70:Destroy
+break
+}
+Gui 70: Flash
+Sleep(10)
+}
+until (Result = "Found")
+
+Sleep(5)
+
+Loop
+{
+Click %Applyx%, %Applyy%
+Click %Applyx%, %Applyy%
+Result := Searchend()
+If  Result = Found
+	break
+}}
+
+if (!Stop_Issue_checks)
+Modifier := Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+
+Serial_count := Added_Serial_Count()
+		GuiControl,1:,serialsentered, Number of Effectivity successfully added to ACM = %Serial_count%
+		Gui,1:Submit,NoHide
+   }
+   return
+   }
+
+Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+{
+Loop, 10
+{
+	Sleep(10)
 	Result := Searchend()
 		If Result = Found
+			{
+			Modifier =
 			Break
-Sleep()
+		}
+Sleep(.5)
+
 Result :=   Searchend_Isssue_Check()
 			If (Result = "Dual_Eng")
 			{
-				;~ MsgBox, Dual eng
 		Multiple_Eng_Array := Multiple_Eng_Model_Check_Add(Prefix)
 		 Modifier = **Multiple Engineering Models**
-		 Multiple_Eng_Model_Check()
+		 Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+		 Added_Serial_Count("-1")
+		 break
 		  }
 			if (Result = "Bad Prefix")
 			{
@@ -798,20 +1141,23 @@ Result :=   Searchend_Isssue_Check()
 			Added_Serial_Count("-1")
 			Break
 	  }
+	  Click, %Applyx%,%Applyy%
+	Click, %Applyx%,%Applyy%
+	}
 
-		  If A_Index   >= 7
-			      Macrotimedout()
+   Return Modifier
+}
 
-				    Click, %Applyx%,%Applyy%
-					Click, %Applyx%,%Applyy%
-   }
-     Serial_count := Added_Serial_Count()
-		  GuiControl,,serialsentered, Number of Effectivity successfully added to ACM = %Serial_count%
-		  Gui,1:Submit,NoHide
-   }
-   return
-   }
 
+	Create_Dual_Instructions_GUI()
+	{
+	activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+Gui 70:Add,Text,, Select an engeering model
+Gui  70:Show, x%amonx% y%amony%,%Effectivity_Macro%
+gui, 70: +AlwaysOnTop
+Gui 70: Flash
+return
+}
 Added_Serial_Count(Add_Or_Subtract := "1")
 {
 	static Add_Count
@@ -838,52 +1184,8 @@ Enterserials(Prefix_Holder_for_ACM_Input,First_Effectivity_Numbers,Second_Effect
       ;~ else
          ;~ Skipserial = 0
    ;~ }
-
-   ;~ Loop, parse, DualENG, `,,all ; Loops though the known Dual Eng prefixes to see if it a know dual prefix
-   ;~ {
-      ;~ ;msgbox, loopfield is %A_LoopField%
-
-      ;~ If prefixes = %A_LoopField%
-      ;~ {
-         ;~ ;msgbox,  serial number match
-         ;~ DUalACMCheck = 1
-         ;~ DualACMPrefix = %prefixes%
-         ;~ Break
-      ;~ }else  {
-         ;~ ;msgbox, no match
-         ;~ DUalACMCheck = 0
-      ;~ }}
-
-
-   ;~ if Skipserial = 1 ; If skipSerial equals to 1, it adds a modifier to the serial during the Effecticity added screen.
-   ;~ {
-      ;~ ;msgbox, no acm skip
-      ;~ Modifier = -*Serial Not in ACM*
-      ;~ Guicontrol,1:,Editfield2, %Editfield2%%PrefixStore%%First_Effectivity_Numbers%-%Second_Effectivity_Numbers%%Modifier%`n
-      ;~ Guicontrol,hide, Editfield2,
-      ;~ GuiControl,1:,serialsentered, Number of Serials successfully added to ACM = %Serialcount%
-      ;~ Modifier =
-      ;~ Skipserial = 0
-       ;~ return
-   ;~ }
-
-   If Complete = 1 ; If the complete variable is equal to 1, the macro stops.
-   {
-      ElapsedTime := A_TickCount - StartTime
-      Total_Time := milli2hms(ElapsedTime, h, m, s)
-      sleep(5)
-      Send {f5}
-       Move_Message_Box("0",""," The number of successful Serial additions to ACM is "  Serialcount "`n`nMacro Finished due to no more Serials to add. `n`n It took the macro " Total_Time " to perform tasks. `n`n Please close Serial Macro Window after checking to ensure serials were entered correctly.")
-      Guicontrol,1:, Editfield,
-      ;~ gosub, radio2h
-  Gui_Image_Show("Stop")
-      Exit
-      Return
-   }
-
-;---------------------------------------------
-; THis starts the part that actually enters the info to the ACM screen
-;----------------------------------------------
+If (!Complete)
+{
 CoordMode, mouse, Screen
    ;listlines on
     ;~ win_check(Active_ID)
@@ -931,6 +1233,19 @@ CoordMode, mouse, Screen
    sleep()
    Searchcount = 0
    Searchcountser = 0
+}
+else
+	  {
+      ElapsedTime := A_TickCount - StartTime
+      Total_Time := milli2hms(ElapsedTime, h, m, s)
+      sleep(5)
+      Send {f5}
+       Move_Message_Box("0",""," The number of successful Serial additions to ACM is "  Serialcount "`n`nMacro Finished due to no more Serials to add. `n`n It took the macro " Total_Time " to perform tasks. `n`n Please close Serial Macro Window after checking to ensure serials were entered correctly.")
+      Guicontrol,1:, Editfield,
+      ;~ gosub, radio2h
+  Gui_Image_Show("Stop")
+      Exit
+   }
    Return
 }
 
@@ -1009,16 +1324,22 @@ Result := Move_Message_Box("262148",Effectivity_Macro, "Press Yes button if you 
 
 Serialnogo()
 {
+	global prefix
 	;~ Cleaning This Up
-	global Editfield2, prefix, Active_ID, prefixx, prefixy
 static Badlist
 badlist := Object()
    ;~ Gui, 3:Destroy
-
    Badlist.Insert(Prefix)
-
 Pause, Off
- win_check(Active_ID)
+Clear_ACM_Fields()
+return
+}
+
+Clear_ACM_Fields()
+{
+	global Editfield2, Active_ID, prefixx, prefixy
+
+win_check(Active_ID)
    Click, %prefixx%, %prefixy%
    sleep(5)
    Send {ctrl down}{a}{Ctrl up}
@@ -1049,38 +1370,63 @@ Multiple_Eng_Array.Insert(Prefix)
 Return Multiple_Eng_Array
 }
 
-Multiple_Eng_Model_Check()
+Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 {
-   warned = 1
-   Modifier = **Multiple Engineering Models**
-   DUalACMCheck = 1
-   StringTrimRight, EditField2, Editfield2,1
-   ;msgbox, after trim :`n %EditField2%`n Prefixstore is %PrefixStore1%`nSerial is %Serialstore1%-%Serialstore3% Mod is %Modifier%
-   Editfield2n = %Editfield2%%Modifier%`n
-   EditField2 = %EditField2n%
-   Guicontrol, 1:,Editfield2, %Editfield2%
-   Gui 1: +alwaysontop
-Move_Message_Box("262144", Effectivity_Macro, "Select the engeering model and then press the OK button on this window. `n`n The prefix will be logged for this session to prevent more timouts of the same prefix.")
-   sleep()
-win_check(Active_ID)
-   Click, %prefixx%, %prefixy%
-   Send {Tab 3}
-   Loop, 3
+Afterloop := Prefix First_Effectivity_Numbers "-" Second_Effectivity_Numbers
+GuiControlGet, Editfield
+Loop, Parse, Editfield, `n
 {
-timeleft := (4 - A_Index)
-   SplashTextOn,,25,Serial Macro, Macro will resume in %timeleft%
-   sleep()
+	If A_LoopField contains  - - - -
+	{
+		;~ EditfieldStore := EditfieldStore - - - - - - - - - - - - - - - - - - - - - - - - - -  "`n"
+		Stop_Check = 1
+			EditfieldStore := EditfieldStore A_LoopField
+			continue
+	}
+
+If (!Stop_check)
+{
+Prefix_Check := Extract_Prefix(A_LoopField)
+If Prefix_Check = %Prefix%
+Afterloop := Afterloop "`n" A_LoopField
+else
+EditfieldStore := EditfieldStore A_LoopField "`n"
 }
-   SplashTextOff
-   Gui_Image_Show("Run")
-  Gui, Submit, NoHide
-   Pause, Off
-   Click, %Applyx%,%Applyy%
-   Click, %Applyx%,%Applyy%
-   Click, %Applyx%,%Applyy%
-Searchend()
-   Return
+else
+	EditfieldStore := EditfieldStore A_LoopField "`n"
 }
+Guicontrol,,Editfield, %EditfieldStore%`n%Afterloop%
+Clear_ACM_Fields()
+return
+}
+
+   ;~ StringTrimRight, EditField2, Editfield2,1
+   ;~ ;msgbox, after trim :`n %EditField2%`n Prefixstore is %PrefixStore1%`nSerial is %Serialstore1%-%Serialstore3% Mod is %Modifier%
+   ;~ Editfield2n = %Editfield2%%Modifier%`n
+   ;~ EditField2 = %EditField2n%
+   ;~ Guicontrol, 1:,Editfield2, %Editfield2%
+   ;~ Gui 1: +alwaysontop
+;~ Move_Message_Box("262144", Effectivity_Macro, "Select the engeering model and then press the OK button on this window. `n`n The prefix will be logged for this session to prevent more timouts of the same prefix.")
+   ;~ sleep()
+;~ win_check(Active_ID)
+   ;~ Click, %prefixx%, %prefixy%
+   ;~ Send {Tab 3}
+   ;~ Loop, 3
+;~ {
+;~ timeleft := (4 - A_Index)
+   ;~ SplashTextOn,,25,Serial Macro, Macro will resume in %timeleft%
+   ;~ sleep()
+;~ }
+   ;~ SplashTextOff
+   ;~ Gui_Image_Show("Run")
+  ;~ Gui, Submit, NoHide
+   ;~ Pause, Off
+   ;~ Click, %Applyx%,%Applyy%
+   ;~ Click, %Applyx%,%Applyy%
+   ;~ Click, %Applyx%,%Applyy%
+;~ Searchend()
+   ;~ Return
+;~ }
 
 
 Macrotimedout()
@@ -1219,14 +1565,14 @@ return Serial_Number
       SysGet,Aarea,MonitorWorkArea,%CurrmonAM%
       WidthA := AareaRight- AareaLeft
       HeightA := aareaBottom - aAreaTop
-      leftt := (aAreaLeft - 4)
-      topp := (AAreaTop - 4)
+      lefta := (aAreaLeft - 4) ; this is -4 becuase Oracle puts a 4 pixel border on its seamless windows
+      topa := (AAreaTop - 4) ; this is -4 becuase Oracle puts a 4 pixel border on its seamless windows
 ;~ MsgBox % WidthA HeightA
 	  ;~ MsgBox, % "Left is "leftt " top is " topp "`nxarbor is " xarbor " yarbor is " yarbor
       MouseGetPos mmx,mmy
-      If (yarbor = topp)
+      If (yarbor = topa)
       {
-         If (xarbor = leftt)
+         If (xarbor = lefta)
          ;Msgbox, win maxed
          Return
       }
@@ -1270,10 +1616,7 @@ global Image_Red_Exclamation_Point
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Image_Red_Exclamation_Point)
    ;~ bmpHaystack := Gdip_BitmapFromScreen(Current_Monitor)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
-
-   sleep()
    RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,10,0,0,0)
-   sleep()
    Gdip_Shutdown(pToken)
       ;listlines on
    If RETSearch < 0
@@ -1314,11 +1657,10 @@ global Issues_Image
 	pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Issues_Image)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
-   sleep()
    RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,0,0,0,0)
-   sleep()
    Gdip_Shutdown(pToken)
       ;listlines on
+	  ;~ MsgBox, % RETSearch
    If RETSearch < 0
    {
       if RETSearch = -1001
@@ -1335,6 +1677,7 @@ global Issues_Image
       Exit
    }
 
+
    If RETSearch = 4
    {
 	  Return "Dual_Eng"
@@ -1343,8 +1686,11 @@ global Issues_Image
    {
 	  Return "Bad Prefix"
 	}
-	else
+		 If (RETSearch = "0")
    Return "Not_found"
+
+		 If (RETSearch != "0") or (RETSearch != "4") or (RETSearch != "5") or (RETSearch != "6")
+   Return "Issues_found"
 }
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -1434,193 +1780,6 @@ sleep()
 
 
 /*
-	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Below are the functions from the Autorun section Before it gets to Serials_GUI_Screen()i \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-	*/
-
-	Folder_Exist_Check(Folder)
-	{
-		Result := FileExist(Folder)
-		If Result =
-		Result = Folder_Not_Exist
-		else
-			Result = Folder_Exist
-
-		Debug_Log_Event("Folder_Exist_Check() .... " Folder "..... Result is " Result)
-
-		return  Folder " - " Result
-	}
-
-	Folder_Create(Folder)
-	{
-		FileCreateDir, %Folder%
-
-		Debug_Log_Event("Folder_Create() .... " Folder "..... Result is " Result)
-		sleep(5)
-		return ErrorLevel
-	}
-
-
-	Config_File_Check(File)
-	{
-		Result := FileExist(File)
-		If Result =
-		Result = File_Not_Exist
-		else
-			Result = File_Exist
-		Debug_Log_Event("File_Exist_Check() ......C:\SerialMacro\" File "..... Result is " Result)
-		return File " - "  Result
-	}
-
-	Config_File_Create(File, At_home:= 0)
-	{
-			If (at_home)
-					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini, %File%,1
-			else
-					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\Config.ini, %File%,1
-		Debug_Log_Event("File_Create() ......" File)
-		return ErrorLevel
-	}
-
-
-
-	Install_Requied_Files_Root( File_Install_Work_Folder, At_home:= 0)
-	{
-		If (at_home)
-					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
-					else
-					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
-		return errorlevel
-	}
-
-	Install_Requied_Files_Icons( File_Install_Work_Folder, at_home := 0)
-	{
-		Problems = 0
-		If (at_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
-		else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
-		If (Errorlevel)
-			Problems = 1
-
-		if (At_home)
-				FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
-		else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
-
-		If (Errorlevel)
-			Problems = 1
-
-		return Problems
-	}
-
-	Install_Requied_Files_Images( File_Install_Work_Folder, at_home := 0)
-	{
-		Problems = 0
-		if (At_home)
-					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
-					else
-					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
-		If (Errorlevel)
-			Problems = 1
-
-		If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
-		else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
-		If (Errorlevel)
-			Problems = 1
-		If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
-		else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
-		If (Errorlevel)
-			Problems = 1
-		If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
-		else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
-		If (Errorlevel)
-			Problems = 1
-		If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
-		else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
-		If (Errorlevel)
-			Problems = 1
-		If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
-		else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
-		If (Errorlevel)
-			Problems = 1
-		If (At_home)
-		FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
-		else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
-		If (Errorlevel)
-			Problems = 1
-		If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
-		else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
-		If (Errorlevel)
-			Problems = 1
-
-			If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
-		else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
-		If (Errorlevel)
-			Problems = 1
-
-		return Problems
-	}
-
-	/*
-	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Below is the Create_Tray_Menu funciton along with the functions it solely calls to .\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-	*/
-
-	Create_Tray_Menu()
-	{
-		Menu, Tray, NoStandard
-		Menu, Tray, Add, How to use, HowTo
-		Menu Tray, Add, Check For update, Versioncheck
-		Menu, Tray, Add, Quit, Quitapp
-		return
-	}
-
-
-	Howto()
-	{
-		splashtexton,,Effectivity Macro, Loading PDF
-		Run, C:\SerialMacro\How to use Effectivity Macro.pdf
-		sleep(20)
-		SplashTextOff
-		return
-	}
-
-	Quitapp:
-	{
-		Result := 	Move_Message_Box("262148","Quit " Effectivity_Macro, "Are you sure you want to quit?")
-
-		If result =  Yes
-		{
-			Stopactcheck = 1
-			Gui 1: -AlwaysOnTop
-			Gui_Image_Show("Stopped") ; Options are Start, Paused, Running, Stopped
-			Gui, Submit, NoHide
-			Send {Shift Up}{Ctrl Up}
-			breakloop = 1
-			ExitApp
-		}
-		Return
-	}
-
-	/*
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Below is the Create_Main__gui_Menu funciton along with the functions it solely calls to .\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
@@ -1897,10 +2056,11 @@ return
 	Move_Message_Box(Msg_box_type,Msg_box_title, Msg_box_text, Msg_box_Time := 2147483 )
 	{
 		global
+		   Gui 1: -AlwaysOnTop
 		activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
 		Settimer, winmovemsgbox, 20
 		MsgBox, % Msg_box_type , %Msg_box_title% , %Msg_box_text% , %Msg_box_time%
-
+  Gui 1: +AlwaysOnTop
 		IfMsgBox yes
 		Result = Yes
 		IfMsgBox no
@@ -1946,8 +2106,8 @@ return
 				aWidth  := (curMonRight  - curMonLeft) /2
 				ay     := curMonTop
 				ax      := curMonLeft
-				ax 		:= aWidth/2 + ax
-				ay		:= aHeight/2 + ay
+				ax 		:= (aWidth / 2) - (ax / 2)
+				ay		:= (aHeight / 2) - (ay / 2)
 				;msgbox, ax is %ax% `n ay is %ay% `n aheight is %aHeight% `n awidth is %aWidth%
 				return
 			}}}
@@ -2056,9 +2216,11 @@ return
 
 			sleep(Amount := 1)
 			{
+				ListLines off
 				amount := amount * 100
 				Sleep %Amount%
-				Return
+ListLines on
+Return
 			}
 
 
@@ -2293,70 +2455,6 @@ return
 }
 
 
-				Load_ini_file(Configuration_File_Location)
-				{
-					global
-					Ini_var_store_array:= Object()
-					Tab_placeholder  =
-					loop,read,%inifile%
-					{
-						If A_LoopReadLine =
-						continue
-
-						if regexmatch(A_Loopreadline,"\[(.*)?]")
-						{
-							Section :=regexreplace(A_loopreadline,"(\[)(.*)?(])","$2")
-							StringReplace, Section,Section, %a_space%,,All
-
-							If Tab_PLaceholder =
-							{
-								Tab_placeholder := Section
-							}
-							Else
-								Tab_placeholder := Tab_placeholder "|" Section
-
-							continue
-						}
-
-						else if A_LoopReadLine !=
-						{
-							StringGetPos, keytemppos, A_LoopReadLine, =,
-							StringLeft, keytemp, A_LoopReadLine,%keytemppos%
-							StringReplace, keytemp,keytemp,%A_SPace%,,All
-							INIstoretemp := Keytemp ":" Section
-							Ini_var_store_array.Insert(INIstoretemp)
-							IniRead,%keytemp%, %inifile%, %Section%, %keytemp%
-						}}
-
-					return
-				}
-
-				Write_ini_file(Configuration_File_Location)
-				{
-					global
-
-					for index, element in Ini_var_store_array
-					{
-					StringSplit, INI_Write,element, `:
-
-					Varname := INI_Write1
-					IniWrite ,% %INI_Write1%, %inifile%, %INI_Write2%, %INI_Write1%
-				}
-			return
-		}
-
-		Debug_Log_Event(Event)
-		{
-			global Log_Events
-
-			If (Log_Events)
-			{
-			OutputDebug, %Event%
-			Sleep(.5)
-
-	}
-	return
-}
 
 
 
