@@ -4,7 +4,7 @@
 #Include Unit_testing\JUnit.ahk
 #Include Unit_testing\OutputDebug.ahk
 
-Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug).Test(Folder_Function_Check, File_Function_Check,INI_File_Function_Tests,temp_File_Functions_Check,Macro_Update_Check_Functions,Formatting_Functions_Check,Editfield_Control,Exit_program,Preformat_Text, Remove_Formatting)
+Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug).Test(Folder_Function_Check, File_Function_Check,INI_File_Function_Tests,temp_File_Functions_Check,Macro_Update_Check_Functions,Formatting_Functions_Check,Editfield_Control,Exit_program,Preformat_Text, Remove_Formatting,Macro_Running)
 
 class Folder_Function_Check
 {
@@ -208,6 +208,16 @@ class Config_File_Create
 
                     class Formatting_Functions_Check
 											{
+												class _Integration_Testing
+												{
+													Format_Serial_Function_test()
+													{
+														Test_data := "621s (SN: TRD00123, TRD00124-00165, TRD00001-00002, CHU00001-00002, CHU00003-00005)"
+														Correct_answer := "TRD00123-00123,`nTRD00124-00165,`nTRD00001-00002,`nCHU00001-00002,`nCHU00003-00005,`n"
+													result := Format_Serial_Functions(test_data, "1")
+													Yunit.assert(Result == Correct_answer, "Did not format correctly")
+												}}
+
 												class Combinecount
 												{
 												Combinecount()
@@ -616,3 +626,26 @@ Result := Remove_Formatting(Test_String)
 }
 
 
+class Macro_Running
+{
+	class Added_Serial_Count
+	{
+
+	_Positive_counting()
+{
+	Correct_answer = 5
+	Loop, 5
+	Result := Added_Serial_Count()
+		Yunit.assert( Result ==   Correct_answer )
+}
+
+	Negative_counting()
+{
+	Correct_answer = 0
+	Loop, 5
+	Result := Added_Serial_Count("-1")
+		Yunit.assert( Result ==   Correct_answer )
+}}
+
+
+}
