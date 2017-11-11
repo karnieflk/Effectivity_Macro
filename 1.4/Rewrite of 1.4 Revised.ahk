@@ -134,15 +134,15 @@ Create_Tray_Menu()
 Create_Main_GUI_Menu()
 
 editfield := Temp_File_Read(File_Install_Work_Folder,"TempAdd.txt")
-MsgBox, % editfield
+
 Temp_File_Delete(File_Install_Work_Folder,"TempAdd.txt")
 
 editfield2 := Temp_File_Read(File_Install_Work_Folder,"TempAdded.txt")
 Temp_File_Delete(File_Install_Work_Folder,"TempAdded.txt")
-MsgBox, % editfield2
+
 TotalPrefixes := Temp_File_Read(File_Install_Work_Folder,"TempAmount.txt")
 Temp_File_Delete(File_Install_Work_Folder,"TempAmount.txt")
-MsgBox, % TotalPrefixes
+
 If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null")
 {
 	editfield =
@@ -175,6 +175,12 @@ return
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Hotkeys \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
+
+^q::
+{
+   Exit_Program()
+   Return
+}
 
 
 ESC::
@@ -1239,55 +1245,6 @@ else
 Macro Timeout Functions and GUI
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
-   acmlong()
-   {
-      pause, off
-      Gui 1: +AlwaysOnTop
-      ;~ gosub, radio1h
-      Guicontrol,hide, Start
-      Guicontrol,hide, paused
-      Guicontrol,hide, paused
-      Guicontrol,hide, Stopped
-      Guicontrol,show, Running
-      Gui 1:Submit, NoHide
-	  GuiControlGet,sleep_delay,,editfield20
-	  IniWrite, %Sleep_Delay%, C:\Serialmacro\Settings.ini,sleep_delay,sleep_delay
-      Gui, 3:Destroy
-Double_Click(Applyx,Applyy)
-      if addtime = 0
-      {
-         Addtimetemp++
-         If addtimetemp = 2
-         {
-            Addtime = 1
-            Addtimetemp = 0
-            Return
-         }}
-      If addtime = 1
-      {
-         Addtimetemp++
-         If addtimetemp = 2
-         {
-            Addtime = 2
-            Addtimetemp = 0
-            Return
-         }}
-      If addtime = 2
-      {
-         Addtimetemp++
-         If addtimetemp = 2
-         {
-            Refreshrate /= 2
-            Addtimetemp = 0
-            addtime = 3
-            SplashTextOn,350,50,Refresh time reduced, Macro will refresh ACM every 10 Serials to help reduce the amount of timeouts from a slow ACM
-            sleep(50)
-            SplashTextOff
-            Return
-         }}
-
-      Return
-   }
 
 
 Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
@@ -1379,40 +1336,6 @@ Clear_ACM_Fields()
 return
 }
 
-
-Macrotimedout()
-{
-global Configuration_File_Location, Effectivity_Macro, editfield20, Time_code
-
-Load_ini_file(Configuration_File_Location)
-    activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-    ;msgbox, Prefix is %Guitextlocation%`n Serial is %Second_Effectivity_Numbers%-%Second_Effectivity_Numbers%`n Mod is %Modifier%
-   Gui, 3:Add, Picture, x0 y0 w385 h215 +0x4000000, C:\SerialMacro\background.png
-   gui, -alwaysontop
-   gui, 3:add, Text, x10 y10 w360  h20 BackgroundTrans,  The delay is most likely due to one of the following:
-   gui, 3:add, Text, xp yp+21 w360  h20 BackgroundTrans,  - The Eng Model needs to be manually added with the drop down menu.
-   gui, 3:add, Text, xp yp+21 w360  h20 BackgroundTrans,  - Effectivity # Does not Exist in ACM
-   gui, 3:add, Text, xp yp+21 w360  h20 BackgroundTrans,  - ACM is running slow
-   gui, 3:add, Text, xp yp+21 w360  h20 BackgroundTrans,  - Something bad happened and the effectivity page is no more.
-
-   gui, 3:add, Text, xp yp+21 w360  h40 BackgroundTrans,  Please press the one of the buttons below after you Idenitify the cause. This action will reflect in the Effectivity Added Screen.
-   gui, 3:add, Button, xp+1 yp+45 w80 h50 BackgroundTrans gMultiple_Eng_Model_Check_Add,  More than one Engineering Model
-   gui, 3:add, Button, xp+90 yp w80 h50 BackgroundTrans gSerialnogo,  Effectivity Does Not Exist
-   gui, 3:add, Button, xp+90 yp w80 h50 BackgroundTrans gacmlong,  ACM Took to long
-   gui, 3:add, Button, xp+90 yp w80 h50 BackgroundTrans  gAnarchy,  Something else happened :(
-    Gui, 3:add, Text, xp-270 yp+55, ACM Delay (10 = 1 second):
-   Gui, 3:add, Edit, xp+140 yp-3 w30 veditfield20 gsavevalue, %Sleep_Delay%
-   Gui, 3:add, Text, xp+35 yp+3, <-- Make this Value Higher if Acm is running slow
-   Gui, 3:Show, x%amonx% y%amony%, Macro Timed Out %Effectivity_Macro%
-   Guicontrol,3:, editfield20, %Sleep_Delay%
-   Gui_Image_Show("Pause")
-   Gui, Submit, NoHide
-   gui, 3: +alwaysontop
-   Pausescript()
-
-   MsgBox, %Time_code%
-   return
-}
 
 
 /*
@@ -1677,59 +1600,65 @@ Wait_For_Shift_Mouse_Click()
 
 Get_Add_Button_Screen_Position(ByRef X_Location, ByRef Y_Location)
 {
-
-	Textaddbutton = Please Shift + mouse button click on the "Add Button" in the ACM effectivity screen to get its position.
-	ToolTip, Please Shift + mouse button click on the "Add Button" in the ACM effectivity screen to get its position.
-
-   ;~ SetTimer, ToolTipTimerbutton, 10  ;timer routine will occur every 10ms..
+   SetTimer, ToolTipTimerbutton, 10  ;timer routine will occur every 10ms..
 
 Wait_For_Shift_Mouse_Click()
 
    MouseGetPos, X_Location, Y_Location
 sleep()
-   ;~ SetTimer, ToolTipTimerbutton,Off
-   Textaddbutton =
+   SetTimer, ToolTipTimerbutton,Off
    Tooltip,
    return
 }
 
+ToolTipTimerbutton:
+{
+   tooltip, Please Shift + mouse button click on the "Add Button" in the ACM effectivity screen to get its position.
+   Return
+}
+
+
 Get_Prefix_Button_Screen_Position(ByRef X_Location, ByRef Y_Location)
 {
-
-Textprefixbutton = Please Shift + mouse button click in the "prefix" edit field in the ACM effectivity screen to get it's location.
-ToolTip Please Shift + mouse button click in the "prefix" edit field in the ACM effectivity screen to get it's location.
-
-   ;~ settimer, ToolTipTimerprefix,10
+   settimer, ToolTipTimerprefix,10
 
 Wait_For_Shift_Mouse_Click()
 
    MouseGetPos, X_Location, Y_Location
 sleep()
-    ;~ settimer, ToolTipTimerprefix,Off
-   Textprefixbutton =
+    settimer, ToolTipTimerprefix,Off
    Tooltip,
    return
+}
+
+ToolTipTimerprefix:
+{
+ToolTip, Please Shift + mouse button click in the "prefix" edit field in the ACM effectivity screen to get it's location.
+   Return
 }
 
 
 Get_Apply_Button_Screen_Position(ByRef X_Location, ByRef Y_Location)
 {
 
-Textapplybutton = Please Shift + mouse button click on the "Apply button" in the ACM effectivity screen to get it's location.
-ToolTip, Please Shift + mouse button click on the "Apply button" in the ACM effectivity screen to get it's location.
-
-   ;~ SetTimer, ToolTipTimerapply, 10  ;timer routine will occur every 10ms..
+   SetTimer, ToolTipTimerapply, 10  ;timer routine will occur every 10ms..
 
 Wait_For_Shift_Mouse_Click()
 
    MouseGetPos, X_Location, Y_Location
 sleep()
-   ;~ SetTimer, ToolTipTimerapply,Off
+   SetTimer, ToolTipTimerapply,Off
    Textapplybutton =
    Tooltip,
    return
 }
 
+
+ToolTipTimerapply:
+{
+ToolTip, Please Shift + mouse button click on the "Apply button" in the ACM effectivity screen to get it's location.
+   Return
+}
 
 /*
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
