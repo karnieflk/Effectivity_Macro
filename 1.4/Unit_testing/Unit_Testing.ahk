@@ -8,7 +8,7 @@ Yunit.Use(YunitWindow, YunitJUnit, YunitOutputDebug).Test(Folder_Function_Check,
 
 class Folder_Function_Check
 {
-	class Folder_Create
+	class Folder_Create 
 	{
 	Folder_Create()
 	{
