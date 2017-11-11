@@ -26,6 +26,17 @@ else
 At_home = 1
 
 
+/*
+
+TODO ************************
+Setup the Export to Excel. - Make it into a CSV file so that is works faster
+Create more unit tests
+Create Testing scripts
+
+
+
+*/
+
 ;~ #include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
 /*
 ****************************************************************************************************************************************************
@@ -203,7 +214,7 @@ return
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
-	Folder_Exist_Check(Folder)
+	Folder_Exist_Check(Folder) ; unit
 	{
 		Result := FileExist(Folder)
 		If Result =
@@ -216,7 +227,7 @@ return
 		return  Folder " - " Result
 	}
 
-	Folder_Create(Folder)
+	Folder_Create(Folder) ; unit
 	{
 		FileCreateDir, %Folder%
 
@@ -226,7 +237,7 @@ return
 	}
 
 
-	Config_File_Check(File)
+	Config_File_Check(File) ;unit
 	{
 		Result := FileExist(File)
 		If Result =
@@ -237,7 +248,7 @@ return
 		return File " - "  Result
 	}
 
-	Config_File_Create(File, At_home:= 0)
+	Config_File_Create(File, At_home:= 0) ; unit
 	{
 			If (at_home)
 					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini, %File%,1
@@ -249,7 +260,7 @@ return
 
 
 
-	Install_Requied_Files_Root( File_Install_Work_Folder, At_home:= 0)
+	Install_Requied_Files_Root( File_Install_Work_Folder, At_home:= 0) ; no unit testing as functions have built in error checking
 	{
 		If (at_home)
 					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
@@ -258,7 +269,7 @@ return
 		return errorlevel
 	}
 
-	Install_Requied_Files_Icons( File_Install_Work_Folder, at_home := 0)
+	Install_Requied_Files_Icons( File_Install_Work_Folder, at_home := 0)  ; no unit testing as functions have built in error checking
 	{
 		Problems = 0
 		If (at_home)
@@ -279,7 +290,7 @@ return
 		return Problems
 	}
 
-	Install_Requied_Files_Images( File_Install_Work_Folder, at_home := 0)
+	Install_Requied_Files_Images( File_Install_Work_Folder, at_home := 0)  ; no unit testing as functions have built in error checking
 	{
 		Problems = 0
 		if (At_home)
@@ -343,10 +354,7 @@ return
 	}
 
 
-
-
-
-				Load_ini_file(Configuration_File_Location)
+				Load_ini_file(Configuration_File_Location) ; unit
 				{
 					global
 
@@ -385,7 +393,7 @@ return
 					return
 				}
 
-				Write_ini_file(Configuration_File_Location)
+				Write_ini_file(Configuration_File_Location) ; unit
 				{
 					global
 
@@ -399,7 +407,7 @@ return
 			return
 		}
 
-		Debug_Log_Event(Event)
+		Debug_Log_Event(Event) ; no unit tesing
 		{
 			global Log_Events
 
@@ -419,7 +427,7 @@ return
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
-	Create_Tray_Menu()
+	Create_Tray_Menu() ; no unit tests
 	{
 		Menu, Tray, NoStandard
 		Menu, Tray, Add, How to use, HowTo
@@ -429,7 +437,7 @@ return
 	}
 
 
-	Howto()
+	Howto() ; no unit testing
 	{
 		splashtexton,,Effectivity Macro, Loading PDF
 		Run, C:\SerialMacro\How to use Effectivity Macro.pdf
@@ -438,7 +446,7 @@ return
 		return
 	}
 
-	Quitapp:
+	Quitapp: ; no unit testing
 	{
 		Result := 	Move_Message_Box("262148","Quit " Effectivity_Macro, "Are you sure you want to quit?")
 
@@ -461,9 +469,9 @@ return
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
-Copy_text_and_Format()
+Copy_text_and_Format() ; no unit test needed as it all the other functions are tested individually.
 {
-	Formatted_Text := Format_Serial_Functions() ; Goes to the Formatserials subroutine
+	Formatted_Text := Format_Serial_Functions(,Unit_Test) ; Goes to the Formatserials subroutine
 	Sort, Formatted_Text ; Sorts the prefixes in order
 	Guicontrol,,Radio1,1
 	Gui,Submit,NoHide
@@ -517,31 +525,27 @@ StringReplace, Editfield, Editfield, `,,,All
 Formatting functions
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
-Format_Serial_Functions(Fullstring := "")
+Format_Serial_Functions(Fullstring := "", Unit_test := 0) ; unit
 {
-	Clear_Format_Variables()
+	Clear_Format_Variables(unit_test)
 	newline = `n
 	sleep()
-	If (Unit_test) ; For testing
-	;~ Fullstring := "621s (SN: 8KD1-00663,8KD00669,8KD00825,TRD00123, TRD00124-00165, TRD"
+	If (Unit_test) && (FullString = "") ; For testing
 	Fullstring := "621s (SN: TRD00123, TRD00124-00165, TRD00001-00002, CHU00001-00002, CHU00003-00005)"
-	Else
+	Else if(!Unit_Test)
 		FullString := Copy_selected_Text()
+
 
 	If FullString = No_Text_Selected
 	{
 		Move_Message_Box("0","Error","Please ensure that text is selected before pressing Ctrl + 1.")
 		Exit
 	}
-
-
 	Format_Removed_Text := Remove_Formatting(Fullstring) ; Goes to the Remove_Formatting funciton and stores the completed result into the Format_Removed_Text varialbe
 		Debug_Log_Event("Format_Serials() Format_Removed_Text is " Format_Removed_Text)
 ;~ MsgBox, % "Format removed is " Format_Removed_Text
 	PreFormatted_Text := PreFormat_Text(Format_Removed_Text) ; Goes to the PreFormat_Text function and stors the completed result into the Preformatted_text variable
 	Debug_Log_Event("Format_Serials() PreFormatted_Text is " PreFormatted_Text)
-
-
 	PreFormatted_Text := Check_For_Single_Serials(PreFormatted_Text)
 Debug_Log_Event("Check_For_Single_Serials() PreFormatted_Text is " PreFormatted_Text)
 
@@ -554,7 +558,7 @@ Debug_Log_Event("add_digits() PreFormatted_Text is " PreFormatted_Text)
 
 
 
-Put_Formatted_Serials_into_Array(Formatted_Text)
+Put_Formatted_Serials_into_Array(Formatted_Text) ; unit
 {
 	Formatted_Array := Object()
 	Loop, Parse, Formatted_Text, `r`n
@@ -566,7 +570,7 @@ Put_Formatted_Serials_into_Array(Formatted_Text)
 	return Formatted_Array
 }
 
-Combineserials(Formatted_Serial_Array)
+Combineserials(Formatted_Serial_Array) ; unit
 {
 	Local Prefix_Combine_array := Object()
 
@@ -617,7 +621,7 @@ Combineserials(Formatted_Serial_Array)
 
 
 
-Extract_Serial_Array(Combined_Serial_Array)
+Extract_Serial_Array(Combined_Serial_Array) ; unit
 {
 	editfield =
 	For index, Element in  Combined_Serial_Array
@@ -629,7 +633,7 @@ Extract_Serial_Array(Combined_Serial_Array)
 	return Editfield
 }
 
-Formatted_Text_Serial_Count(Formatted_Text)
+Formatted_Text_Serial_Count(Formatted_Text) ; unit
 {
 	Serial_Counter = 0
 	Loop, Parse, Formatted_Text,`,
@@ -641,7 +645,7 @@ Formatted_Text_Serial_Count(Formatted_Text)
 	return Serial_Counter
 }
 
-Copy_selected_Text()
+Copy_selected_Text() ;Unit
 {
 	Clipboard =
 	Send ^c ; sends a control C to the computer to copy selected text
@@ -655,7 +659,7 @@ Copy_selected_Text()
 
 
 
-Check_For_Single_Serials(PreFormatted_Text)
+Check_For_Single_Serials(PreFormatted_Text) ; unit
 {
 	Loop, Parse, PreFormatted_Text, `,  ; loop to divide the Formatted_Text variable by the carraige returns
 	{
@@ -697,7 +701,7 @@ continue
 
 
 
-Combinecount(Prefix_Store_Array)
+Combinecount(Prefix_Store_Array) ; unit
 {
 	Prefixcombinecount = 0 ; Sets the Prefixcombinecount variable to 0
 
@@ -711,7 +715,7 @@ Combinecount(Prefix_Store_Array)
 	return Prefixcombinecount
 }
 
-One_Up_All(Serial_Store_Array)
+One_Up_All(Serial_Store_Array) ; unit
 {
 	One_Up_Prefix_array := Object()
 	Length:= Serial_Store_Array.length()
@@ -733,25 +737,25 @@ One_Up_All(Serial_Store_Array)
 
 
 
-Extract_Prefix(Serial_Number)
+Extract_Prefix(Serial_Number) ; unit
 {
 	StringMid, Prefix_Store, Serial_Number, 1, 3 ; Gets the prefix letters and stores them for later reuse
 	return Prefix_Store
 }
 
-Extract_First_Set_Of_Serial_Number(Serial_Number)
+Extract_First_Set_Of_Serial_Number(Serial_Number) ; unit
 {
 	Stringmid, First_Half_Serial_Num,Serial_Number,4,5 ; takes the numbers after teh prefix and stores them into String%Counting%number variable
 	return First_Half_Serial_Num
 }
 
-Extract_Serial_Dividing_Char(Serial_Number)
+Extract_Serial_Dividing_Char(Serial_Number) ; unit
 {
 	Stringmid, Check_Char,Serial_Number,9,1 ; takes the next char after the first half of the serial numbers
 	return Check_Char
 }
 
-Extract_Second_Set_Of_Serial_Number(Serial_Number)
+Extract_Second_Set_Of_Serial_Number(Serial_Number) ; unit
 {
 	Stringmid, Second_Half_Serial_Num,Serial_Number,10,5
 	return Second_Half_Serial_Num
@@ -759,7 +763,7 @@ Extract_Second_Set_Of_Serial_Number(Serial_Number)
 
 
 
-Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
+Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0) ; unit
 {
 	static Serial_Combine_Array := Object()
 
@@ -810,7 +814,7 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 
 
 
-	Remove_Formatting(Selected_Text)
+	Remove_Formatting(Selected_Text) ; unit
 	{
 		StringReplace, Selected_Text,Selected_Text,`n,,All
 		StringReplace, Selected_Text,Selected_Text,`r,,All
@@ -827,7 +831,7 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 	}
 
 
-	PreFormat_Text(Format_Removed_Text)
+	PreFormat_Text(Format_Removed_Text) ; unit
 	{
 		;Loops Format_Removed_Text variable to clean up the all the entereed text. Removes carriage returns with parse, removes any spaces, changes the ) to double ,
 		; Changes 1-up to nothing, changes -up to 999999, changes ), to nothing
@@ -853,7 +857,7 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 			Return Full_Text
 	}
 
-	Prefix_Alone_Check_And_Add_One_UP(Text)
+	Prefix_Alone_Check_And_Add_One_UP(Text) ; unit
 	{
 ;~ MsgBox, % "Test is `n" text
 		Loop, parse, Text, `,
@@ -898,7 +902,7 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 	}
 
 
-	add_digits(Serial_Number)
+	add_digits(Serial_Number) ; unit
 	{
 ;~ MsgBox, % "Serial is "Serial_Number
 			Final_Combined_Digits =
@@ -931,21 +935,14 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 	}
 
 
-	Clear_Format_Variables()
+	Clear_Format_Variables(unit_test) ; unit no need
 	{
 		global
 		;Clear the variables
-		Clipboard5 =
-		FullString =
-		Checkers =
 		Clipboard =
-		Clipboard1 =
-		Checkeend  =
 		Editfield =
-		Parseclip =
+		If (!Unit_Test)
 		Guicontrol,, Editfield, %Editfield%
-		formatfound =
-		Stringthree =
 		return
 	}
 
@@ -957,14 +954,14 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0)
 ENter Serias Section
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
-Enter_Serials_Variable_Setup()
+Enter_Serials_Variable_Setup() ; no unit testing needed
 {
 	global
    Prefixcount = 5
      StartTime := A_TickCount
  }
 
-Start_Macro()
+Start_Macro() ; no unit testing needed as all contained functions are tested
 {
 	global
 	GuiControlGet,Editfield
@@ -973,9 +970,7 @@ If Editfield =
 Move_Message_Box("0","We Got A Problem","Oops! `nThere is no effectivity to input.`n`nPlease select the effectivity and press Ctrl +1. `nThank You!")
 Exit
 }
-
-; Initial setup before the macro starts to output to the screen
-      Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
+Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
  Enter_Serials_Variable_Setup()
 Move_Message_Box("262144","Select ACM Screen","Click on the ACM window that you want to add effectivity to and then press the OK button`n`nNote that is the window is not full screen, the macro will make it full screen to increase macro reliability. ")
 sleep(5)
@@ -1129,7 +1124,7 @@ Serial_count := Added_Serial_Count()
    return
    }
 
-	Double_Click(x,y)
+	Double_Click(x,y) ; no unit test needed
 	{
 Click %x%, %y%
 Click %x%, %y%
@@ -1172,7 +1167,7 @@ Double_Click(Applyx,Applyy)
 }
 
 
-	Create_Dual_Instructions_GUI()
+	Create_Dual_Instructions_GUI() ; no unit test needed
 	{
 	activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
 Gui 70:Add,Text,, Select an engeering model
@@ -1181,7 +1176,7 @@ gui, 70: +AlwaysOnTop
 Gui 70: Flash
 return
 }
-Added_Serial_Count(Add_Or_Subtract := "1")
+Added_Serial_Count(Add_Or_Subtract := "1") ; unit
 {
 	static Add_Count
 	Add_count += %Add_Or_Subtract%
@@ -1343,7 +1338,7 @@ return
 Supporting Functions
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
-milli2hms(milli, ByRef hours=0, ByRef mins=0, ByRef secs=0, secPercision=0)
+milli2hms(milli, ByRef hours=0, ByRef mins=0, ByRef secs=0, secPercision=0) ; no unit testing needed
 {
    SetFormat, FLOAT, 0.%secPercision%
    milli /= 1000.0
@@ -1358,7 +1353,7 @@ milli2hms(milli, ByRef hours=0, ByRef mins=0, ByRef secs=0, secPercision=0)
    return hours . ":" . mins . ":" . secs
 }
 
-Win_check(Active_ID)
+Win_check(Active_ID) ; no unit test needed
 {
 WinGetTitle, Title, ahk_id %Active_ID%
    IfWinNotActive , %Title%
@@ -1372,7 +1367,7 @@ WinGetTitle, Title, ahk_id %Active_ID%
 }
 
 
-checkforactivity()
+checkforactivity() ; no unit test needed
 {
 	global breakloop, Active_ID
    while A_TimeIdlePhysical < 4999 ; meaning there has been user activity
@@ -1432,7 +1427,7 @@ return Serial_Number
 }
 
 
-   SerialFullScreen(Active_ID)
+   SerialFullScreen(Active_ID) ; no unit test needed
    {
       WinGetPos, Xarbor,yarbor,warbor,harbor, ahk_id %Active_ID%
       CurrmonAM := GetCurrentMonitor()
@@ -1461,7 +1456,7 @@ return Serial_Number
       return
    }
 
-GetCurrentMonitor()
+GetCurrentMonitor() ; no unit test needed
 {
    SysGet, numberOfMonitors, MonitorCount
    WinGetPos, winX, winY, winWidth, winHeight, A
@@ -1588,7 +1583,7 @@ Comma_Check(Effectivity_Macro)
 }
 
 
-Wait_For_Shift_Mouse_Click()
+Wait_For_Shift_Mouse_Click() ; no unit test needed
 {
 
    Keywait, Shift,D
@@ -1598,7 +1593,7 @@ Wait_For_Shift_Mouse_Click()
 }
 
 
-Get_Add_Button_Screen_Position(ByRef X_Location, ByRef Y_Location)
+Get_Add_Button_Screen_Position(ByRef X_Location, ByRef Y_Location) ; no unit test needed
 {
    SetTimer, ToolTipTimerbutton, 10  ;timer routine will occur every 10ms..
 
@@ -1618,7 +1613,7 @@ ToolTipTimerbutton:
 }
 
 
-Get_Prefix_Button_Screen_Position(ByRef X_Location, ByRef Y_Location)
+Get_Prefix_Button_Screen_Position(ByRef X_Location, ByRef Y_Location) ; no unit test needed
 {
    settimer, ToolTipTimerprefix,10
 
@@ -1638,7 +1633,7 @@ ToolTip, Please Shift + mouse button click in the "prefix" edit field in the ACM
 }
 
 
-Get_Apply_Button_Screen_Position(ByRef X_Location, ByRef Y_Location)
+Get_Apply_Button_Screen_Position(ByRef X_Location, ByRef Y_Location) ; no unit test needed
 {
 
    SetTimer, ToolTipTimerapply, 10  ;timer routine will occur every 10ms..
@@ -1666,7 +1661,7 @@ ToolTip, Please Shift + mouse button click on the "Apply button" in the ACM effe
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
-	Create_Main_GUI_Menu()
+	Create_Main_GUI_Menu() ; no unit test needed
 	{
 		Menu, BBBB, Add, &Check For Update , Versioncheck
 		Menu, BBBB, Add, &Options, OptionsGui
@@ -1692,7 +1687,7 @@ ToolTip, Please Shift + mouse button click on the "Apply button" in the ACM effe
 		{
 			gosub, radio_button
 			Gui 1: -AlwaysOnTop
-			Gui_Image_Show("Paused") ; Options are Start, Paused, Running, Stopped
+			Gui_Image_Show("Pause") ; Options are Start, Pause, Run, Stop
 			Gui, Submit, NoHide
 			Loop, 4
 			{
@@ -1703,14 +1698,14 @@ ToolTip, Please Shift + mouse button click on the "Apply button" in the ACM effe
 			Return
 		}else  {
 			Gui 1: +AlwaysOnTop
-			Gui_Image_Show("Running") ; Options are Start, Paused, Running, Stopped
+			Gui_Image_Show("Run") ; Options are Start, Pause, Run, Stop
 			Gui, Submit, NoHide
 			Pause, toggle, 1
 		}
 		return
 	}
 
-	Exit_Program(Unit_Test := 0)
+	Exit_Program(Unit_Test := 0) ; unit
 	{
 		global Serialcount
 		Result := Move_Message_Box("262148",Effectivity_Macro, " The number of successful Serial additions to ACM is %Serialcount% `n`n Are you sure you want to Quit the macro?.`n`n Press YES to Quit the Macro.`n`n No to keep going.")
@@ -1744,17 +1739,16 @@ SetTimer, Clickno, Off
 return
 }
 
-	restart_macro()
+	restart_macro() ; no unit test needed
 	{
 		Result := Move_Message_Box("262148",Effectivity_Macro, "Are you sure that you want to reload the program?" )
-
 		If Result =  yes
 		Reload
 
 		return
 	}
 
-	restart_macro_Effectivity()
+	restart_macro_Effectivity() ; no unit test needed
 	{
 		global nextserialtoadd, EditField, EditField2,reloadprefixtext,serialsentered
 
@@ -1790,7 +1784,7 @@ return
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
-	Serials_GUI_Screen(editfieldamount, editfield2amount, TotalPrefixestemp)
+	Serials_GUI_Screen(editfieldamount, editfield2amount, TotalPrefixestemp) ; no unit test needed
 	{
 		Global
 
@@ -1859,7 +1853,7 @@ return
 		return
 	}
 
-	Editfield_Control(Textbox, Gui_Number := 1)
+	Editfield_Control(Textbox, Gui_Number := 1) ; unit
 	{
       global editfield, editfield2
 
@@ -1879,8 +1873,8 @@ return
 
 	Gui_Image_Show(Image)
 	{
-		global
-		If ( image = "Paused")
+		global paused, Starting, Stopped, Running
+		If ( image = "Pause")
 		{
 			Guicontrol,show, paused
 			Guicontrol,hide, Starting
@@ -1888,14 +1882,14 @@ return
 			Guicontrol,hide, Running
 		}
 
-		If (image = "Running")
+		If (image = "Run")
 		{
 			Guicontrol,Show, Running
 			Guicontrol,Hide, paused
 			Guicontrol,hide, Stopped
 			Guicontrol,hide, Starting
 		}
-		If (image = "Stopped")
+		If (image = "Stop")
 		{
 			Guicontrol,Show, Stopped
 			Guicontrol,hide, Starting
@@ -1913,7 +1907,7 @@ return
 	}
 
 
-	Temp_File_Read(File_Install_Root_Folder,File_Name)
+	Temp_File_Read(File_Install_Root_Folder,File_Name) ; unit
 	{
 		IfExist, %File_Install_Root_Folder%\%File_Name%
 		{
@@ -1927,7 +1921,7 @@ return
 		return Variable_Store
 	}
 
-	Temp_File_Delete(File_Install_Root_Folder,File_Name)
+	Temp_File_Delete(File_Install_Root_Folder,File_Name) ; unit
 	{
 		IfExist, %File_Install_Root_Folder%\%File_Name%
 		{
@@ -1940,7 +1934,7 @@ return
 			return  File_Name " - File Not Exist"
 	}
 
-	Move_Message_Box(Msg_box_type,Msg_box_title, Msg_box_text, Msg_box_Time := 2147483 )
+	Move_Message_Box(Msg_box_type,Msg_box_title, Msg_box_text, Msg_box_Time := 2147483 ) ; no unit test needed
 	{
 		global
 		   Gui 1: -AlwaysOnTop
@@ -1979,7 +1973,7 @@ return
 		return
 	}
 
-	activeMonitorInfo( ByRef aX, ByRef aY, ByRef aWidth,  ByRef  aHeight, ByRef mouseX, ByRef mouseY  )
+	activeMonitorInfo( ByRef aX, ByRef aY, ByRef aWidth,  ByRef  aHeight, ByRef mouseX, ByRef mouseY  ) ; no unit test needed
 	{
 		CoordMode, Mouse, Screen
 		MouseGetPos, mouseX , mouseY
@@ -1999,7 +1993,7 @@ return
 				return
 			}}}
 
-			SerialbreakquestionGUI()
+			SerialbreakquestionGUI() ; no unit test needed
 			{
 				global createexcel
 				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
@@ -2017,16 +2011,18 @@ return
 				return
 			}
 
-			Pausescript()
+			Pausescript() ; no unit test needed
 			{
 				Menu,Tray,Icon, % "C:\Serialmacro\icons\paused.ico", ,1
+				Gui_Image_Show("Pause")
 				Pause,on
 				Return
 			}
 
-			UnPausescript()
+			UnPausescript() ; no unit test needed
 			{
 				Menu,Tray,Icon, % "C:\Serialmacro\icons\Serial.ico", ,1
+				Gui_Image_Show("Run")
 				Pause,off
 				Return
 			}
@@ -2064,7 +2060,7 @@ return
 				Return
 			}
 
-			aboutmacro()
+			aboutmacro() ; no unit test needed
 			{
 				global File_Install_Work_Folder, Program_Location_Link, Effectivity_Macro
 				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
@@ -2087,13 +2083,13 @@ return
 				return
 			}
 
-			emaillink()
+			emaillink() ; no unit test needed
 			{
 				Run,  mailto:Karnia_Jarett_S@cat?Subject=Effectivity Macro
 				return
 			}
 
-			boxlink()
+			boxlink() ; no unit test needed
 			{
 				global Program_Location_Link
 				Run, %Program_Location_Link%
@@ -2101,7 +2097,7 @@ return
 			}
 
 
-			sleep(Amount := 1)
+			sleep(Amount := 1) ; no unit test needed
 			{
 				ListLines off
 				amount := amount * 100
@@ -2111,14 +2107,20 @@ Return
 			}
 
 
-			Calculate_Days_Since_Last_Update(Last_Update)
+	/*
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Update macro functions  .\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	*/
+
+			Calculate_Days_Since_Last_Update(Last_Update) ; unt
 			{
 				Today := A_Now		; Set to the current date first
 				EnvSub, Today, %Last_Update%, Days 	; this does a date calc, in days
 				Return Today
 			}
 
-			Versioncheck()
+			Versioncheck() ; no unit test needed
 			{
 				global Checkversion,Version_Number, Configuration_File_Location
 
@@ -2131,21 +2133,15 @@ Return
 				create_checkgui(hwnd, ParentGUI, wb)
 				Progress,  w200, Updating..., Fetching Server Information, Effectivity Macro Updater
 				Progress, 15
-
 				DllCall("SetParent", "uint",  hwnd, "uint", ParentGUI)
 				wb.Visible := True
 				WinSet, Style, -0xC00000, ahk_id %hwnd%
-
 				Progress, 25
 				sleep(2)
-				;~ MsgBox, %Update_Check_URL%
-				;~ Update_Check_URL := "https://docs.google.com/document/d/1woiaqcTjqkABrIecRERDAt6nqiEknFWdySqRmie7bCM/edit?usp=sharing"
 				wb.navigate(Update_Check_URL) ; Update_Check_url is from Config FIle
-
 				Progress,  w200, Updating...,Gathering Current Version From Server, Effectivity Macro Updater
 				Progress, 50
 				sleep(2)
-
 				while wb.busy
 				{
 					sleep()
@@ -2157,7 +2153,6 @@ Return
 				Doc_Title := Check_Doc_Title()
 
 				update_Version:=  Format_Serial_Check_Title(Doc_Title)
-;~ msgbox, Checkversion is %Checkversion%
 				If update_Version = Not_Found
 				{
 					Progress,  w200,Updating..., Error Occured. Update Not Able To Complete, Effectivity Macro Updater
@@ -2175,7 +2170,6 @@ Return
 					sleep(10)
 					Progress, off
 					settimer, versiontimeout, Off
-					;Msgbox,,Serial Macro Updater,Macro is Up to date.
 				}
 
 				If update_Version > %Version_Number%
@@ -2208,7 +2202,7 @@ Return
 				return
 			}
 
-			Check_Doc_Title()
+			Check_Doc_Title() ; unit
 			{
 				Result = Not_Found
 				Loop, 3
@@ -2226,7 +2220,7 @@ Return
 					return Result
 				}
 
-				Format_Serial_Check_Title(Title)
+				Format_Serial_Check_Title(Title) ; unit
 				{
 					If Title != Not_Found
 					{
@@ -2240,7 +2234,7 @@ Return
 				}
 
 
-				create_checkgui(ByRef hwnd, ByRef ParentGUI, ByRef wb)
+				create_checkgui(ByRef hwnd, ByRef ParentGUI, ByRef wb) ; no unit test needed
 				{
 					global
 					wb := ComObjCreate("InternetExplorer.Application")
