@@ -28,8 +28,8 @@ At_home = 1
 
 /*
 
-TODO  ************************
-Setup the Export to Excel. - Make it into a CSV file so that is works faster
+TODO ************************
+*** complete*** Setup the Export to Excel. - Make it into a CSV file so that is works faster
 Create more unit tests
 Create Testing scripts
 
@@ -187,6 +187,31 @@ return
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
+
+   Insert::
+   Pause::
+   {
+      if A_IsPaused = 0
+      {
+         Gui 1: -AlwaysOnTop
+         Gui, Submit, NoHide
+
+  Loop, 4
+	Move_Message_Box("262144", Effectivity_Macro,"Macro is paused. Press pause to unpause", ".1")
+
+	Move_Message_Box("262144", Effectivity_Macro,"Macro is paused. Press pause to unpause", "10")
+
+    Pausescript()
+         Return
+      }else  {
+       gosub, radio_button
+         Gui 1: +AlwaysOnTop
+UnPausescript()
+         Gui, Submit, NoHide
+      }
+      return
+   }
+
 ^q::
 {
    Exit_Program()
@@ -208,6 +233,53 @@ Copy_text_and_Format()
 return
 }
 
+$^Numpad2::
+$^2::
+{
+Start_Macro()
+return
+}
+
+#If Winactive("ahk_class TTAFrameXClass") or WinActive(Effectivity_Macro)
+Esc::
+{
+   Gosub,Stop_Macro
+   Return
+}
+
+#if winactive (Effectivity_Macro)
+;~ Esc::
+;~ {
+   ;~ Gosub,Stop_Macro
+   ;~ Return
+;~ }
+
+F1::
+{
+  HowTo()
+   Return
+}
+
+#if winactive ; stops the requirement for only the macro screen or acm
+
+
+
+Stop_Macro:
+{
+Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successful Serial additions to ACM is %Serialcount% `n`n Are you sure that you want to stop the macro?.`n`n Press YES to stop the Macro.`n`n No to keep going.")
+   If result =  yes
+   {
+      Stopactcheck = 1
+      Gui 1: -AlwaysOnTop
+	  Gui_Image_Show("Stop")
+      Gui, Submit, NoHide
+      Send {Shift Up}{Ctrl Up}
+      breakloop = 1
+      Exit
+   }
+   Else
+      Return
+}
 /*
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Below are the functions from the Autorun section Before it gets to Serials_GUI_Screen()i \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
@@ -454,7 +526,7 @@ return
 		{
 			Stopactcheck = 1
 			Gui 1: -AlwaysOnTop
-			Gui_Image_Show("Stopped") ; Options are Start, Paused, Running, Stopped
+			Gui_Image_Show("Stop") ; Options are Start, Paused, Running, Stopped
 			Gui, Submit, NoHide
 			Send {Shift Up}{Ctrl Up}
 			breakloop = 1
@@ -485,9 +557,9 @@ Copy_text_and_Format() ; no unit test needed as it all the other functions are t
 	/* for testing********
 	*/
 
-	;~ SerialbreakquestionGUI() ; Goes to the Serialsgui.ahk and into the SerialbreakquestionGUI subroutine
-	combine = 0
-	Oneupserial = 0
+	Checked := SerialbreakquestionGUI() ; Goes to the Serialsgui.ahk and into the SerialbreakquestionGUI subroutine
+	;~ combine = 0
+	;~ Oneupserial = 0
 
 	/*
 	Stop for testing
@@ -516,7 +588,7 @@ StringReplace, Editfield, Editfield, `,,,All
 	Guicontrol, Focus, Editfield ; Puts the cursor in the Editfield in teh Gui window
 	send {Ctrl Down}{Home}{Ctrl Up} ; sends keystrokes to move the cursor to the top of the listbox
 	Gui, Submit, NoHide ; Updates the Gui screen
-	;~ gosub, ExportSerials
+		gosub, Export_Serials
 	return
 }
 
@@ -949,6 +1021,60 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0) ; un
 
 
 
+
+
+Export_Serials:
+{
+if checked = 0
+Return
+
+Progress, b w200 ,,Creating CSV file (This may take a minute or two)
+Progress, 0
+
+Effectivitycount = 1
+WorkbookPath := A_Desktop "\Effectivity.CSV"    ; full path to your Workbook
+Loop
+{
+IfNotExist %WorkbookPath%
+Break
+
+IfExist %WorkbookPath%
+WorkbookPath := A_Desktop "\Effectivity" Effectivitycount ".CSV"    ; full path to your Workbook
+Effectivitycount++
+}
+
+
+FileAppend, Prefix`,Begin Serial`,End Serial`n,  %WorkbookPath%
+
+
+;msgbox, start export
+GuiControlGet, EditField
+
+
+Varcount = 0
+Loop, parse, Editfield, `n
+{
+Varcount++
+}
+
+Percent_complete := 100 / Varcount
+
+
+Loop, parse, Editfield, `n
+{
+	If A_LoopField contains - - - - - -
+		continue
+
+	Progress_total := Percent_Complete * A_Index
+	Progress,  %Progress_total%
+Prefix := Extract_Prefix(A_LoopField)
+First_Number_Set := Extract_First_Set_Of_Serial_Number(A_LoopField)
+Second_Number_Set := Extract_Second_Set_Of_Serial_Number(A_LoopField)
+FileAppend, %Prefix%`,%First_Number_Set%`,%Second_Number_Set%`n,  %WorkbookPath%
+}
+Progress, off
+Return
+}
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ENter Serias Section
@@ -2004,11 +2130,11 @@ return
 				Gui, 8:add, button, xp+50 yp+20 gcombinequstion, Combine
 				gui, 8:add, button, xp+75 yp gkeepseperated, Keep Seperated
 				gui, 8:add, button, xp+115 yp goneup, 1-UP all Effectivity
-				Gui, 8:Add, Checkbox, XP-190 yp+30 vcreateexcel, Export Excel file of Effectivity to Desktop (Effectivity.xlxs)
+				Gui, 8:Add, Checkbox, XP-190 yp+30 vcreateexcel, Export Effectivity to Excel file (Effectivity.CSV)
 				Gui, 8:show, x%amonx% y%amony% w400 h90
 				gui 8: +alwaysontop
 				Pausescript()
-				return
+				return checked
 			}
 
 			Pausescript() ; no unit test needed
@@ -2028,27 +2154,27 @@ return
 			}
 
 
-			oneup:
+			oneup()
 			{
 				UnPausescript()
 				GuiControlGet, checked,, createexcel
 				gui 1: +alwaysontop
 				Oneupserial = 1
 				Gui, 8:destroy
-				Return
+			Return Checked
 			}
 
-			combinequstion:
+			combinequstion()
 			{
 				UnPausescript()
 				GuiControlGet, checked,, createexcel
 				gui 1: +alwaysontop
 				Gui, 8:destroy
 				combine = 1
-				Return
+				Return Checked
 			}
 
-			keepseperated:
+			keepseperated()
 			{
 				UnPausescript()
 				GuiControlGet, checked,, createexcel
@@ -2057,7 +2183,7 @@ return
 				combine = 0
 				Oneupserial = 0
 
-				Return
+				Return Checked
 			}
 
 			aboutmacro() ; no unit test needed
