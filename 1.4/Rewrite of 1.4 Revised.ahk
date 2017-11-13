@@ -2,6 +2,16 @@
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir   %A_ScriptDir% ; Ensures a consistent starting directory.
+/*!
+	Library: Effectivity Macro
+		This macro Gets the user selected text from the CPI tool and enters it into ACM effectivity screen
+
+	Author: Jarett Karnia
+	Version: 2.0
+*/
+
+
+
 
 #KeyHistory 0
 SetBatchLines, -1
@@ -17,7 +27,8 @@ DetectHiddenText on
 #InstallKeybdHook
 #InstallMouseHook
 
-Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, sleepstill, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array
+
+Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array
 
 ; below is for testing between home and work computer
 If A_UserName = karnijs
@@ -286,7 +297,7 @@ Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successfu
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
-	Folder_Exist_Check(Folder) ; unit
+	Folder_Exist_Check(Folder) ; unit  && Documentation
 	{
 		Result := FileExist(Folder)
 		If Result =
@@ -297,19 +308,71 @@ Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successfu
 		Debug_Log_Event("Folder_Exist_Check() .... " Folder "..... Result is " Result)
 
 		return  Folder " - " Result
+
+/*!
+	Function: Folder_Exist_Check(Folder)
+			Checks to ensure that a folder exists on the users computer
+
+	Parameters:
+		Folder - This should contain the full file path of the folder
+					 >  Folder = C:\SerialMacro
+					>  Folder_Exist_Check(Folder)
+
+	Remarks:
+		Uses the AutoHotkey built in function of `FileExist()` to determing is the file is on the computer
+
+	Returns:
+		The Name of the *Folder* Variable - the *result*  Variable
+			> Folder := C:\SerialMacro
+		> Result := Folder_Exist_Check(Folder)
+		Result would be `C:\SerialMacro - Folder_Exist` if the folder **IS** on the C Drive  
+		Result would be `C:\SerialMacro - Folder_Not_Exist` if the folder was **NOT** on the C Drive
+		
+	Extra:
+		### Additional Information
+		For more information on the `FileExist()` function click on the link (Internet Connection Required) below:  
+		[FileExist()](https://autohotkey.com/docs/commands/FileExist.htm)
+*/
 	}
 
-	Folder_Create(Folder) ; unit
+	Folder_Create(Folder) ; unit && Documentation
 	{
 		FileCreateDir, %Folder%
 
 		Debug_Log_Event("Folder_Create() .... " Folder "..... Result is " Result)
 		sleep(5)
-		return ErrorLevel
+		return ErrorLevel		
+		
+/*!
+	Function:  Folder_Create(Folder)
+			Creates a folder the users computer
+
+	Parameters:
+		Folder - This should contain the full file path of the folder  
+					 >  Folder = C:\SerialMacro
+					>  Folder_Create(Folder)				
+					
+	Remarks:  
+		Uses the AutoHotkey built in function of `FileCreateDir` to create a folder
+
+	Returns:
+		The Errorlevel for the `FileCreateDir`  
+		> Folder := C:\SerialMacro  
+		> Result := Folder_Create(Folder)  
+		*Result* is 0 if the folder was created       
+		*Result* is 1 if the folder was not able to be created  
+		
+	Extra:
+		### Additional Information
+		For more information on the `FileCreateDir` function click on the link (Internet Connection Required) below:  
+		[FileCreateDir](https://autohotkey.com/docs/commands/FileCreateDir.htm)
+		
+	
+*/
 	}
 
 
-	Config_File_Check(File) ;unit
+	Config_File_Check(File) ;unit && Documentation
 	{
 		Result := FileExist(File)
 		If Result =
@@ -318,9 +381,36 @@ Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successfu
 			Result = File_Exist
 		Debug_Log_Event("File_Exist_Check() ......C:\SerialMacro\" File "..... Result is " Result)
 		return File " - "  Result
+		
+/*!
+	Function:  Config_File_Check(File)  
+			checks the  existance of  the config file  
+	
+	Parameters:
+		File - This should contain the full file path of the file   
+					 >  Config_File = C:\SerialMacro\Config.ini
+					>  Config_File_Check(Config_File)  
+
+	Remarks:
+		Uses the AutoHotkey built in function of `FileExist()` to check for the config file  
+
+	Returns:
+		The Name of the *File* Variable - the *result*  Variable  
+		>  Config_File = C:\SerialMacro\Config.ini  
+		>  REsult :=- Config_File_Check(Config_File)  
+		Result would be `C:\SerialMacro\Config.ini - File_Exist` if the file **IS** at the location specified in the *File* variable  
+		Result would be `C:\SerialMacro\Config.ini - File_Not_Exist` if the folder was **NOT**  location specified in the *File* variable	 
+		
+	Extra:
+		### Additional Information
+			For more information on the `FileExist()` function click on the link (Internet Connection Required) below:  
+			[FileExist()](https://autohotkey.com/docs/commands/FileExist.htm)
+*/
+
+
 	}
 
-	Config_File_Create(File, At_home:= 0) ; unit
+	Config_File_Create(File, At_home:= 0) ; unit && Documentation
 	{
 			If (at_home)
 					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini, %File%,1
@@ -328,20 +418,106 @@ Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successfu
 					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\Config.ini, %File%,1
 		Debug_Log_Event("File_Create() ......" File)
 		return ErrorLevel
+/*!
+	Function: 		Config_File_Create(File [, At_home:= 0])
+			Creates a config file on  the users computer at the location specified in the *File* variable
+
+	Parameters:
+		File - This should contain the full file path of the Config file
+					 >  File = C:\SerialMacro\config.ini
+					>  Config_File_Create(File)
+					
+	At_Home (Optional)-   0: **Default** if nothing is in that location on the function
+				> Config_File_Create(File)  
+				1:  Function will use the alternate Fileinstall location  
+				> Config_File_Create(File, "1")  
+
+
+	Remarks:
+		Uses the AutoHotkey built in function of `FileInstall` to combine a file with the compiled version of the program.  
+		The 'At_home' optional variable is here because I got tired of having errors when testing at home, and instead of having to change the orginal file location from  
+		> C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\Config.ini  
+		to  
+		> E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini  
+		when I was testing from home.   
+		I made it so that the program knows which computer I am on automatically. In the beginning of the program, I have the following code:
+		> If A_UserName = karnijs
+		> At_home = 0
+		> else
+		> At_home = 1
+		If I am on the work computer it will detect my username, or else it will be the home computer.   I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run. 
+
+	Returns:
+		The Errorlevel for the `Fileinstall` function
+			> Folder := C:\SerialMacro
+		> Result := Folder_Create(Folder)
+		*Result* is 0 if the folder was created   
+		*Result* is 1 if the folder was not able to be created
+		
+	Extra:
+		### Additional Information
+			For more information on the `FileInstall` function click on the link (Internet Connection Required) below:    
+			[FileInstall](https://autohotkey.com/docs/commands/FileInstall.htm)
+	
+*/
 	}
 
 
 
-	Install_Requied_Files_Root( File_Install_Work_Folder, At_home:= 0) ; no unit testing as functions have built in error checking
+	Install_Requied_Files_Root( File_Install_Work_Folder, At_home:= 0) ; no unit testing as functions have built in error checking && Documentation
 	{
 		If (at_home)
 					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
 					else
 					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
 		return errorlevel
+		
+/*!
+	Function: Install_Requied_Files_Root( File_Install_Work_Folder [, At_home:= 0])
+			Creates the How To Use PDF  file on  the users computer at the folder specifiec by the *File_Install_Work_Folder*
+
+	Parameters:
+		File_Install_Work_Folder - This should contain the full file path of the Root script working folder
+					 >  File_Install_Work_Folder = C:\SerialMacro
+					>  Function: Install_Requied_Files_Root( File_Install_Work_Folder)
+					
+	At_Home (Optional)-   0: **Default** tf nothing is in that location on the function
+				> Install_Requied_Files_Root( File_Install_Work_Folder)
+				1:  Function will use the alternate Fileinstall location  
+				> Install_Requied_Files_Root( File_Install_Work_Folder, "1")
+
+
+	Remarks:
+		Uses the AutoHotkey built in function of `FileInstall` to combine a file with the compiled version of the program.  
+		The 'At_home' optional variable is here because I got tired of having errors when testing at home, and instead of having to change the orginal file location from  
+		> C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files
+		to  
+		> E:\Git\Effectivity_Macro\1.4\Install_Files\
+		when I was testing from home.   
+		I made it so that the program knows which computer I am on automatically. In the beginning of the program, I have the following code:
+		> If A_UserName = karnijs
+		> At_home = 0
+		> else
+		> At_home = 1
+		If I am on the work computer it will detect my username, or else it will be the home computer.   I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run. 
+		
+
+	Returns:
+		The Errorlevel for the `Fileinstall` function
+			> File_Install_Work_Folder = C:\SerialMacro
+		> Result := Install_Requied_Files_Root( File_Install_Work_Folder)
+		*Result* is 0 if the file was created   
+		*Result* is 1 if the file was not able to be created
+		
+	Extra:
+		### Additional Information
+			For more information on the `FileInstall` function click on the link (Internet Connection Required) below:  
+			[FileInstall](https://autohotkey.com/docs/commands/FileInstall.htm)
+	
+*/
 	}
 
-	Install_Requied_Files_Icons( File_Install_Work_Folder, at_home := 0)  ; no unit testing as functions have built in error checking
+	Install_Requied_Files_Icons( File_Install_Work_Folder, at_home := 0)  ; no unit testing as functions have built in error checking && Documentation
 	{
 		Problems = 0
 		If (at_home)
@@ -360,9 +536,56 @@ Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successfu
 			Problems = 1
 
 		return Problems
+		
+/*!
+	Function: Install_Requied_Files_Icons( File_Install_Work_Folder [, at_home := 0]) 
+			Creates the icon  files on  the users computer at the folder specifiec by the *File_Install_Work_Folder*
+
+	Parameters:
+		File_Install_Work_Folder - This should contain the full file path of the Root script working folder
+					 >  File_Install_Work_Folder = C:\SerialMacro
+					>  Function: Install_Requied_Files_Icons( File_Install_Work_Folder)
+					
+	At_Home (Optional)-   0: **Default** tf nothing is in that location on the function
+				> Install_Requied_Files_Icons( File_Install_Work_Folder)
+				1:  Function will use the alternate Fileinstall location  
+				> Install_Requied_Files_Icons( File_Install_Work_Folder, "1")
+
+
+	Remarks:
+		Uses the AutoHotkey built in function of `FileInstall` to combine a file with the compiled version of the program.  
+		The 'At_home' optional variable is here because I got tired of having errors when testing at home, and instead of having to change the orginal file location from  
+		>  C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\serial.ico
+		>  C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\paused.ico
+		to  
+		> E:\Git\Effectivity_Macro\1.4\Install_Files\icons\serial.ico
+		> E:\Git\Effectivity_Macro\1.4\Install_Files\icons\paused.ico
+		when I was testing from home.   
+		I made it so that the program knows which computer I am on automatically. In the beginning of the program, I have the following code:
+		> If A_UserName = karnijs
+		> At_home = 0
+		> else
+		> At_home = 1
+		If I am on the work computer it will detect my username, or else it will be the home computer. I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run. 
+		
+
+	Returns:
+		The *Problems* variable  
+		If there is an issue and one of the files cannot be installed, the Errorlevel of the `Fileinstall` will trigger a `Problems = 1`
+			> File_Install_Work_Folder = C:\SerialMacro
+		> Result := Install_Requied_Files_Icons( File_Install_Work_Folder)
+		*Result* is 0 if the files were created   
+		*Result* is 1 if  at least one of the files was not able to be created
+		
+	Extra:
+		### Additional Information
+			For more information on the `FileInstall` function click on the link (Internet Connection Required) below:  
+			[FileInstall](https://autohotkey.com/docs/commands/FileInstall.htm)
+	
+*/
 	}
 
-	Install_Requied_Files_Images( File_Install_Work_Folder, at_home := 0)  ; no unit testing as functions have built in error checking
+	Install_Requied_Files_Images( File_Install_Work_Folder, at_home := 0)  ; no unit testing as functions have built in error checking && Documentation
 	{
 		Problems = 0
 		if (At_home)
@@ -423,6 +646,65 @@ Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successfu
 			Problems = 1
 
 		return Problems
+		
+/*!
+	Function: 	Install_Requied_Files_Images( File_Install_Work_Folder [, at_home := 0])
+			Creates the image  files on  the users computer at the folder specifiec by the *File_Install_Work_Folder*
+
+	Parameters:
+		File_Install_Work_Folder - This should contain the full file path of the Root script working folder
+					 >  File_Install_Work_Folder = C:\SerialMacro
+					>  Install_Requied_Files_Images( File_Install_Work_Folder)
+					
+	At_Home (Optional)-   0: **Default** tf nothing is in that location on the function
+				> Install_Requied_Files_Images( File_Install_Work_Folder)
+				1:  Function will use the alternate Fileinstall location  
+				> Install_Requied_Files_Images( File_Install_Work_Folder, "1")
+
+
+	Remarks:
+		Uses the AutoHotkey built in function of `FileInstall` to combine a file with the compiled version of the program.  
+		The 'At_home' optional variable is here because I got tired of having errors when testing at home, and instead of having to change the orginal file location from  
+		>   C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\red_image.png
+		>   C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\active_plus.png
+		>   C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\orange_button.png
+		>   C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\paused.png
+		>   C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Running.png
+		>   C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Stopped.png
+		>   C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\background.png
+		>   C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Issues_Image.png
+		to  
+		> ,E:\Git\Effectivity_Macro\1.4\Install_Files\images\red_image.png
+		> ,E:\Git\Effectivity_Macro\1.4\Install_Files\images\active_plus.png
+		> ,E:\Git\Effectivity_Macro\1.4\Install_Files\images\orange_button.png
+		> ,E:\Git\Effectivity_Macro\1.4\Install_Files\images\paused.png
+		> ,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Running.png
+		> ,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Stopped.png
+		> ,E:\Git\Effectivity_Macro\1.4\Install_Files\images\background.png
+		> ,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Issues_Image.png
+		when I was testing from home.   
+		I made it so that the program knows which computer I am on automatically. In the beginning of the program, I have the following code:
+		> If A_UserName = karnijs
+		> At_home = 0
+		> else
+		> At_home = 1
+		If I am on the work computer it will detect my username, or else it will be the home computer. I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run. 
+		
+
+	Returns:
+		The *Problems* variable  
+		If there is an issue and one of the files cannot be installed, the Errorlevel of the `Fileinstall` will trigger a `Problems = 1`
+			> File_Install_Work_Folder = C:\SerialMacro
+		> Result := Install_Requied_Files_Images( File_Install_Work_Folder)
+		*Result* is 0 if the files were created   
+		*Result* is 1 if  at least one of the files was not able to be created
+		
+	Extra:
+		### Additional Information
+			For more information on the `FileInstall` function click on the link (Internet Connection Required) below:  
+			[FileInstall](https://autohotkey.com/docs/commands/FileInstall.htm)
+	
+*/
 	}
 
 
@@ -463,6 +745,32 @@ Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successfu
 						}}
 
 					return
+					
+/*!
+	Function: 	Load_ini_file(Configuration_File_Location)
+			Loads the configuration Ini file from the  *Configuration_File_Location*
+
+	Parameters:
+		Configuration_File_Location - This should contain the full file path of the Root script working folder
+					 >  Configuration_File_Location = C:\SerialMacro\Config.ini
+					>  Load_ini_file(Configuration_File_Location)
+
+	Remarks:
+		Uses the AutoHotkey built in function of `IniRead` to read the config file.  
+		The function stores the variable names into an array for later retrievial by the `Write_ini_file()` function
+		
+	
+		
+
+	Returns:
+		There is no returned variable. The Funciton is Global, which makes all the variables it stores global variables, which makes the config file contents accessble to all functions
+		
+	Extra:
+		### Additional Information
+			For more information on the `IniRead` function click on the link (Internet Connection Required) below:  
+			[FileInstall](https://autohotkey.com/docs/commands/IniRead.htm)
+	
+*/
 				}
 
 				Write_ini_file(Configuration_File_Location) ; unit
@@ -477,6 +785,32 @@ Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successfu
 					IniWrite ,% %INI_Write1%, %Configuration_File_Location%, %INI_Write2%, %INI_Write1%
 				}
 			return
+			
+/*!
+	Function: 	Write_ini_file(Configuration_File_Location)
+			Writes the configuration variables to the configuration Ini file at  the  *Configuration_File_Location*
+
+	Parameters:
+		Configuration_File_Location - This should contain the full file path of the Root script working folder
+					 >  Configuration_File_Location = C:\SerialMacro\Config.ini
+					>  Write_ini_file(Configuration_File_Location)
+
+	Remarks:
+		Uses the AutoHotkey built in function of `IniWrite` to read the config file.  
+		The  highlighted  (green) **%** in the below code is there so written value to the `config.ini`  file ithe actual value of the variable and not the name of the variable from  the `ini_store_Array'  
+		`IniWrite ,*%* %INI_Write1%, %Configuration_File_Location%, %INI_Write2%, %INI_Write1%`
+	
+		
+
+	Returns:
+		There is no returned variable. The Funciton is Global, which makes all the variables it stores global variables, which makes the config file contents accessble to all functions
+		
+	Extra:
+		### Additional Information
+			For more information on the `IniRead` function click on the link (Internet Connection Required) below:  
+			[FileInstall](https://autohotkey.com/docs/commands/IniWrite.htm)
+	
+*/
 		}
 
 		Debug_Log_Event(Event) ; no unit tesing
