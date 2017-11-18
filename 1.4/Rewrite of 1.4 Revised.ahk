@@ -1,4 +1,5 @@
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+#ErrorStdOut
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir   %A_ScriptDir% ; Ensures a consistent starting directory.
@@ -56,7 +57,7 @@ Create Testing scripts
 */
 
 
-Version_Number = 1.4 beta
+Version_Number = 1.1
 Effectivity_Macro :=  "Effectivity Macro V" Version_Number
 Checkp=0
 Sleepstill = 0
@@ -171,22 +172,13 @@ If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null")
 	editfield2 =
 	TotalPrefixes =
 }
-If(!Unit_test)
-{
-	Days := Calculate_Days_Since_Last_Update(updaterate)
-	If Days > %Updaterate%	; More than speficied days
-	{
-		Msg_Box_Result_Update := Move_Message_Box("4","Effectivity Macro Updater", "Would you like to check for a new update?" )
-		IniWrite, %A_now%, %Configuration_File_Location%, update, lastupdate
-	}
-	If Msg_Box_Result_Update = Yes
-	Versioncheck()
-}
+
+Versioncheck()
+
+	
+
 
 Serials_GUI_Screen(editfield, editfield2, TotalPrefixes)
-
-If Msg_Box_Result_Update = Yes
-SetTimer, QuitBrowser, 1000
 
 If (Unit_test)
 	Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1")
@@ -253,18 +245,14 @@ return
 }
 
 #If Winactive("ahk_class TTAFrameXClass") or WinActive(Effectivity_Macro)
-Esc::
+~Esc::
 {
    Gosub,Stop_Macro
    Return
 }
 
-#if winactive (Effectivity_Macro)
-;~ Esc::
-;~ {
-   ;~ Gosub,Stop_Macro
-   ;~ Return
-;~ }
+#if winactive(Effectivity_Macro)
+
 
 F1::
 {
@@ -2634,171 +2622,92 @@ Return
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
-			Calculate_Days_Since_Last_Update(Last_Update) ; unt
-			{
-				Today := A_Now		; Set to the current date first
-				EnvSub, Today, %Last_Update%, Days 	; this does a date calc, in days
-				Return Today
-			}
-
 			Versioncheck() ; no unit test needed
 			{
-				global Checkversion,Version_Number, Configuration_File_Location
+				global Version_Number, Configuration_File_Location, Update_Check_URL
 
 				Load_ini_file(Configuration_File_Location)
+
+IfExist, %A_desktop%\testdownload.txt
+FileDelete, %A_desktop%\testdownload.txt
+	
 				Progress,  w200, Updating..., Gathering Information, Effectivity Macro Updater
 				Progress, 0
-				sleep(2)
-				Versioncount = 0
-				settimer, versiontimeout, 500
-				create_checkgui(hwnd, ParentGUI, wb)
+				
+					URLDownloadToFile,%Update_Check_URL%, %A_desktop%\TestDownload.txt
+
 				Progress,  w200, Updating..., Fetching Server Information, Effectivity Macro Updater
 				Progress, 15
-				DllCall("SetParent", "uint",  hwnd, "uint", ParentGUI)
-				wb.Visible := True
-				WinSet, Style, -0xC00000, ahk_id %hwnd%
-				Progress, 25
-				sleep(2)
-				wb.navigate(Update_Check_URL) ; Update_Check_url is from Config FIle
+
 				Progress,  w200, Updating...,Gathering Current Version From Server, Effectivity Macro Updater
 				Progress, 50
-				sleep(2)
-				while wb.busy
-				{
-					sleep()
-				}
-
+		
 				Progress,  w200,Updating..., Comparing Version Information, Effectivity Macro Updater
 				Progress, 60
+Loop, Read, %A_desktop%\testdownload.txt
+{
+	If A_LoopReadLine contains Version=
+		update_Version := A_LoopReadLine
+	else
+		What_is_new_text := What_is_new_text A_LoopReadLine "`n"
+}
 
-				Doc_Title := Check_Doc_Title()
+StringReplace, update_Version,update_Version,Version=,,
 
-				update_Version:=  Format_Serial_Check_Title(Doc_Title)
-				If update_Version = Not_Found
-				{
-					Progress,  w200,Updating..., Error Occured. Update Not Able To Complete, Effectivity Macro Updater
-					Progress, 0
-					sleep()
-					Progress, off
-					Move_Message_Box("0","Effectivity Macro Updater", "Error `n Cannot find Server" )
-					return
-				}
+
 
 				If update_Version <= %Version_Number%
 				{
 					Progress,  w200,Updating..., Macro is Up to date., Effectivity Macro Updater
 					Progress, 100
 					sleep(10)
-					Progress, off
-					settimer, versiontimeout, Off
 				}
+
 
 				If update_Version > %Version_Number%
 				{
-					settimer, versiontimeout, Off
-
-					Result := Move_Message_Box("262148","Effectivity Macro Updater", " New update found. Would you like to open the Cat Box site to download the latest version?" )
-					;~ MsgBox, %Program_Location_Link%
-					If Result =  yes
-					Run, %Program_Location_Link%
+					Progress, Off
+					gui,35: font, S15  ; Set 10-point Verdana.
+				Gui, 35:Add, Text,x5 y5, New Version available!
+				Gui, 35:Add, Text,xp yP+25, Your version is %Version_Number% 
+			gui,35: font, S15 cRED  ; Set 10-point Verdana.
+				Gui, 35:Add, Text,xp yP+25, New  version is %update_Version% 
+					gui,35: font, s10 cblack  ; Set 10-point Verdana.
+				Gui, 35:Add, Edit,xp yP+35 w600 h500, %What_is_new_text%
+				Gui, 35:Add, Button, yp+525 gDownload_new_version, DOWNLOAD NEW VERSION
+				Gui, 35:Add, Button, xp+200 gCancel, Cancel
+				gui, 35:Show,,New Version!
+				Pause, on
 				}
-
-			IniWrite,%A_Now%, %Configuration_File_Location%, Update, lastupdate
-				Progress, w200,,Disconnecting From Server..., Effectivity Macro Updater
-				Progress,25
-				Sleep()
-				Progress, 50
-
-				Gui,2:Destroy
-				wb.Quit
-				wb:= ""
-				Progress, Off
+Progress, Off
+				
 				return
 			}
+			
+35GuiEscape:
+35GuiClose:
+{
+	gui, 35:destroy
+Pause, Off
+Return
+}
 
-			QuitBrowser:
-			{
-				SetTimer, QuitBrowser, Off
+Download_new_version()
+{
+	global Program_Location_Link
+	Pause, off
+	Gui 35: Destroy
+Run, %Program_Location_Link%
+	
+	return
+}
 
-				return
-			}
-
-			Check_Doc_Title() ; unit
-			{
-				Result = Not_Found
-				Loop, 3
-				{
-					Winactivate, Serial version
-					wingettitle, Google_Doc_Title, A
-					sleep(10)
-					;~ Msgbox, Title is  %Google_Doc_Title%
-					Result = Not_Found
-					If Google_Doc_Title !=
-					{
-						Result := Google_Doc_Title
-						break
-					}}
-					return Result
-				}
-
-				Format_Serial_Check_Title(Title) ; unit
-				{
-					If Title != Not_Found
-					{
-						StringGetPos, pos, Title, #, 1
-						Update_Check_Version_Number := SubStr(Title, pos+2)
-						Update_Check_Version_Number := SubStr(Update_Check_Version_Number,1,3)
-						return Update_Check_Version_Number
-					}
-					else
-						return "Not_Found"
-				}
-
-
-				create_checkgui(ByRef hwnd, ByRef ParentGUI, ByRef wb) ; no unit test needed
-				{
-					global
-					wb := ComObjCreate("InternetExplorer.Application")
-					sleep(5)
-					Wb.AddressBar := false
-					;~ Wb.AddressBar := true
-					wb.MenuBar := false
-					;~ wb.MenuBar := true
-					wb.ToolBar := false
-					;~ wb.ToolBar := true
-					wb.StatusBar := false
-					wb.Resizable := false
-					wb.Width := 1000
-					wb.Height := 500
-					wb.Top := 0
-					wb.Left := 0
-					wb.Silent := true
-					hwnd := wb.hwnd
-					Gui, 2:+LastFound
-					ParentGUI := WinExist()
-					Gui,2:-SysMenu -ToolWindow -Border
-					Gui,2:Color, EEAA99
-					Gui,2:+LastFound
-					WinSet, TransColor, EEAA99
-					Gui,2:show, x-10 y-10 W1 H1 , Updater
-					;~ Gui,2:show, x50 y50 W1000 h1000 , Updater
-					return
-				}
-
-				versiontimeout:
-				{
-					Versioncount++
-					If Versioncount = 60
-					{
-						Progress,  w200,Updating..., Error Occured.Cannot connect to server for update check, please check for internet connection., Effectivity Macro Updater
-						Progress, 0
-						sleep(2)
-						Progress, Off
-						SplashTextOff
-						Gui,2:Destroy
-					}
-					Return
-				}
+Cancel:
+{
+	pause, off
+Gui 35:Destroy
+return
+}	
 
 				OptionsGui:
 				{
