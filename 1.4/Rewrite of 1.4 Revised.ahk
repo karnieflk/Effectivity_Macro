@@ -78,7 +78,7 @@ Prefixcount = 5
 TotalPrefixes = 0
 Radiobutton = 1
 
-Unit_Test = 1 ; Set this to 1 to perform unit tests  and offline testing
+Unit_Test = 0 ; Set this to 1 to perform unit tests  and offline testing
 Log_Events = 0 ;Set this to 1 to perform logging
 
 inifile = config.ini
@@ -197,7 +197,8 @@ return
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Hotkeys \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
-
+#`::ListLines
++#~::ListVars
 
    Insert::
    Pause::
@@ -961,12 +962,14 @@ StringReplace, Editfield, Editfield, `,,,All
 		Guicontrol,1:, Editfield, %Formatted_Text% - - - - - - - - - - - - - - - - - - - - - - - - - - ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
 	}
 	totalprefixes = %Prefix_Count% ; Sets the totalprefixes variables to the Prefixcombinecount variable
-	Guicontrol,, reloadprefixtext,%totalprefixes% ; Changes the valuse in the main GUI screen
+		Guicontrol,, reloadprefixtext,%totalprefixes% ; Changes the valuse in the main GUI screen
 	Winactivate, Effectivity Macro ; Make the Main GUi window  Active
 	Guicontrol, Focus, Editfield ; Puts the cursor in the Editfield in teh Gui window
 	send {Ctrl Down}{Home}{Ctrl Up} ; sends keystrokes to move the cursor to the top of the listbox
-	Gui, Submit, NoHide ; Updates the Gui screen
-		gosub, Export_Serials
+Gui, Submit, NoHide ; Updates the Gui screen
+Gui_Image_Show("Start")
+if (checked)
+gosub, Export_Serials
 	return
 }
 
@@ -1569,7 +1572,6 @@ sleep(10)
       Complete = 1
     }
 	      Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
-Sleep(5)
 
 If (Stop_Issue_checks)
 {
@@ -1587,7 +1589,7 @@ If (Result_check =" Issues_found") or (Result_check = "Dual_Eng")
 	Result = no
 If (Result = "Not_found") && (Result_check = "Not_found")
 {
-	sleep(5)
+
 	If Counter = 10
 	{
 	Double_Click(Applyx,Applyy)
@@ -1601,7 +1603,7 @@ Gui 70: Flash
 Sleep(10)
 }
 until (Result = "Found")
-Sleep(5)
+
 Loop
 {
 	if (breakloop)
@@ -1642,18 +1644,21 @@ Loop, 10
 	If (breakloop)
 		break
 
-	Sleep(10)
 	Result := Searchend()
 		If Result = Found
 			{
 			Modifier =
 			Break
 		}
+		
 Sleep(.5)
 
 Result :=   Searchend_Isssue_Check()
 			If (Result = "Dual_Eng")
 			{
+				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+				SplashTextOn,,,Dual Serial or Eng Models, This serial has dual Engineering Models. This Prefix will be moved to the End of the list.
+				Winmove, ,This serial has dual engeering Models,%amonx%, %Amony%
 		 Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 		 Added_Serial_Count("-1")
 		 break
@@ -1980,7 +1985,7 @@ GetCurrentMonitor() ; no unit test needed
 
 Searchend()
 {
-global Image_Red_Exclamation_Point
+global Image_Red_Exclamation_Point, Active_ID, 
    ;msgbox, searchend
    listlines off
 
@@ -2024,16 +2029,26 @@ global Image_Red_Exclamation_Point
 
 Searchend_Isssue_Check()
 {
-global Issues_Image
+global Issues_Image, Active_ID, prefixx, prefixy
+;~ MsgBox x Locations are %prefixx% , %prefixy%
    listlines off
 	Current_Monitor := GetCurrentMonitor()
 	pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Issues_Image)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
+   ;~ Outx1 := prefixx - 30
+   ;~ Outx2 := prefixx +30
+   ;~ Outy1 := prefixy - 30
+   ;~ Outy2 := prefixy +30  
+   
+   ;~ MsgBox % Outx1 " is outx1 `n"  Outx2 " is outx2 `n" Outy1 " is outy1 `n"  Outy2 " is outy2 " 
+   ;~ RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,Outx1,Outx2,Outy1,Outy2,0,0,0,0)
    RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,0,0,0,0)
+      ;~ Gui,15:Show, h10 w10 x%Outx1% y%Outy1% , 
+   ;~ Gui,16:Show, h10 w10 x%Outx2% y%Outy2% , 
    Gdip_Shutdown(pToken)
       ;listlines on
-	  ;~ MsgBox, % RETSearch
+	  MsgBox, % RETSearch
    If RETSearch < 0
    {
       if RETSearch = -1001
@@ -2046,7 +2061,7 @@ global Issues_Image
       RETSearch = Unable to lock needle bitmap bits
       if RETSearch = -1005
       RETSearch = Cannot find monitor for screen capture
-  Move_Message_Box("262144", Effectivity_Macro, "Error Searchend (bmpNeedle1)" RETSearch)
+  Move_Message_Box("262144", Effectivity_Macro, "Error Searchend Issues check  (bmpNeedle1)" RETSearch)
       Exit
    }
 
@@ -2310,10 +2325,10 @@ return
 		Gui 1:Add, Edit, xp+165 yp+343 w110 h20  vnextserialtoadd, %nextserialtoaddv%
 
 		Gui 1:Add, Text, x5 y5   BackgroundTrans +Center , There are a total of
-		Gui 1:Add, Text, xp+92  BackgroundTrans +Center vreloadprefixtext, %TotalPrefixestemp%
-		Gui 1:Add, Text, xp+35  BackgroundTrans +Center , Effectivity to add to ACM
+		Gui 1:Add, Text, xp+65 w75  BackgroundTrans +Center vreloadprefixtext, %TotalPrefixestemp%
+		Gui 1:Add, Text, xp+55  BackgroundTrans +Center , Effectivity to add to ACM
 
-		Gui 1:add, Radio, xp-102 yp+25 w130 h20 BackGroundTrans Checked vradio1 gradio_button, Effectivity to be added
+		Gui 1:add, Radio, xp-97 yp+25 w130 h20 BackGroundTrans Checked vradio1 gradio_button, Effectivity to be added
 		Gui 1:add, Radio, xp+155 yp w140 h20 BackGroundTrans  vradio2 gradio_button, Effectivity already added
 
 		Gui 1:Add, Text, xp-170 Yp+265 W250 h13 BackGroundTrans, Number of Effectivity successfully added to ACM =
@@ -2499,7 +2514,7 @@ return
 
 			SerialbreakquestionGUI() ; no unit test needed
 			{
-				global createexcel
+				global createexcel, checked
 				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
 
 				gui 1: -alwaysontop
@@ -2511,7 +2526,7 @@ return
 				Gui, 8:Add, Checkbox, XP-190 yp+30 vcreateexcel, Export Effectivity to Excel file (Effectivity.CSV)
 				Gui, 8:show, x%amonx% y%amony% w400 h90
 				gui 8: +alwaysontop
-				Pausescript()
+				Pausescript()			
 				return checked
 			}
 
@@ -2525,15 +2540,16 @@ return
 
 			UnPausescript() ; no unit test needed
 			{
-				Menu,Tray,Icon, % "C:\Serialmacro\icons\Serial.ico", ,1
-				Gui_Image_Show("Run")
 				Pause,off
+				Menu,Tray,Icon, % "C:\Serialmacro\icons\Serial.ico", ,1
+				Gui_Image_Show("Run")	
 				Return
 			}
 
 
 			oneup()
 			{
+				global checked
 				UnPausescript()
 				GuiControlGet, checked,, createexcel
 				gui 1: +alwaysontop
@@ -2544,6 +2560,7 @@ return
 
 			combinequstion()
 			{
+				global checked
 				UnPausescript()
 				GuiControlGet, checked,, createexcel
 				gui 1: +alwaysontop
@@ -2554,13 +2571,13 @@ return
 
 			keepseperated()
 			{
+				global checked
 				UnPausescript()
 				GuiControlGet, checked,, createexcel
 				gui 1: +alwaysontop
 				Gui, 8:destroy
 				combine = 0
 				Oneupserial = 0
-
 				Return Checked
 			}
 
@@ -6154,5 +6171,3 @@ StrGetB(Address, Length=-1, Encoding=0)
 	return String
 }
 
-#`::ListLines
-+#~::ListVars
