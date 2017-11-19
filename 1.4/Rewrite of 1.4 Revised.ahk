@@ -57,7 +57,7 @@ Create Testing scripts
 */
 
 
-Version_Number = 1.1
+Version_Number = 1.4 Beta
 Effectivity_Macro :=  "Effectivity Macro V" Version_Number
 Checkp=0
 Sleepstill = 0
@@ -173,8 +173,9 @@ If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null")
 	TotalPrefixes =
 }
 
-Versioncheck()
 
+
+Versioncheck()
 	
 
 
@@ -1488,8 +1489,8 @@ return
 
 Enter_Effectivity_Loop()
 {
-global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro
-
+global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate
+LoopCount=0
  Loop
    {
       ;~ tabcount++
@@ -1519,30 +1520,38 @@ sleep(10)
          Break
       }
 
-      ;~ LoopCount++
-      ;~ If LoopCount >= %Refreshrate%
-       ;~ {
-         ;~ Click, %Applyx%,%Applyy%
-         ;~ Click, %Applyx%,%Applyy%
-         ;~ sleep(10)
-          ;~ Needrefresh = 0
-         ;~ ;msgbox, refresh
-         ;~ sleep(3)
-         ;~ Result :=   Searchend()
-          ;~ If (Result = Failure) or (Result = Timedout)
-            ;~ Exit
+      LoopCount++
+      If LoopCount >= %Refreshrate%
+       {
+         Click, %Applyx%,%Applyy%
+         Click, %Applyx%,%Applyy%
+         sleep(10)
+		 Result :=   Searchend()
+          If (Result = Failure) or (Result = Timedout)
+            Exit
+			
+          Needrefresh = 0
+         ;msgbox, refresh
+         sleep(3)
 
-        ;~ Win_check(Active_ID)
-         ;~ sleep()
-         ;~ Send {F5}
-         ;~ sleep(20)
-             ;~ Searchcountser = 0
-         ;~ Gosub Refreshpage
-         ;~ Loopcount = 0
-         ;~ Searchcountser = 0
-         ;~ Needrefresh = 0
-         ;~ sleep(10)
-      ;~ }
+        Win_check(Active_ID)
+         sleep()
+         Send {F5}
+         sleep(20)
+             Searchcountser = 0
+Loop
+{
+Result :=   Searchend()
+          If (Result = Failure) or (Result = Timedout)
+            Exit
+} until Result = Found
+
+         Loopcount = 0
+         Searchcountser = 0
+         Needrefresh = 0
+         sleep(10)
+      }
+	  
       sleep()
 	Serial_number := Get_Serial_Numbers()
 	if Serial_Number  contains  - - - - -
@@ -1578,9 +1587,10 @@ If (Result_check =" Issues_found") or (Result_check = "Dual_Eng")
 If (Result = "Not_found") && (Result_check = "Not_found")
 {
 
-	If Counter = 10
+	If Counter = 20
 	{
-	Double_Click(Applyx,Applyy)
+		Send {Enter 2}
+	;~ Double_Click(Applyx,Applyy)
 	Counter = 0
 }
 
@@ -1596,7 +1606,8 @@ Loop
 {
 	if (breakloop)
 		Break
-Double_Click(Applyx,Applyy)
+
+;~ Double_Click(Applyx,Applyy)
 Result := Searchend()
 If  Result = Found
 {
@@ -1607,7 +1618,12 @@ If  Result = Found
 
 if (!Stop_Issue_checks)
 {
+	Loop
+{
+Sleep(5)
 Result := Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+} until Result !=  Not_Found
+
 If (Result  != "Bad Prefix") and  (Result != "Dual_Eng")
 Add_To_Completed_LIst(Serial_number)
 }
@@ -1639,7 +1655,7 @@ Loop, 10
 			Break
 		}
 		
-Sleep(.5)
+Sleep()
 
 Result :=   Searchend_Isssue_Check()
 			If (Result = "Dual_Eng")
@@ -1649,18 +1665,20 @@ Result :=   Searchend_Isssue_Check()
 				Winmove, ,This serial has dual engeering Models,%amonx%, %Amony%
 		 Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 		 Added_Serial_Count("-1")
-		 break
+		    Return Result
 		  }
 			if (Result = "Bad Prefix")
 			{
 			;~ MsgBox, Bad Prefix
 			Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 			Added_Serial_Count("-1")
-			Break
+			   Return Result
 	  }
-Double_Click(Applyx,Applyy)
+	  	
+;~ Double_Click(Applyx,Applyy)
 	}
-   Return Result
+	Send {Enter 2}
+   Return "Not_Found"
 }
 
 
@@ -1690,7 +1708,7 @@ If (!Complete)
 {
 CoordMode, mouse, Screen
    ;listlines on
-    ;~ win_check(Active_ID)
+    win_check(Active_ID)
    Click, %prefixx%, %prefixy%
    sleep()
    mousemove 300,300
@@ -1698,11 +1716,11 @@ CoordMode, mouse, Screen
    SEndRaw, %Prefix_Holder_for_ACM_Input%
    sleep()
    Send {Tab}
- ;~ win_check(Active_ID)
+ win_check(Active_ID)
    Sendraw, %First_Effectivity_Numbers%
    sleep(3)
    Send {Tab}
-  ;~ win_check(Active_ID)
+  win_check(Active_ID)
    SendRaw, %Second_Effectivity_Numbers%
    sleep(3)
    Send {Tab}
@@ -1710,7 +1728,7 @@ CoordMode, mouse, Screen
    Send {enter 2}
    Sleep(2)
 Double_Click(Applyx,Applyy)
-   ;SetTimer, refreshcheck, 250
+Sleep(3)
    Serialcount +=1
    sleep()
    Searchcount = 0
@@ -2018,27 +2036,21 @@ global Image_Red_Exclamation_Point, Active_ID,
 Searchend_Isssue_Check()
 {
 global Issues_Image, Active_ID, prefixx, prefixy
-;~ MsgBox x Locations are %prefixx% , %prefixy%
+
    listlines off
 	Current_Monitor := GetCurrentMonitor()
 	pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Issues_Image)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
-   ;~ Outx1 := prefixx - 30
-   ;~ Outx2 := prefixx +30
-   ;~ Outy1 := prefixy - 30
-   ;~ Outy2 := prefixy +30  
-   
-   ;~ MsgBox % Outx1 " is outx1 `n"  Outx2 " is outx2 `n" Outy1 " is outy1 `n"  Outy2 " is outy2 " 
-   ;~ RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,Outx1,Outx2,Outy1,Outy2,0,0,0,0)
+
    RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,0,0,0,0)
-      ;~ Gui,15:Show, h10 w10 x%Outx1% y%Outy1% , 
-   ;~ Gui,16:Show, h10 w10 x%Outx2% y%Outy2% , 
+
    Gdip_Shutdown(pToken)
       ;listlines on
-	  MsgBox, % RETSearch
+	  ;~ MsgBox, % RETSearch
    If RETSearch < 0
    {
+      if RETSearch = -1001
       if RETSearch = -1001
       RETSearch = invalid haystack or needle bitmap pointer
       if RETSearch = -1002
@@ -2624,7 +2636,7 @@ Return
 
 			Versioncheck() ; no unit test needed
 			{
-				global Version_Number, Configuration_File_Location, Update_Check_URL
+				global Version_Number, Configuration_File_Location, Update_Check_URL, First_Run
 
 				Load_ini_file(Configuration_File_Location)
 
@@ -2644,6 +2656,7 @@ FileDelete, %A_desktop%\testdownload.txt
 		
 				Progress,  w200,Updating..., Comparing Version Information, Effectivity Macro Updater
 				Progress, 60
+				
 Loop, Read, %A_desktop%\testdownload.txt
 {
 	If A_LoopReadLine contains Version=
@@ -2654,33 +2667,39 @@ Loop, Read, %A_desktop%\testdownload.txt
 
 StringReplace, update_Version,update_Version,Version=,,
 
-
-
-				If update_Version <= %Version_Number%
+				If (update_Version <= Version_Number) and  (First_run = "0")
 				{
 					Progress,  w200,Updating..., Macro is Up to date., Effectivity Macro Updater
 					Progress, 100
 					sleep(10)
 				}
 
-
-				If update_Version > %Version_Number%
+				If (update_Version > Version_Number)  or (First_run = "1")
 				{
-					Progress, Off
-					gui,35: font, S15  ; Set 10-point Verdana.
+				Progress, Off
+					gui,35: font, S15  ;Set 10-point Verdana.
 				Gui, 35:Add, Text,x5 y5, New Version available!
 				Gui, 35:Add, Text,xp yP+25, Your version is %Version_Number% 
 			gui,35: font, S15 cRED  ; Set 10-point Verdana.
 				Gui, 35:Add, Text,xp yP+25, New  version is %update_Version% 
 					gui,35: font, s10 cblack  ; Set 10-point Verdana.
+					If (First_Run)
+				Gui, 35:Add, Edit,xp yP+35 w600 h500,  Looks Like This is Your first time Running This Version. `n`n %What_is_new_text%
+				else
 				Gui, 35:Add, Edit,xp yP+35 w600 h500, %What_is_new_text%
+				If (First_run)
+				Gui, 35:Add, Button, yp+525  w100 h25 gCancel, Ok
+				else
+				{
 				Gui, 35:Add, Button, yp+525 gDownload_new_version, DOWNLOAD NEW VERSION
 				Gui, 35:Add, Button, xp+200 gCancel, Cancel
+			}
 				gui, 35:Show,,New Version!
+					First_Run=0
+						Write_ini_file(Configuration_File_Location)
 				Pause, on
 				}
 Progress, Off
-				
 				return
 			}
 			
