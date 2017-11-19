@@ -1541,6 +1541,10 @@ sleep(10)
              Searchcountser = 0
 Loop
 {
+	
+	 Click, %Applyx%,%Applyy%
+	Click, %Applyx%,%Applyy%
+		 
 Result :=   Searchend()
           If (Result = Failure) or (Result = Timedout)
             Exit
@@ -1643,7 +1647,7 @@ Click %x%, %y%
 Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 {
 	global breakloop
-Loop, 10
+Loop, 2
 {
 	If (breakloop)
 		break
@@ -1654,8 +1658,6 @@ Loop, 10
 			Modifier =
 			Break
 		}
-		
-Sleep()
 
 Result :=   Searchend_Isssue_Check()
 			If (Result = "Dual_Eng")
@@ -1666,6 +1668,7 @@ Result :=   Searchend_Isssue_Check()
 		 Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 		 Added_Serial_Count("-1")
 		    Return Result
+			Break
 		  }
 			if (Result = "Bad Prefix")
 			{
@@ -1673,6 +1676,7 @@ Result :=   Searchend_Isssue_Check()
 			Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 			Added_Serial_Count("-1")
 			   Return Result
+			   Break
 	  }
 	  	
 ;~ Double_Click(Applyx,Applyy)
@@ -1702,7 +1706,7 @@ return Add_count
 Enterserials(Prefix_Holder_for_ACM_Input,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
 {
 
-	global  prefixx, prefixy, Applyx, Applyy, Add_Button_X_Location, Add_Button_Y_Location, StartTime
+	global  prefixx, prefixy, Applyx, Applyy, Add_Button_X_Location, Add_Button_Y_Location, StartTime, Sleep_Delay
 
 If (!Complete)
 {
