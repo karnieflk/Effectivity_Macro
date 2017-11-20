@@ -175,7 +175,7 @@ If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null")
 
 
 
-Versioncheck()
+;~ Versioncheck()
 	
 
 
@@ -227,6 +227,8 @@ UnPausescript()
 ESC::
 {
 breakloop=1
+   ListLines
+   Pause,on
 return
 }
 
@@ -249,6 +251,8 @@ return
 ~Esc::
 {
    Gosub,Stop_Macro
+   ListLines
+   Pause,on
    Return
 }
 
@@ -1489,6 +1493,7 @@ return
 
 Enter_Effectivity_Loop()
 {
+	
 global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate
 LoopCount=0
  Loop
@@ -1508,7 +1513,7 @@ checkforactivity()
 	  ;~ tabcount = 0
 
 
-sleep(10)
+;~ sleep(10)
 
       If breakloop = 1
       {
@@ -1521,40 +1526,44 @@ sleep(10)
       }
 
       LoopCount++
-      If LoopCount >= %Refreshrate%
-       {
-         Click, %Applyx%,%Applyy%
-         Click, %Applyx%,%Applyy%
-         sleep(10)
-		 Result :=   Searchend()
-          If (Result = Failure) or (Result = Timedout)
-            Exit
-			
-          Needrefresh = 0
-         ;msgbox, refresh
-         sleep(3)
+				  If LoopCount >= %Refreshrate%
+				   {
+					 Click, %Applyx%,%Applyy%
+					 Click, %Applyx%,%Applyy%
+					 sleep(10)
+					 Result :=   Searchend()
+					  If (Result = Failure) or (Result = Timedout)
+						Exit
+						
+					  Needrefresh = 0
+					 ;msgbox, refresh
+					 sleep(3)
 
-        Win_check(Active_ID)
-         sleep()
-         Send {F5}
-         sleep(20)
-             Searchcountser = 0
-Loop
-{
-	
-	 Click, %Applyx%,%Applyy%
-	Click, %Applyx%,%Applyy%
-		 
-Result :=   Searchend()
-          If (Result = Failure) or (Result = Timedout)
-            Exit
-} until Result = Found
+					Win_check(Active_ID)
+					 sleep()
+					 Send {F5}
+					 sleep(20)
+						 Searchcountser = 0
+								Loop
+								{									
+									If (breakloop)
+										break
+									
+									 Click, %Applyx%,%Applyy%
+									Click, %Applyx%,%Applyy%
+										 
+								Result :=   Searchend()
+										  If (Result = Failure) or (Result = Timedout)
+											Exit
+								} until Result = Found
 
-         Loopcount = 0
-         Searchcountser = 0
-         Needrefresh = 0
-         sleep(10)
-      }
+					 Loopcount = 0
+					 Searchcountser = 0
+					 Needrefresh = 0
+					 sleep(10)
+				  } ; End Refresh loop
+	  
+	  
 	  
       sleep()
 	Serial_number := Get_Serial_Numbers()
@@ -1572,6 +1581,9 @@ Result :=   Searchend()
    {
       Complete = 1
     }
+	
+	Result := Searchend()
+	If Result = Found
 	      Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
 
 If (Stop_Issue_checks)
@@ -1585,13 +1597,14 @@ loop
 	if breakloop = 1
 		Break
 Result := Searchend()
+
 Result_check := Searchend_Isssue_Check()
 If (Result_check =" Issues_found") or (Result_check = "Dual_Eng")
 	Result = no
 If (Result = "Not_found") && (Result_check = "Not_found")
 {
 
-	If Counter = 20
+	If Counter = 10
 	{
 		Send {Enter 2}
 	;~ Double_Click(Applyx,Applyy)
@@ -1624,8 +1637,26 @@ if (!Stop_Issue_checks)
 {
 	Loop
 {
-Sleep(5)
+	If (breakloop)
+		break
+									
+Sleep()
+Loop, 2
+{
+	If (breakloop)
+	break							
+					Sleep(3)				
+	Result := Searchend()
+		If Result = Found
+			{
+			Modifier =
+			Break
+		}
+}
+
 Result := Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+
+Send {Enter 2}
 } until Result !=  Not_Found
 
 If (Result  != "Bad Prefix") and  (Result != "Dual_Eng")
@@ -1645,19 +1676,12 @@ Click %x%, %y%
 }
 
 Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-{
+{	
 	global breakloop
-Loop, 2
+Loop, 8
 {
 	If (breakloop)
 		break
-
-	Result := Searchend()
-		If Result = Found
-			{
-			Modifier =
-			Break
-		}
 
 Result :=   Searchend_Isssue_Check()
 			If (Result = "Dual_Eng")
@@ -1665,10 +1689,10 @@ Result :=   Searchend_Isssue_Check()
 				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
 				SplashTextOn,,,Dual Serial or Eng Models, This serial has dual Engineering Models. This Prefix will be moved to the End of the list.
 				Winmove, ,This serial has dual engeering Models,%amonx%, %Amony%
-		 Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-		 Added_Serial_Count("-1")
-		    Return Result
-			Break
+				Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+				Added_Serial_Count("-1")
+				Return Result
+				Break
 		  }
 			if (Result = "Bad Prefix")
 			{
@@ -1681,7 +1705,7 @@ Result :=   Searchend_Isssue_Check()
 	  	
 ;~ Double_Click(Applyx,Applyy)
 	}
-	Send {Enter 2}
+
    Return "Not_Found"
 }
 
@@ -1897,6 +1921,7 @@ checkforactivity() ; no unit test needed
          If breakloop = 1
          {
             SplashTextOff
+			Break
             Return
          }
 
@@ -1926,7 +1951,6 @@ checkforactivity() ; no unit test needed
             ;~ gosub, radio1h
             Gui, Submit, NoHide
             ;~ gosub, SerialFullScreen
-            sleep(10)
          }
       return
    }
@@ -1934,7 +1958,7 @@ checkforactivity() ; no unit test needed
 
  Get_Serial_Numbers()
  {
-	global Effectivity_Macro
+	global Effectivity_Macro, nextserialtoadd
 	 COntrolSEnd,,{Ctrl Down}{Home}{Ctrl Up}, %Effectivity_Macro% ;note that the controlsend has two commas after the function call (THis always messed me up)
    sleep()
    COntrolSEnd,,{Shift Down}{End}{Shift Up}, %Effectivity_Macro%
@@ -1942,6 +1966,7 @@ checkforactivity() ; no unit test needed
    ControlGet,Serial_Number,Selected,,,%Effectivity_Macro%
 
    COntrolSEnd,,{Del 2}, %Effectivity_Macro%
+   GuiControl,,nextserialtoadd,%Serial_Number%
 return Serial_Number
 }
 
@@ -2004,7 +2029,7 @@ global Image_Red_Exclamation_Point, Active_ID,
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Image_Red_Exclamation_Point)
    ;~ bmpHaystack := Gdip_BitmapFromScreen(Current_Monitor)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
-   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,10,0,0,0)
+   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,0,0,0,0)
    Gdip_Shutdown(pToken)
       ;listlines on
    If RETSearch < 0
