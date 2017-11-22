@@ -1497,7 +1497,7 @@ return
 Enter_Effectivity_Loop()
 {
 	
-global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate
+global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location
 LoopCount=0
  Loop
    {
@@ -1531,8 +1531,7 @@ checkforactivity()
       LoopCount++
 				  If LoopCount >= %Refreshrate%
 				   {
-					 Click, %Applyx%,%Applyy%
-					 Click, %Applyx%,%Applyy%
+					Double_Click(Applyx,Applyy)
 					 sleep(10)
 					 Result :=   Searchend()
 					  If (Result = Failure) or (Result = Timedout)
@@ -1552,8 +1551,8 @@ checkforactivity()
 									If (breakloop)
 										break
 									
-									 Click, %Applyx%,%Applyy%
-									Click, %Applyx%,%Applyy%
+									sleep()
+									Double_Click(Add_Button_X_Location,Add_Button_Y_Location)
 										 
 								Result :=   Searchend()
 										  If (Result = Failure) or (Result = Timedout)
@@ -1599,28 +1598,27 @@ loop
 	Counter++
 	if breakloop = 1
 		Break
-Result := Searchend()
 
 Result_check := Searchend_Isssue_Check()
-If (Result_check =" Issues_found") or (Result_check = "Dual_Eng")
-	Result = no
+;~ If (Result_check =" Issues_found") or (Result_check = "Dual_Eng")
+	;~ Result = no
 If (Result = "Not_found") && (Result_check = "Not_found")
 {
 
-	If Counter = 10
-	{
+	;~ If Counter = 10
+	;~ {
 		Send {Enter 2}
 	;~ Double_Click(Applyx,Applyy)
 	Counter = 0
+	Gui, 70:Destroy
+break
 }
 
-Gui, 70:Destroy
-break
+
 }
 Gui 70: Flash
 Sleep(10)
-}
-until (Result = "Found")
+} until (Result = "Found")
 
 Loop
 {
@@ -1644,7 +1642,7 @@ if (!Stop_Issue_checks)
 		break
 									
 Sleep()
-Loop, 2
+Loop, 3
 {
 	If (breakloop)
 	break							
@@ -1655,10 +1653,11 @@ Loop, 2
 			Modifier =
 			Break
 		}
-}
-
+} 
+If Result != Found
 Result := Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 
+If Result != Found
 Send {Enter 2}
 } until Result !=  Not_Found
 
@@ -1741,25 +1740,25 @@ CoordMode, mouse, Screen
    ;listlines on
     win_check(Active_ID)
    Click, %prefixx%, %prefixy%
-   sleep()
+   sleep(.5)
    mousemove 300,300
-   sleep()
+   sleep(.5)
    SEndRaw, %Prefix_Holder_for_ACM_Input%
    sleep()
    Send {Tab}
  win_check(Active_ID)
    Sendraw, %First_Effectivity_Numbers%
-   sleep(3)
+   sleep()
    Send {Tab}
   win_check(Active_ID)
    SendRaw, %Second_Effectivity_Numbers%
-   sleep(3)
+   sleep()
    Send {Tab}
    Sleep(Sleep_Delay)
    Send {enter 2}
    Sleep(2)
 Double_Click(Applyx,Applyy)
-Sleep(3)
+Sleep()
    Serialcount +=1
    sleep()
    Searchcount = 0
@@ -2060,6 +2059,7 @@ global Image_Red_Exclamation_Point, Active_ID,
       ;Msgbox, found
 	  Return "Found"
 	}
+	
 	else
    Return "Not_Found"
 }
