@@ -183,6 +183,9 @@ If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null")
 
 Serials_GUI_Screen(editfield, editfield2, TotalPrefixes)
 
+If WinExist("What's New") or WinExist("New Version!")
+	WinActivate
+
 If (Unit_test)
 	Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1")
 return
@@ -1615,7 +1618,7 @@ break
 }
 
 
-}
+
 Gui 70: Flash
 Sleep(10)
 } until (Result = "Found")
@@ -2666,7 +2669,7 @@ Return
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
-			Versioncheck() ; no unit test needed
+			Versioncheck(Start := 0) ; no unit test needed
 			{
 				global  Configuration_File_Location, Update_Check_URL, req
 
@@ -2674,33 +2677,47 @@ Return
 Internet_Status := Internet_Connection_Check()
 
 If (!Internet_Status)
-	exit
+Return
 
 Load_ini_file(Configuration_File_Location)
 	
-				Progress,  w200, Updating..., Gathering Information, Effectivity Macro Updater
+	If (start)
+	{
+	Progress,  w200, Updating..., Gathering Information, Effectivity Macro Updater
 				Progress, 0
-				req := ComObjCreate("Msxml2.XMLHTTP")
+}
+;~ req := ComObjCreate("Msxml2.XMLHTTP")
+req := ComObjCreate("MSXML2.XMLHTTP.6.0")
+				;~ req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 		
-
+	If (start)
+	{
 				Progress,  w200, Updating..., Fetching Server Information, Effectivity Macro Updater
 				Progress, 15
+			}
 
-req.open("GET", Update_Check_URL, true)
+req.open("GET", Update_Check_URL, false)
 
+	If (start)
+	{
 				Progress,  w200, Updating...,Gathering Current Version From Server, Effectivity Macro Updater
 				Progress, 50
 		
 				Progress,  w200,Updating..., Comparing Version Information, Effectivity Macro Updater
 				Progress, 60
+			}
 	req.onreadystatechange := Func("Ready")
 ; Send the request.  Ready() will be called when it's complete.
+Try
 req.send()
+catch e
+	Return
+
 return
 }
 
 
-UPdate_TExt(Text)
+UPdate_TExt(Text, start)
 {
 global First_Run, Configuration_File_Location, Version_Number
 Loop, Parse, Text, `n`r
@@ -2714,21 +2731,28 @@ Loop, Parse, Text, `n`r
 StringReplace, update_Version,update_Version,Version=,,
 				If (update_Version <= Version_Number) and  (First_run = "0")
 				{
+						If (start)
+	{
 					Progress,  w200,Updating..., Macro is Up to date., Arbortext Macro Updater
 					Progress, 100
 					sleep 1000
 				}
 
+				}
+
 				If (update_Version > Version_Number)  or (First_run = "1")
 				{
 				Progress, Off
+						IF (!First_Run)
+						{
 					gui,35: font, S15  ;Set 10-point Verdana.
 				Gui, 35:Add, Text,x5 y5, New Version available!
 				Gui, 35:Add, Text,xp yP+25, Your version is %Version_Number% 
 			gui,35: font, S15 cRED  ; Set 10-point Verdana.
 				Gui, 35:Add, Text,xp yP+25, New  version is %update_Version% 
-					gui,35: font, s10 cblack  ; Set 10-point Verdana.
-					If (First_Run)
+}			
+			gui,35: font, s10 cblack  ; Set 10-point Verdana.
+						If (First_Run)
 				Gui, 35:Add, Edit,xp yP+35 w600 h500,  Looks Like This is Your first time Running This Version. `n`n %What_is_new_text%
 				else
 				Gui, 35:Add, Edit,xp yP+35 w600 h500, %What_is_new_text%
@@ -2739,10 +2763,14 @@ StringReplace, update_Version,update_Version,Version=,,
 				Gui, 35:Add, Button, yp+525 gDownload_new_version, DOWNLOAD NEW VERSION
 				Gui, 35:Add, Button, xp+200 gCancel, Cancel
 			}
+			If (First_Run)
+				gui, 35:Show,,What's New
+			else
 				gui, 35:Show,,New Version!
+			
 				gui 35: + AlwaysOnTop
 					First_Run=0
-						Write_ini_file(inifile)
+						Write_ini_file(Configuration_File_Location)
 				Pause, on
 				}
 Progress, Off
@@ -2750,13 +2778,13 @@ Progress, Off
 			}
 
 Ready() {
-    global req
+    global req, start
     if (req.readyState != 4)  ; Not done yet.
         return
     if (req.status == 200) ; OK.
-      UPdate_TExt(req.responseText)
-    else
-           Exit
+      UPdate_TExt(req.responseText, start)
+    
+	return
 
 }
 		
@@ -2765,13 +2793,23 @@ Ready() {
 Internet_Connection_Check()
 {
    global req, Internet_Status
-req := ComObjCreate("Msxml2.XMLHTTP")
+;~ req := ComObjCreate("Msxml2.XMLHTTP")
+req := ComObjCreate("MSXML2.XMLHTTP.6.0")
+;~ req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 ; Open a request with async enabled.
+;~ req.SetTimeouts(5000, 5000, 5000, 5000)
+
 req.open("GET", "https://www.google.com", false)
+
 ; Set our callback function (v1.1.17+).
 req.onreadystatechange := Func("Internet_check")
 ; Send the request.  Ready() will be called when it's complete.
+Try
 req.send()
+
+catch e
+	Internet_Status = 0
+	
 Return Internet_Status
 }
 
@@ -2784,6 +2822,7 @@ Internet_check() {
     else
     Internet_Status = 0
 	
+
 return Internet_Status
 }
 
