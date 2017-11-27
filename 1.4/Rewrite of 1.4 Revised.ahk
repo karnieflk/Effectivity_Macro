@@ -60,7 +60,7 @@ New way to update and check, now it does it very quickly and every launch
 
 
 Version_Number = 1.4 Beta
-;~ Version_Number = 1.1
+;~ Version_Number = 1.1 test
 Effectivity_Macro :=  "Effectivity Macro V" Version_Number
 Checkp=0
 Sleepstill = 0
@@ -177,9 +177,8 @@ If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null")
 }
 
 
-	Versioncheck()
-	
 
+Versioncheck("0")
 
 Serials_GUI_Screen(editfield, editfield2, TotalPrefixes)
 
@@ -276,7 +275,7 @@ F1::
 
 Stop_Macro:
 {
-Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successful Serial additions to ACM is %Serialcount% `n`n Are you sure that you want to stop the macro?.`n`n Press YES to stop the Macro.`n`n No to keep going.")
+Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successful Serial additions to ACM is " Serialcount " `n`n Are you sure that you want to stop the macro?.`n`n Press YES to stop the Macro.`n`n No to keep going.")
    If result =  yes
    {
       Stopactcheck = 1
@@ -1501,12 +1500,13 @@ Enter_Effectivity_Loop()
 {
 	
 global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location
+static ACM_Time=1.0
 LoopCount=0
  Loop
    {
       ;~ tabcount++
 Load_ini_file(Configuration_File_Location)
-checkforactivity()
+;~ checkforactivity()
 
 ;~ If Runcount > 20
 	  ;~ {
@@ -1520,6 +1520,11 @@ checkforactivity()
 
 
 ;~ sleep(10)
+/*
+\/\/\/\//\/\/\/\/\//\/\/\
+REfresh section
+\/\/\/\/\/\/\/\/\/\/\/\/\
+*/
 
       If breakloop = 1
       {
@@ -1560,16 +1565,21 @@ checkforactivity()
 								Result :=   Searchend()
 										  If (Result = Failure) or (Result = Timedout)
 											Exit
-								} until Result = Found
+											If Result = Found
+												Break
+								} 
 
 					 Loopcount = 0
 					 Searchcountser = 0
 					 Needrefresh = 0
 					 sleep(10)
-				  } ; End Refresh loop
-	  
-	  
-	  
+				  } ; End Refresh loop	  
+	
+/*
+\/\/\/\//\/\/\/\/\//\/\/\
+Ger prefix  section
+\/\/\/\/\/\/\/\/\/\/\/\/\
+*/	
       sleep()
 	Serial_number := Get_Serial_Numbers()
 	if Serial_Number  contains  - - - - -
@@ -1589,7 +1599,64 @@ checkforactivity()
 	
 	Result := Searchend()
 	If Result = Found
+	{
 	      Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
+		  Double_Click(Applyx,Applyy)			
+
+}
+if (!Stop_Issue_checks)
+{
+			  ToolTip, % ACM_Time
+		    Sleep(ACM_Time)
+			Enter_time("start")  
+	Loop
+{
+	If (breakloop)
+		break
+									
+Sleep()
+Loop, 10
+{
+	;~ Sleep()
+	If (breakloop)
+	break							
+		Enter_time("Pause_on")							
+	Result := Searchend()
+	Enter_time("Pause_off")
+	
+		If (Result = "Found")
+			{
+			Modifier =
+			;~ MsgBox, Break 6 loop
+			Break
+		}
+} 
+If Result = Found
+	break
+else
+{
+		Enter_time("Pause_on")	
+Result := Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+		Enter_time("Pause_off")		
+	}
+if REsult = Found
+{
+	;~ MsgBox, Break stop isues  loop
+Break
+ LoopCount--
+}
+If Result != Found
+{
+ Double_Click(Applyx,Applyy)	
+}}
+
+If (Result  != "Bad Prefix") and  (Result != "Dual_Eng")
+{
+ACM_Time := Enter_time("End")  
+Add_To_Completed_LIst(Serial_number)
+}
+}
+
 
 If (Stop_Issue_checks)
 {
@@ -1610,8 +1677,7 @@ If (Result = "Not_found") && (Result_check = "Not_found")
 
 	;~ If Counter = 10
 	;~ {
-		Send {Enter 2}
-	;~ Double_Click(Applyx,Applyy)
+			Double_Click(Applyx,Applyy)
 	Counter = 0
 	Gui, 70:Destroy
 break
@@ -1632,41 +1698,11 @@ Loop
 Result := Searchend()
 If  Result = Found
 {
+	
 	Add_To_Completed_LIst(Serial_number, Modifier)
 	break
 }
 }}
-
-if (!Stop_Issue_checks)
-{
-	Loop
-{
-	If (breakloop)
-		break
-									
-Sleep()
-Loop, 3
-{
-	If (breakloop)
-	break							
-					Sleep(3)				
-	Result := Searchend()
-		If Result = Found
-			{
-			Modifier =
-			Break
-		}
-} 
-If Result != Found
-Result := Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-
-If Result != Found
-Send {Enter 2}
-} until Result !=  Not_Found
-
-If (Result  != "Bad Prefix") and  (Result != "Dual_Eng")
-Add_To_Completed_LIst(Serial_number)
-}
 Serial_count := Added_Serial_Count()
 		GuiControl,1:,serialsentered,%Serial_count%
 		Gui,1:Submit,NoHide
@@ -1680,10 +1716,38 @@ Click %x%, %y%
 Click %x%, %y%
 }
 
+Enter_time(Time)  
+{
+	make sure timing is good
+	static Average_time = 1, Start_time = 0, End_time = 0, paused = 0, Pause_Off = 0, paused_Off_Store = 0
+
+If  time = Start
+		Start_time := A_TickCount
+	If time = End
+	{
+		End_time := A_TickCount		
+	Average_time := ((((End_time - Start_time)  - paused_off_store ) / 100)  + Average_time) /2.5
+	paused_off_store = 0
+	;~ Average_time := (((End_time - Start_time) / 100)  + Average_time) /2	
+}
+
+If time = Pause_on
+	paused := A_TickCount
+
+If Time = Pause_off
+{
+	Pause_Off := A_TickCount - paused
+	paused_Off_Store := paused_off_store + Pause_Off
+}
+
+
+Return Average_time	
+}
+
 Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 {	
 	global breakloop
-Loop, 8
+Loop, 2
 {
 	If (breakloop)
 		break
@@ -1692,10 +1756,11 @@ Result :=   Searchend_Isssue_Check()
 			If (Result = "Dual_Eng")
 			{
 				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-				SplashTextOn,,,Dual Serial or Eng Models, This serial has dual Engineering Models. This Prefix will be moved to the End of the list.
-				Winmove, ,This serial has dual engeering Models,%amonx%, %Amony%
+				SplashTextOn,,300,, This serial has Multiple Engineering Models. This Prefix will be moved to the End of the list.
+				Winmove, ,This serial has Multiple engeering Models,%amonx%, %Amony%
 				Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 				Added_Serial_Count("-1")
+				SplashTextOff
 				Return Result
 				Break
 		  }
@@ -1742,6 +1807,7 @@ If (!Complete)
 CoordMode, mouse, Screen
    ;listlines on
     win_check(Active_ID)
+	Sleep()
    Click, %prefixx%, %prefixy%
    sleep(.5)
    mousemove 300,300
@@ -1758,14 +1824,7 @@ CoordMode, mouse, Screen
    sleep()
    Send {Tab}
    Sleep(Sleep_Delay)
-   Send {enter 2}
-   Sleep(2)
-Double_Click(Applyx,Applyy)
-Sleep()
-   Serialcount +=1
-   sleep()
-   Searchcount = 0
-   Searchcountser = 0
+Sleep(2)
 }
 else
 	  {
@@ -1849,7 +1908,9 @@ win_check(Active_ID)
 
 Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 {
-Afterloop := Prefix First_Effectivity_Numbers "-" Second_Effectivity_Numbers
+	ensure This is correct
+	
+Afterloop := Prefix First_Effectivity_Numbers "-" Second_Effectivity_Numbers "`n"
 GuiControlGet, Editfield
 Loop, Parse, Editfield, `n
 {
@@ -1859,7 +1920,7 @@ Loop, Parse, Editfield, `n
 	If A_LoopField contains  - - - -
 	{
 		Stop_Check = 1
-			EditfieldStore := EditfieldStore A_LoopField
+			EditfieldStore := EditfieldStore  A_LoopField  "`n"  Afterloop "`n"
 			continue
 	}
 
@@ -1867,14 +1928,16 @@ If (!Stop_check)
 {
 Prefix_Check := Extract_Prefix(A_LoopField)
 If Prefix_Check = %Prefix%
-Afterloop := Afterloop "`n" A_LoopField
+Afterloop := Afterloop A_LoopField "`n"
 else
 EditfieldStore := EditfieldStore A_LoopField "`n"
 }
 else
 	EditfieldStore := EditfieldStore A_LoopField "`n"
 }
-Guicontrol,,Editfield, %EditfieldStore%`n%Afterloop%
+
+
+Guicontrol,,Editfield, %EditfieldStore%
 Clear_ACM_Fields()
 return
 }
@@ -2261,8 +2324,8 @@ ToolTip, Please Shift + mouse button click on the "Apply button" in the ACM effe
 
 	Exit_Program(Unit_Test := 0) ; unit
 	{
-		global Serialcount
-		Result := Move_Message_Box("262148",Effectivity_Macro, " The number of successful Serial additions to ACM is %Serialcount% `n`n Are you sure you want to Quit the macro?.`n`n Press YES to Quit the Macro.`n`n No to keep going.")
+		GuiControlGet, serialsentered
+		Result := Move_Message_Box("262148",Effectivity_Macro, " The number of successful Serial additions to ACM is "  serialsentered "`n`n Are you sure you want to Quit the macro?.`n`n Press YES to Quit the Macro.`n`n No to keep going.")
 
 		If Result = Yes
 		{
@@ -2313,7 +2376,7 @@ return
 			GuiControlGet, nextserialtoadd
 			GuiControlGet, EditField
 			GuiControlGet, EditField2
-			GuiControlGet, Serialcount
+			GuiControlGet, serialsentered
 			GuiControlGet, reloadprefixtext
 
 			If nextserialtoadd =
@@ -2669,7 +2732,7 @@ Return
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
-			Versioncheck(Start := 0) ; no unit test needed
+			Versioncheck(Start := 1) ; no unit test needed
 			{
 				global  Configuration_File_Location, Update_Check_URL, req
 
@@ -2695,7 +2758,9 @@ req := ComObjCreate("MSXML2.XMLHTTP.6.0")
 				Progress,  w200, Updating..., Fetching Server Information, Effectivity Macro Updater
 				Progress, 15
 			}
-
+If (Start)
+req.open("GET", Update_Check_URL, true)
+else
 req.open("GET", Update_Check_URL, false)
 
 	If (start)
