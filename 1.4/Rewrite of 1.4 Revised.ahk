@@ -82,7 +82,7 @@ Prefixcount = 5
 TotalPrefixes = 0
 Radiobutton = 1
 
-Unit_Test = 0 ; Set this to 1 to perform unit tests  and offline testing
+Unit_Test = 1 ; Set this to 1 to perform unit tests  and offline testing
 Log_Events = 0 ;Set this to 1 to perform logging
 
 inifile = config.ini
@@ -178,7 +178,11 @@ If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null")
 
 
 
+
+SplashTextOn,,20,,Initializing....
 Versioncheck("0")
+SplashTextOff
+
 
 Serials_GUI_Screen(editfield, editfield2, TotalPrefixes)
 
@@ -953,11 +957,11 @@ Copy_text_and_Format() ; no unit test needed as it all the other functions are t
 
 		Editfield := Extract_Serial_Array(Combined_Serial_Array)
 StringReplace, Editfield, Editfield, `,,,All
-		Guicontrol,1:, Editfield, %Editfield% - - - - - - - - - - - - - - - - - - - - - - - - - - ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
+		Guicontrol,1:, Editfield, %Editfield% - - - - - - - - - - - - - - - - - - - - - - - - - -  `n ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
 	}else  {
 		Prefix_Count :=  Formatted_Text_Serial_Count(Formatted_Text)
 	StringReplace, Formatted_Text, Formatted_Text, `,,,All
-		Guicontrol,1:, Editfield, %Formatted_Text% - - - - - - - - - - - - - - - - - - - - - - - - - - ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
+		Guicontrol,1:, Editfield, %Formatted_Text% - - - - - - - - - - - - - - - - - - - - - - - - - - `n ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
 	}
 	totalprefixes = %Prefix_Count% ; Sets the totalprefixes variables to the Prefixcombinecount variable
 		Guicontrol,, reloadprefixtext,%totalprefixes% ; Changes the valuse in the main GUI screen
@@ -982,7 +986,7 @@ Format_Serial_Functions(Fullstring := "", Unit_test := 0) ; unit
 	newline = `n
 	sleep()
 	If (Unit_test) && (FullString = "") ; For testing
-	Fullstring := "621s (SN: TRD00123, TRD00124-00165, TRD00001-00002, CHU00001-00002, CHU00003-00005)"
+	Fullstring := "621s (SN: TRD00123, TRD00124-00165, TRD00001-00002, CHU00001-00002, CHU00003-00005,  gnz00001-00003,gnz00005-00008, gnz00010-00015, Apu00001-00150,apu00200-01000)"
 	Else if(!Unit_Test)
 		FullString := Copy_selected_Text()
 
@@ -1500,8 +1504,8 @@ Enter_Effectivity_Loop()
 {
 	
 global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location
-static ACM_Time=1.0
-LoopCount=0
+static ACM_Time= 5.0
+
  Loop
    {
       ;~ tabcount++
@@ -1520,68 +1524,18 @@ Load_ini_file(Configuration_File_Location)
 
 
 ;~ sleep(10)
-/*
-\/\/\/\//\/\/\/\/\//\/\/\
-REfresh section
-\/\/\/\/\/\/\/\/\/\/\/\/\
-*/
 
-      If breakloop = 1
-      {
-         Gui 1: -AlwaysOnTop
-         SplashTextOn,,,Macro Stopped
-         Gui_Image_Show("Stop") ; options are Stop, Run, Pause, Start
-         Sleep(10)
-          SplashTextOff
-         Break
-      }
+Refresh_Screen()
 
-      LoopCount++
-				  If LoopCount >= %Refreshrate%
-				   {
-					Double_Click(Applyx,Applyy)
-					 sleep(10)
-					 Result :=   Searchend()
-					  If (Result = Failure) or (Result = Timedout)
-						Exit
-						
-					  Needrefresh = 0
-					 ;msgbox, refresh
-					 sleep(3)
-
-					Win_check(Active_ID)
-					 sleep()
-					 Send {F5}
-					 sleep(20)
-						 Searchcountser = 0
-								Loop
-								{									
-									If (breakloop)
-										break
-									
-									sleep()
-									Double_Click(Add_Button_X_Location,Add_Button_Y_Location)
-										 
-								Result :=   Searchend()
-										  If (Result = Failure) or (Result = Timedout)
-											Exit
-											If Result = Found
-												Break
-								} 
-
-					 Loopcount = 0
-					 Searchcountser = 0
-					 Needrefresh = 0
-					 sleep(10)
-				  } ; End Refresh loop	  
-	
 /*
 \/\/\/\//\/\/\/\/\//\/\/\
 Ger prefix  section
 \/\/\/\/\/\/\/\/\/\/\/\/\
 */	
+
       sleep()
 	Serial_number := Get_Serial_Numbers()
+	
 	if Serial_Number  contains  - - - - -
 		{
 		Stop_Issue_checks = 1
@@ -1604,6 +1558,7 @@ Ger prefix  section
 		  Double_Click(Applyx,Applyy)			
 
 }
+
 if (!Stop_Issue_checks)
 {
 			  ToolTip, % ACM_Time
@@ -1615,30 +1570,38 @@ if (!Stop_Issue_checks)
 		break
 									
 Sleep()
-Loop, 10
-{
-	;~ Sleep()
-	If (breakloop)
-	break							
-		Enter_time("Pause_on")							
-	Result := Searchend()
-	Enter_time("Pause_off")
-	
-		If (Result = "Found")
+			Loop, 10
 			{
-			Modifier =
-			;~ MsgBox, Break 6 loop
-			Break
-		}
-} 
-If Result = Found
-	break
-else
-{
+				;~ Sleep()
+				If (breakloop)
+				break	
+				
+					Enter_time("Pause_on")							
+				Result := Searchend()
+				Enter_time("Pause_off")
+				
+					If (Result = "Found")
+						{
+						Modifier =
+						Break
+					}
+			} 
+
+	If Result != Found
+	{
 		Enter_time("Pause_on")	
 Result := Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+ IF result = Dual_eng
+	Break
+	
+	 IF result = Bad_Prefix
+	Break
+	
+If Result != Not_Found
+	Break
 		Enter_time("Pause_off")		
-	}
+}
+
 if REsult = Found
 {
 	;~ MsgBox, Break stop isues  loop
@@ -1650,45 +1613,43 @@ If Result != Found
  Double_Click(Applyx,Applyy)	
 }}
 
-If (Result  != "Bad Prefix") and  (Result != "Dual_Eng")
+if REsult = Found
 {
 ACM_Time := Enter_time("End")  
 Add_To_Completed_LIst(Serial_number)
 }
 }
-
-
-If (Stop_Issue_checks)
+else If (Stop_Issue_checks)
 {
 Modifier = **Multiple Engineering Models**
 Create_Dual_Instructions_GUI()
 Counter = 0
 loop
 {
-	Counter++
+
 	if breakloop = 1
 		Break
 
 Result_check := Searchend_Isssue_Check()
-;~ If (Result_check =" Issues_found") or (Result_check = "Dual_Eng")
-	;~ Result = no
-If (Result = "Not_found") && (Result_check = "Not_found")
-{
+;~ MsgBox, % Result_check " is result_check"
 
-	;~ If Counter = 10
-	;~ {
-			Double_Click(Applyx,Applyy)
-	Counter = 0
-	Gui, 70:Destroy
+
+If (Result_check = "Not_found")
+{
+	Sleep(3)
+			Gui, 70:Destroy
+			Double_Click(Applyx,Applyy)	
+			Loop
+			{
+				result := Searchend()			
+;~ MsgBox, result is %result%				
+			} until (Result = "Found")
+			
 break
 }
-
-
-
 Gui 70: Flash
 Sleep(10)
-} until (Result = "Found")
-
+} 
 Loop
 {
 	if (breakloop)
@@ -1698,7 +1659,7 @@ Loop
 Result := Searchend()
 If  Result = Found
 {
-	
+	Gui, 70:Destroy
 	Add_To_Completed_LIst(Serial_number, Modifier)
 	break
 }
@@ -1717,8 +1678,7 @@ Click %x%, %y%
 }
 
 Enter_time(Time)  
-{
-	make sure timing is good
+{	
 	static Average_time = 1, Start_time = 0, End_time = 0, paused = 0, Pause_Off = 0, paused_Off_Store = 0
 
 If  time = Start
@@ -1756,7 +1716,7 @@ Result :=   Searchend_Isssue_Check()
 			If (Result = "Dual_Eng")
 			{
 				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-				SplashTextOn,,300,, This serial has Multiple Engineering Models. This Prefix will be moved to the End of the list.
+				SplashTextOn,350,100,, This serial has Multiple Engineering Models. This Prefix will be moved to the End of the list.
 				Winmove, ,This serial has Multiple engeering Models,%amonx%, %Amony%
 				Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 				Added_Serial_Count("-1")
@@ -1764,7 +1724,7 @@ Result :=   Searchend_Isssue_Check()
 				Return Result
 				Break
 		  }
-			if (Result = "Bad Prefix")
+			if (Result = "Bad_Prefix")
 			{
 			;~ MsgBox, Bad Prefix
 			Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
@@ -1772,8 +1732,6 @@ Result :=   Searchend_Isssue_Check()
 			   Return Result
 			   Break
 	  }
-	  	
-;~ Double_Click(Applyx,Applyy)
 	}
 
    Return "Not_Found"
@@ -1787,6 +1745,59 @@ Gui 70:Add,Text,, Select an engeering model
 Gui  70:Show, x%amonx% y%amony%,%Effectivity_Macro%
 gui, 70: +AlwaysOnTop
 Gui 70: Flash
+return
+}
+
+Refresh_Screen()
+{
+	global Applyx, Applyy, prefixx, prefixy,Active_ID, breakloop, Refreshrate
+	
+	static LoopCount = 0
+	
+    If breakloop = 1
+      {
+         Gui 1: -AlwaysOnTop
+         SplashTextOn,,,Macro Stopped
+         Gui_Image_Show("Stop") ; options are Stop, Run, Pause, Start
+         Sleep(10)
+          SplashTextOff
+      }
+
+      LoopCount++
+				  If LoopCount >= %Refreshrate%
+				   {
+					Double_Click(Applyx,Applyy)
+					 sleep(10)
+					 Result :=   Searchend()
+					  If (Result = Failure) or (Result = Timedout)
+						Exit
+
+					 sleep(3)
+
+					Win_check(Active_ID)
+					 sleep()
+					 Send {F5}
+					 sleep(20)
+					Loop
+								{									
+									If (breakloop)
+										break
+									
+									sleep()
+									Double_Click(Add_Button_X_Location,Add_Button_Y_Location)
+										 
+								Result :=   Searchend()
+										  If (Result = Failure) or (Result = Timedout)
+											Exit
+											If Result = Found
+												Break
+								} 
+
+					 LoopCount = 0
+
+					 sleep(10)
+				  } ; End Refresh loop	  
+				  
 return
 }
 Added_Serial_Count(Add_Or_Subtract := "1") ; unit
@@ -1853,15 +1864,18 @@ Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 {
 	;~ MsgBox, Serialnogo prefix is %Prefix%
 	Serial_Number := Prefix First_Effectivity_Numbers "-" Second_Effectivity_Numbers
-	Modifier = ** Not In ACM **
-	Add_To_Completed_LIst(Serial_number,Modifier)
+	Modifier = **Not In ACM**
+	Add_To_Completed_LIst(Serial_Number, Modifier)
 	GuiControlGet, Editfield
 Loop, Parse, Editfield, `n
 {
+	MsgBox, %A_LoopField% `n` is Serialnogo
 Prefix_Check := Extract_Prefix(A_LoopField)
 If Prefix_Check = %Prefix%
 {
-Add_To_Completed_LIst(A_LoopField, Modifier)
+	Modifier = **Not In ACM**
+		Serial_number := Get_Serial_Numbers()
+	Add_To_Completed_LIst(Serial_Number, Modifier)
 continue
 }
 else
@@ -1875,7 +1889,12 @@ return
 Add_To_Completed_LIst(Serial_number, Modifier := "")
 {
 	GuiControlGet, Editfield2
-	GuiControl,, Editfield2, %Editfield2%`n%Serial_Number%  %Modifier%
+	tooltip,pause
+	Pause, on
+	tooltip
+	;~ MsgBox % Editfield2 Serial_Number  Modifier
+		GuiControl,, Editfield2, %Editfield2%%Serial_number%  %Modifier% `n
+		gui,Submit,NoHide
 Return
 }
 
@@ -1907,9 +1926,7 @@ win_check(Active_ID)
 
 
 Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-{
-	ensure This is correct
-	
+{	
 Afterloop := Prefix First_Effectivity_Numbers "-" Second_Effectivity_Numbers "`n"
 GuiControlGet, Editfield
 Loop, Parse, Editfield, `n
@@ -1920,7 +1937,7 @@ Loop, Parse, Editfield, `n
 	If A_LoopField contains  - - - -
 	{
 		Stop_Check = 1
-			EditfieldStore := EditfieldStore  A_LoopField  "`n"  Afterloop "`n"
+			EditfieldStore := EditfieldStore  A_LoopField "`n"  Afterloop
 			continue
 	}
 
@@ -1932,10 +1949,14 @@ Afterloop := Afterloop A_LoopField "`n"
 else
 EditfieldStore := EditfieldStore A_LoopField "`n"
 }
-else
-	EditfieldStore := EditfieldStore A_LoopField "`n"
-}
 
+else
+{
+		If (A_LoopField = "`n") or (A_LoopField = "")
+		continue
+	EditfieldStore := EditfieldStore A_LoopField  "`n"
+}
+}
 
 Guicontrol,,Editfield, %EditfieldStore%
 Clear_ACM_Fields()
@@ -2097,7 +2118,7 @@ global Image_Red_Exclamation_Point, Active_ID,
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Image_Red_Exclamation_Point)
    ;~ bmpHaystack := Gdip_BitmapFromScreen(Current_Monitor)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
-   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,0,0,0,0)
+   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,10,0,0,0)
    Gdip_Shutdown(pToken)
       ;listlines on
    If RETSearch < 0
@@ -2141,7 +2162,7 @@ global Issues_Image, Active_ID, prefixx, prefixy
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Issues_Image)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
 
-   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,0,0,0,0)
+   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,10,0,0,0)
 
    Gdip_Shutdown(pToken)
       ;listlines on
@@ -2163,20 +2184,19 @@ global Issues_Image, Active_ID, prefixx, prefixy
       Exit
    }
 
-;~ MsgBox, % RETSearch
-
    If (RETSearch = "4") or (RETSearch = "2")
    {
 	  Return "Dual_Eng"
    }
     If (RETSearch = "3") or (RETSearch = "5") or (RETSearch = "6")
    {
-	  Return "Bad Prefix"
+	  Return "Bad_Prefix"
 	}
+	
 		 If (RETSearch = "0")
    Return "Not_found"
 
-		 If (RETSearch != "0") or (RETSearch != "4") or (RETSearch != "5") or (RETSearch != "6")
+		else
    Return "Issues_found"
 }
 /*
@@ -2863,7 +2883,7 @@ req := ComObjCreate("MSXML2.XMLHTTP.6.0")
 ;~ req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 ; Open a request with async enabled.
 ;~ req.SetTimeouts(5000, 5000, 5000, 5000)
-
+SetTimer, Kill_check,5000
 req.open("GET", "https://www.google.com", false)
 
 ; Set our callback function (v1.1.17+).
@@ -2876,6 +2896,15 @@ catch e
 	Internet_Status = 0
 	
 Return Internet_Status
+}
+
+Kill_Check:
+{
+SetTimer, Kill_check,Off
+SplashTextOff
+	Internet_Status = 0
+Exit
+return
 }
 
 Internet_check() {
