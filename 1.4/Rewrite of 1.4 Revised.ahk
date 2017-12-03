@@ -1,61 +1,3 @@
-
-timeotu method 
-
-start := A_tickcount
-result := IsInternetConnected()
-End := A_tickcount
-Totaltime := (end - start) / 1000
-msgbox % result " and took " totaltime
-return
-
-
-
-IsInternetConnected()
-{
-  static sz := A_IsUnicode ? 408 : 204, addrToStr := "Ws2_32\WSAAddressToString" (A_IsUnicode ? "W" : "A")
-  VarSetCapacity(wsaData, 408)
-  if DllCall("Ws2_32\WSAStartup", "UShort", 0x0202, "Ptr", &wsaData)
-    return false
-  if DllCall("Ws2_32\GetAddrInfoW", "wstr", "dns.msftncsi.com", "wstr", "http", "ptr", 0, "ptr*", results)
-  {
-    DllCall("Ws2_32\WSACleanup")
-    return false
-  }
-  ai_family := NumGet(results+4, 0, "int")    ;address family (ipv4 or ipv6)
-  ai_addr := Numget(results+16, 2*A_PtrSize, "ptr")   ;binary ip address
-  ai_addrlen := Numget(results+16, 0, "ptr")   ;length of ip
-  DllCall(addrToStr, "ptr", ai_addr, "uint", ai_addrlen, "ptr", 0, "str", wsaData, "uint*", 204)
-  DllCall("Ws2_32\FreeAddrInfoW", "ptr", results)
-  DllCall("Ws2_32\WSACleanup")
-  http := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-
-  if (ai_family = 2 && wsaData = "131.107.255.255:80")
-  {
-http.SetTimeouts(5000, 5000, 5000, 5000)
-    http.Open("GET", "http://www.msftncsi.com/ncsi.txt")
-  }
-  else if (ai_family = 23 && wsaData = "[fd3e:4f5a:5b81::1]:80")
-  {
-http.SetTimeouts(5000, 5000, 5000, 5000)
-    http.Open("GET", "http://ipv6.msftncsi.com/ncsi.txt")
-  }
-  else
-  {
-    return false
-  }
-try{
-
-  http.Send()
-}
-catch e
-Return "Timeout"
-
-  return (http.ResponseText = "Microsoft NCSI") ;ncsi.txt will contain exactly this text
-}
-
-
-
-
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 #ErrorStdOut
 ; #Warn  ; Enable warnings to assist with detecting common errors.
@@ -140,7 +82,7 @@ Prefixcount = 5
 TotalPrefixes = 0
 Radiobutton = 1
 
-Unit_Test = 1 ; Set this to 1 to perform unit tests  and offline testing
+Unit_Test = 0 ; Set this to 1 to perform unit tests  and offline testing
 Log_Events = 0 ;Set this to 1 to perform logging
 
 inifile = config.ini
@@ -293,8 +235,7 @@ UnPausescript()
 ESC::
 {
 breakloop=1
-   ListLines
-   Pause,on
+exit
 return
 }
 
@@ -317,8 +258,7 @@ return
 ~Esc::
 {
    Gosub,Stop_Macro
-   ListLines
-   Pause,on
+exit
    Return
 }
 
@@ -1567,7 +1507,6 @@ static ACM_Time= 5.0
  Loop
    {
 Serial_number = 
-the slow down below seemed to help. Figure out why
 Sleep(3)
 	  ;~ tabcount++
 Load_ini_file(Configuration_File_Location)
@@ -1613,17 +1552,25 @@ Result =
 	  Complete = 1
 	}
 	
+	Loop
+	{
+		if (breakloop)
+			Break
+		
+	Double_Click(Applyx,Applyy)	
 	Result := Searchend()
-	If Result = Found
+	
+} until (result = "Found")
+
+If Result = Found
 	{
 		  Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
 		  Double_Click(Applyx,Applyy)			
-
 }
 
 if (!Stop_Issue_checks)
 {
-			  ToolTip, % ACM_Time
+			 
 			Sleep(ACM_Time)
 			Enter_time("start")  
 			
@@ -1658,12 +1605,19 @@ ISSUE_Result := Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbe
 
  IF ISSUE_Result = Dual_eng
 	{
-	Serial_Number = 
+				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+				SplashTextOn,400,100,, This serial has Multiple Engineering Models. This Prefix will be moved to the End of the list.
+				Winmove, ,This serial has Multiple engeering Models,%amonx%, %Amony%
+				Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+				Added_Serial_Count("-1")
+				SplashTextOff
 	Enter_time("Pause_off")		
 	Break
 	}
 	 IF ISSUE_Result = Bad_Prefix
 	{
+		Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+		Added_Serial_Count("-1")
 		Enter_time("Pause_off")		
 	Break
 }
@@ -1677,14 +1631,12 @@ If ISSUE_Result != Not_Found
 if REsult = Found
 {
 	 LoopCount--
-	;~ MsgBox, Break stop isues  loop
 Break
 }
 
 If Result != Found
-{
  Double_Click(Applyx,Applyy)	
-}} ; end loop
+} ; end loop
 
 
 if Result = Found
@@ -1697,7 +1649,7 @@ else If (Stop_Issue_checks)
 {
 Modifier = **Multiple Engineering Models**
 Create_Dual_Instructions_GUI()
-Engineering_location_x := prefixx - 60
+Engineering_location_x := prefixx - 110
 MouseMove %Engineering_location_x%, %prefixy%
 Counter = 0
 loop
@@ -1709,7 +1661,11 @@ loop
 Result_check := Searchend_Isssue_Check()
 ;~ MsgBox, % Result_check " is result_check"
 
-
+If (Result_check = "Bad_Prefix")
+{
+	Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+		Added_Serial_Count("-1")
+}
 If (Result_check = "Not_found")
 {
 	Sleep(3)
@@ -1792,20 +1748,13 @@ Loop, 2
 Result :=   Searchend_Isssue_Check()
 			If (Result = "Dual_Eng")
 			{
-				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-				SplashTextOn,350,100,, This serial has Multiple Engineering Models. This Prefix will be moved to the End of the list.
-				Winmove, ,This serial has Multiple engeering Models,%amonx%, %Amony%
-				Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-				Added_Serial_Count("-1")
-				SplashTextOff
+
 				Return "Dual_Eng"
 				Break
 		  }
 			if (Result = "Bad_Prefix")
 			{
 			;~ MsgBox, Bad Prefix
-			Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-			Added_Serial_Count("-1")
 			   Return "Bad_Prefix"
 			   Break
 	  }
@@ -1827,7 +1776,7 @@ return
 
 Refresh_Screen()
 {
-	global Applyx, Applyy, prefixx, prefixy,Active_ID, breakloop, Refreshrate
+	global Applyx, Applyy, prefixx, prefixy,Active_ID, breakloop, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location
 	
 	static LoopCount = 0
 	
@@ -2957,15 +2906,13 @@ Internet_Connection_Check()
 {
    global req, Internet_Status
 ;~ req := ComObjCreate("Msxml2.XMLHTTP")
-req := ComObjCreate("MSXML2.XMLHTTP.6.0")
-;~ req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-; Open a request with async enabled.
-;~ req.SetTimeouts(5000, 5000, 5000, 5000)
-SetTimer, Kill_check,5000
-req.open("GET", "https://www.google.com", false)
+req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 
+; Open a request with async enabled.
+req.SetTimeouts(5000, 5000, 5000, 5000)
+req.open("GET", "https://www.google.com", false)
 ; Set our callback function (v1.1.17+).
-req.onreadystatechange := Func("Internet_check")
+;~ req.onreadystatechange := Func("Internet_check")
 ; Send the request.  Ready() will be called when it's complete.
 Try
 req.send()
