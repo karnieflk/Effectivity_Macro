@@ -155,58 +155,7 @@ class Config_File_Create
 								Yunit.assert(Result == "Test")
 							}}}
 
-							Class Macro_Update_Check_Functions
-							{
-								class Calculations
-								{
-									Calculate_Days_Since_Last_Update()
-									{
-										Updatestatus := A_Now
-										Newtime = -10
-										EnvAdd, UpdateStatus, %Newtime%, days
-
-										Days := Calculate_Days_Since_Last_Update(updatestatus)
-										Yunit.assert(Days == "10")
-									}  }
-
-									class Check_Doc_Title
-									{
-										Test_For__Found_title()
-										{
-											Gui 5:add, Text,, Test Window!
-											gui 5:Show,w500, Serial Version Unit Testing Gui
-											Correct_answer = Serial Version Unit Testing Gui
-
-											Result :=  Check_Doc_Title()
-
-											Gui 5:Destroy
-											Yunit.assert(Result == Correct_answer, "Could Not find ""Serial Version Unit Testing Gui"" Gui Window" )
-										}
-
-										Test_For__Not_Found_Title()
-										{
-											Result :=  Check_Doc_Title()
-											Yunit.assert(Result == "Yunit Testing" , "Negative response check failed")
-										}}
-
-										class Format_Serial_check_title
-										{
-											Test_For__Found_title()
-											{
-												Title := "Serial Version #99"
-												Result :=   Format_Serial_Check_Title(Title)
-												Yunit.assert(Result == "99" , "Did not format title correctly")
-											}
-
-											TEst_for__Not_found_title()
-											{
-												Title := "Not_Found"
-												Result :=   Format_Serial_Check_Title(Title)
-												Yunit.assert(Result == "Not_Found" , "Did not Pass Not_found")
-											}}}
-
-
-                    class Formatting_Functions_Check
+					                    class Formatting_Functions_Check
 											{
 												class _Integration_Testing
 												{
@@ -589,7 +538,8 @@ class Exit_program
 			Correct_answer := "Yes"
 	SetTimer, ClickYes, 500
 Result :=  Exit_Program("1")
-	Yunit.assert( Result ==   Correct_answer )
+MsgBox % Result
+	Yunit.assert( Result =   Correct_answer )
 }
 
 	no()
@@ -597,7 +547,7 @@ Result :=  Exit_Program("1")
 		Correct_answer := "no"
 	SetTimer, Clickno, 500
 Result :=  Exit_Program("1")
-	Yunit.assert( Result ==   Correct_answer )
+	Yunit.assert( Result =   Correct_answer )
 }}
 
 class Preformat_Text
