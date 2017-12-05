@@ -29,7 +29,7 @@ DetectHiddenText on
 #InstallMouseHook
 
 
-Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array
+Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array, breakloop
 
 ; below is for testing between home and work computer
 If A_UserName = karnijs
@@ -82,16 +82,11 @@ Prefixcount = 5
 TotalPrefixes = 0
 Radiobutton = 1
 
-Unit_Test = 0 ; Set this to 1 to perform unit tests  and offline testing
+Unit_Test = 1 ; Set this to 1 to perform unit tests  and offline testing
 Log_Events = 0 ;Set this to 1 to perform logging
 
-inifile = config.ini
-;~ File_Install_Root_Folder = C:\Users\karnijs\Desktop\Autohotkey\Effectivity Macro\1.4\Install_Files ; for testing at work
-;~ File_Install_Root_Folder = E:\Git\Effectivity_Macro\1.4\Install_Files ; for when testing at home
-
-
 File_Install_Work_Folder = C:\SerialMacro
-Configuration_File_Location = %File_Install_Work_Folder%\%inifile%
+Configuration_File_Location = %File_Install_Work_Folder%\config.ini
 File_install_Image_Folder = %File_Install_Work_Folder%\images
 File_install_Icon_Folder = %File_Install_Work_Folder%\icons
 
@@ -179,8 +174,8 @@ If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null")
 
 
 
-SplashTextOn,,20,,Initializing....
-;~ Versioncheck("0")
+SplashTextOn,,20,,Checking for update....
+Versioncheck("0")
 SplashTextOff
 
 
@@ -225,18 +220,23 @@ UnPausescript()
 	  return
    }
 
-^q::
+
+
+~Esc::
 {
-   Exit_Program()
+Serialcount := Added_Serial_Count("0")
+Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successful Serial additions to ACM is " Serialcount " `n`n Are you sure that you want to stop the macro?.`n`n Press YES to stop the Macro.`n`n No to keep going.")
+   If Result = Yes
+{
+	  Gui 1: -AlwaysOnTop
+	  Gui_Image_Show("Stop")
+	  Gui, Submit, NoHide
+	  Send {Shift Up}{Ctrl Up}
+	  breakloop = 1
+	  exit
+	  }
+else
    Return
-}
-
-
-ESC::
-{
-breakloop=1
-exit
-return
 }
 
 ;Sets the hotkey for Ctrl + 1 or Ctrl + numpad 1
@@ -244,6 +244,7 @@ $^Numpad1::
 $^1::
 {
 Copy_text_and_Format()
+Formatted_text_completed = 1
 return
 }
 
@@ -255,10 +256,10 @@ return
 }
 
 #If Winactive("ahk_class TTAFrameXClass") or WinActive(Effectivity_Macro)
-~Esc::
+
+^q::
 {
-   Gosub,Stop_Macro
-exit
+   Exit_Program()
    Return
 }
 
@@ -273,24 +274,6 @@ F1::
 
 #if winactive ; stops the requirement for only the macro screen or acm
 
-
-
-Stop_Macro:
-{
-Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successful Serial additions to ACM is " Serialcount " `n`n Are you sure that you want to stop the macro?.`n`n Press YES to stop the Macro.`n`n No to keep going.")
-   If result =  yes
-   {
-	  Stopactcheck = 1
-	  Gui 1: -AlwaysOnTop
-	  Gui_Image_Show("Stop")
-	  Gui, Submit, NoHide
-	  Send {Shift Up}{Ctrl Up}
-	  breakloop = 1
-	  Exit
-   }
-   Else
-	  Return
-}
 
 /*
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
@@ -903,7 +886,7 @@ Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successfu
 
 		If result =  Yes
 		{
-			Stopactcheck = 1
+		
 			Gui 1: -AlwaysOnTop
 			Gui_Image_Show("Stop") ; Options are Start, Paused, Running, Stopped
 			Gui, Submit, NoHide
@@ -920,9 +903,9 @@ Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successfu
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
-Copy_text_and_Format() ; no unit test needed as it all the other functions are tested individually.
+Copy_text_and_Format(Input_text := "") ; no unit test needed as it all the other functions are tested individually.
 {
-	Formatted_Text := Format_Serial_Functions(,Unit_Test) ; Goes to the Formatserials subroutine
+	Formatted_Text := Format_Serial_Functions(Input_text,Unit_Test) ; Goes to the Formatserials subroutine
 	Sort, Formatted_Text ; Sorts the prefixes in order
 	Guicontrol,,Radio1,1
 	Gui,Submit,NoHide
@@ -985,7 +968,7 @@ Format_Serial_Functions(Fullstring := "", Unit_test := 0) ; unit
 	sleep()
 	If (Unit_test) && (FullString = "") ; For testing
 	Fullstring := "621s (SN: TRD00123, TRD00124-00165, TRD00001-00002, CHU00001-00002, CHU00003-00005,  gnz00001-00003,gnz00005-00008, gnz00010-00015, Apu00001-00150,apu00200-01000)"
-	Else if(!Unit_Test)
+	Else if(!Unit_Test) && (Fullstring = "")
 		FullString := Copy_selected_Text()
 
 
@@ -1471,12 +1454,27 @@ Enter_Serials_Variable_Setup() ; no unit testing needed
 Start_Macro() ; no unit testing needed as all contained functions are tested
 {
 	global
-	GuiControlGet,Editfield
+	gui,Submit, NoHide
+	GuiControlGet, EditfieldCHeck,,Editfield 
+
+	If Formatted_text_completed !=1
+	{
+			  Guicontrol,1:, Editfield,			  
+			  Copy_text_and_Format(EditfieldCHeck)	
+	}
+	else
+		Formatted_text_completed = 0
+	
+	GuiControlGet, Editfield
+	
 If Editfield =
 {
 Move_Message_Box("0","We Got A Problem","Oops! `nThere is no effectivity to input.`n`nPlease select the effectivity and press Ctrl +1. `nThank You!")
 Exit
 }
+
+
+	
 Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
  Enter_Serials_Variable_Setup()
 Move_Message_Box("262144","Select ACM Screen","Click on the ACM window that you want to add effectivity to and then press the OK button`n`nNote that is the window is not full screen, the macro will make it full screen to increase macro reliability. ")
@@ -1511,6 +1509,7 @@ Sleep(3)
 	  ;~ tabcount++
 Load_ini_file(Configuration_File_Location)
 ;~ checkforactivity()
+
 
 ;~ If Runcount > 20
 	  ;~ {
@@ -1564,15 +1563,19 @@ Result =
 
 If Result = Found
 	{
+		if breakloop = 1
+			{
+			Exit
+		break
+	}
 		  Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
 		  Double_Click(Applyx,Applyy)			
 }
 
 if (!Stop_Issue_checks)
 {
-			 
 			Sleep(ACM_Time)
-			Enter_time("start")  
+			Enter_time("Start")  
 			
 	Loop
 {
@@ -1602,29 +1605,28 @@ Sleep()
 	{
 		Enter_time("Pause_on")	
 ISSUE_Result := Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-
+	Enter_time("Pause_off")	
+	
  IF ISSUE_Result = Dual_eng
 	{
 				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-				SplashTextOn,400,100,, This serial has Multiple Engineering Models. This Prefix will be moved to the End of the list.
+				SplashTextOn,400,100,, This serial has Multiple Engineering/  sales models. This Prefix will be moved to the End of the list.
 				Winmove, ,This serial has Multiple engeering Models,%amonx%, %Amony%
 				Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-				Added_Serial_Count("-1")
+				;~ Added_Serial_Count("-1")
 				SplashTextOff
-	Enter_time("Pause_off")		
+	
 	Break
 	}
 	 IF ISSUE_Result = Bad_Prefix
 	{
 		Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 		Added_Serial_Count("-1")
-		Enter_time("Pause_off")		
-	Break
+		Break
 }
 
 If ISSUE_Result != Not_Found
 {
-	Enter_time("Pause_off")		
 	Break
 }}
 
@@ -1635,14 +1637,21 @@ Break
 }
 
 If Result != Found
+{
+	
  Double_Click(Applyx,Applyy)	
+}
 } ; end loop
 
 
 if Result = Found
 {
 ACM_Time := Enter_time("End")  
+
 Add_To_Completed_LIst(Serial_number)
+Serial_count := Added_Serial_Count("1")
+		GuiControl,1:,serialsentered,%Serial_count%
+		Gui,1:Submit,NoHide
 }
 }
 else If (Stop_Issue_checks)
@@ -1654,21 +1663,21 @@ MouseMove %Engineering_location_x%, %prefixy%
 Counter = 0
 loop
 {
-
 	if breakloop = 1
 		Break
 
 Result_check := Searchend_Isssue_Check()
 ;~ MsgBox, % Result_check " is result_check"
 
-If (Result_check = "Bad_Prefix")
-{
-	Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-		Added_Serial_Count("-1")
-}
+;~ If (Result_check = "Bad_Prefix")
+;~ {
+		;~ Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+		;~ Added_Serial_Count("-1")
+;~ }
+		
 If (Result_check = "Not_found")
 {
-	Sleep(3)
+			Sleep(3)
 			Gui, 70:Destroy
 			Double_Click(Applyx,Applyy)	
 			Loop
@@ -1693,13 +1702,16 @@ If  Result = Found
 {
 	Gui, 70:Destroy
 	Add_To_Completed_LIst(Serial_number, Modifier)
+	Serial_count := Added_Serial_Count("1")
+			GuiControl,1:,serialsentered,%Serial_count%
+		Gui,1:Submit,NoHide
 	break
 }
 }}
 
-Serial_count := Added_Serial_Count()
-		GuiControl,1:,serialsentered,%Serial_count%
-		Gui,1:Submit,NoHide
+;~ Serial_count := Added_Serial_Count()
+		;~ GuiControl,1:,serialsentered,%Serial_count%
+		;~ Gui,1:Submit,NoHide
    }
    return
    }
@@ -1712,29 +1724,52 @@ Click %x%, %y%
 
 Enter_time(Time)  
 {	
-	static Average_time = 1, Start_time = 0, End_time = 0, paused = 0, Pause_Off = 0, paused_Off_Store = 0
+	static Average_time = 1
+static Start_time = 0
+static End_time = 0
+static paused = 0
+static Pause_Off = 0
+static paused_off_store = 0
+static paused_Start = 0
+
+
+If time = Get
+	Return Average_time
 
 If  time = Start
+{
 		Start_time := A_TickCount
+return
+}
 	If time = End
 	{
-		End_time := A_TickCount		
-	Average_time := ((((End_time - Start_time)  - paused_off_store ) / 100)  + Average_time) /2.5
-	paused_off_store = 0
-	;~ Average_time := (((End_time - Start_time) / 100)  + Average_time) /2	
+		End_time := (A_TickCount - Start_time) / 100
+		Total_Time := End_time -  (paused_off_store / 100)
+		Average_time := (Total_Time + Average_time) / 2.0
+		;~ Tooltip %Average_time%
+		;~ MsgBox, % "end time is " End_time "`ntotaltime is " Total_Time "`naveragetime is " Average_time "`n paused off store is " paused_off_store
+		paused_off_store = 0	
+		Return Average_time	
 }
 
 If time = Pause_on
-	paused := A_TickCount
+{
+paused_Start := A_TickCount
+;~ MsgBox % paused_Start " paused start"
+return
+}
 
 If Time = Pause_off
 {
-	Pause_Off := A_TickCount - paused
-	paused_Off_Store := paused_off_store + Pause_Off
+	Pause_Off := A_TickCount - paused_Start
+	;~ MsgBox % Pause_Off " Pause_Off"
+	paused = 0
+	paused_off_store := paused_off_store + Pause_Off
+		;~ MsgBox % paused_off_store " paused_off_store"
+	Pause_Off = 0
+	return
 }
-
-
-Return Average_time	
+Return
 }
 
 Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
@@ -1778,7 +1813,7 @@ Refresh_Screen()
 {
 	global Applyx, Applyy, prefixx, prefixy,Active_ID, breakloop, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location
 	
-	static LoopCount = 0
+	static LoopCount = -1
 	
 	If breakloop = 1
 	  {
@@ -1787,6 +1822,7 @@ Refresh_Screen()
 		 Gui_Image_Show("Stop") ; options are Stop, Run, Pause, Start
 		 Sleep(10)
 		  SplashTextOff
+		  Exit
 	  }
 
 	  LoopCount++
@@ -1803,7 +1839,7 @@ Refresh_Screen()
 					Win_check(Active_ID)
 					 sleep()
 					 Send {F5}
-					 sleep(20)
+					 sleep(10)
 					Loop
 								{									
 									If (breakloop)
@@ -1826,6 +1862,7 @@ Refresh_Screen()
 				  
 return
 }
+
 Added_Serial_Count(Add_Or_Subtract := "1") ; unit
 {
 	static Add_Count
@@ -1869,6 +1906,7 @@ else
 	  Total_Time := milli2hms(ElapsedTime, h, m, s)
 	  sleep(5)
 	  Send {f5}
+	  Serialcount := Added_Serial_Count("0")
 	   Move_Message_Box("0",""," The number of successful Serial additions to ACM is "  Serialcount "`n`nMacro Finished due to no more Serials to add. `n`n It took the macro " Total_Time " to perform tasks. `n`n Please close Serial Macro Window after checking to ensure serials were entered correctly.")
 	  Guicontrol,1:, Editfield,
 	  ;~ gosub, radio2h
@@ -1900,7 +1938,10 @@ Prefix_Check := Extract_Prefix(A_LoopField)
 If Prefix_Check = %Prefix%
 {
 	Modifier = **Not In ACM**
-		Serial_number := Get_Serial_Numbers()
+	First_Half_Serial_Num := Extract_First_Set_Of_Serial_Number(A_LoopField)
+	Second_Half_Serial_Num := Extract_Second_Set_Of_Serial_Number(A_LoopField)
+	
+		Serial_number := Prefix First_Half_Serial_Num "-" Second_Half_Serial_Num
 	Add_To_Completed_LIst(Serial_Number, Modifier)
 continue
 }
@@ -2043,6 +2084,7 @@ checkforactivity() ; no unit test needed
 
 		 If (A_TimeIdlePhysical > 0) and (A_TimeIdlePhysical < 1000)
 		 Timeleft = 5
+	
 		 If (A_TimeIdlePhysical > 1000) and (A_TimeIdlePhysical < 2000)
 		 Timeleft = 4
 		   If (A_TimeIdlePhysical > 2000) and (A_TimeIdlePhysical < 3000)
@@ -2052,6 +2094,11 @@ checkforactivity() ; no unit test needed
 		 If (A_TimeIdlePhysical > 4000) and (A_TimeIdlePhysical < 5000)
 		 Timeleft = 1
 }
+	 If (breakloop)
+			{
+			SplashTextOff
+			Break
+		}
 		 SplashTextOn,350,50,Macro paused, Macro is now paused due to user activity.`n Macro will resume after %timeleft% seconds of no user input
 				Gui_Image_Show("Pause") ; options are Stop, Run, Pause, Start
 		 Gui, Submit, NoHide
@@ -2375,12 +2422,10 @@ ToolTip, Please Shift + mouse button click on the "Apply button" in the ACM effe
 		Result := Move_Message_Box("262148",Effectivity_Macro, " The number of successful Serial additions to ACM is "  serialsentered "`n`n Are you sure you want to Quit the macro?.`n`n Press YES to Quit the Macro.`n`n No to keep going.")
 
 		If Result = Yes
-		{
-			Stopactcheck = 1
+		{		
 			Gui 1: -AlwaysOnTop
 			If (!unit_test)
 			Gui_Image_Show("Stopped")
-
 			Send {Shift Up}{Ctrl Up}
 			breakloop = 1
 			If (!Unit_Test)
@@ -2477,7 +2522,7 @@ return
 		Gui 1:add, Radio, xp+155 yp w140 h20 BackGroundTrans  vradio2 gradio_button, Effectivity already added
 
 		Gui 1:Add, Text, xp-170 Yp+265 W250 h13 BackGroundTrans, Number of Effectivity successfully added to ACM =
-		Gui 1:Add, Text, xp+245  h13 BackGroundTrans vserialsentered, %Serialcount%
+		Gui 1:Add, Text, xp+245  h13  W45 BackGroundTrans vserialsentered, %Serialcount%
 
 		Gui 1:Add, Text, Xp-245 Yp+15 w250 h13  BackGroundTrans , If macro is operating incorrectly, press Esc to reload
 		Gui 1:Add, Text, xp yp+15 w250 h13  BackGroundTrans , Or press Pause Button on keyboard to Pause macro, Press Pause again to resume macro.
@@ -2779,7 +2824,7 @@ Return
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
-			Versioncheck(Start := 1) ; no unit test needed
+Versioncheck(Start := "1") ; no unit test needed
 			{
 				global  Configuration_File_Location, Update_Check_URL, req
 
@@ -2796,9 +2841,11 @@ Load_ini_file(Configuration_File_Location)
 	Progress,  w200, Updating..., Gathering Information, Effectivity Macro Updater
 				Progress, 0
 }
-;~ req := ComObjCreate("Msxml2.XMLHTTP")
-req := ComObjCreate("MSXML2.XMLHTTP.6.0")
-				;~ req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+;~ req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+req := ComObjCreate("Msxml2.XMLHTTP")
+
+; Open a request with async enabled.
+;~ req.SetTimeouts(10000, 10000, 10000, 10000)
 		
 	If (start)
 	{
@@ -2823,8 +2870,13 @@ req.open("GET", Update_Check_URL, false)
 Try
 req.send()
 catch e
+{
+	Progress,  w200,Updating..., Server Timedout, Error
+	Sleep 1000
+				Progress, 100
+				Progress, off
 	Return
-
+}
 return
 }
 
@@ -2905,14 +2957,14 @@ Ready() {
 Internet_Connection_Check()
 {
    global req, Internet_Status
-;~ req := ComObjCreate("Msxml2.XMLHTTP")
-req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+req := ComObjCreate("Msxml2.XMLHTTP")
+;~ req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 
 ; Open a request with async enabled.
-req.SetTimeouts(5000, 5000, 5000, 5000)
+;~ req.SetTimeouts(10000, 10000, 10000, 10000)
 req.open("GET", "https://www.google.com", false)
 ; Set our callback function (v1.1.17+).
-;~ req.onreadystatechange := Func("Internet_check")
+req.onreadystatechange := Func("Internet_check")
 ; Send the request.  Ready() will be called when it's complete.
 Try
 req.send()
