@@ -241,6 +241,7 @@ else
 $^Numpad1::
 $^1::
 {
+Added_Serial_Count(Add_Or_Subtract := "Reset")
 Copy_text_and_Format()
 Formatted_text_completed = 1
 return
@@ -1469,15 +1470,25 @@ Enter_Effectivity_Loop()
 {
 global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location, prefixx, prefixy
 static ACM_Time= 5.0
-Bad_Prefix_Array := Object()
+value = 0
+
  Loop
 {
+	if (breakloop)
+		exit
+	
 Serial_number = 
 ;~ Sleep(3.5)
 Sleep()
 Load_ini_file(Configuration_File_Location)
 checkforactivity()
+
+If (value > 0 )
+{
+value := Added_Serial_Count("0")
+if ( Mod(value , Refreshrate ) = 0 )
 Refresh_Screen()
+}
 
 /*
 \/\/\/\//\/\/\/\/\//\/\/\
@@ -1504,7 +1515,7 @@ Result =
 
 	 If Prefix =
    {
-	  Retry_bad_serials = 1
+	  Complete = 1
 	}
 	
 	Loop
@@ -1524,13 +1535,7 @@ If Result = Found
 			Exit
 		break
 	}
-	If (Retry_bad_serials)
-	{
-	Bad_serial_repeat(Bad_Prefix_Array)
-	Complete = 1
-	}
 	
-	If (
 	 Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
 	Double_Click(Applyx,Applyy)			
 }
@@ -1550,7 +1555,7 @@ if (!Stop_Issue_checks)
 									
 Sleep()
 
-			Loop, 10
+			Loop, 5
 			{
 				If (breakloop)
 				break	
@@ -1564,6 +1569,9 @@ Sleep()
 						Modifier =
 						Break
 					}
+					Enter_time("Pause_on")	
+					Sleep(".5")
+					Enter_time("Pause_off")
 			}  ; end loop,10
 
 	If Result != Found
@@ -1584,13 +1592,15 @@ Sleep()
 	
 	 IF ISSUE_Result = Bad_Prefix
 	{
+		SplashTextOn,100,20, Waiting to confirm Not In ACM...
 		Enter_time("Pause_on")	
-		Sleep(40)		
+		Sleep(50)		
+		Splashtextoff
 		ISSUE_Result :=   Searchend_Isssue_Check()
 		Enter_time("Pause_off")	
 			IF ISSUE_Result = Bad_Prefix
 			{
-			Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Bad_Prefix_Array)
+			Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 			Added_Serial_Count("-1")
 			Break			
 			}		
@@ -1673,32 +1683,8 @@ If  Result = Found
 }}}
 return
    }
- figure out Array
-Bad_serial_repeat(Bad_Prefix_Array)
-{
-	SplashTextOn,w300,h100, rechecking the Bad prefixes
-	Sleep(10)
-	SplashTextOff	
-for index, element in Bad_Prefix_Array
-	{
-		Refresh_Screen()
-	Prefix := Extract_Prefix(Serial_Number)
-	 First_Effectivity_Numbers := Extract_First_Set_Of_Serial_Number(Serial_Number)
-	 Second_Effectivity_Numbers := Extract_Second_Set_Of_Serial_Number(Serial_Number)
-	Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, "0")
-	Sleep(10)
-	ISSUE_Result :=   Searchend_Isssue_Check()
-	 IF ISSUE_Result = Bad_Prefix
-	{
-		Sleep(30)		
-		ISSUE_Result :=   Searchend_Isssue_Check()
-	 IF ISSUE_Result = Bad_Prefix
-		
-			Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Bad_Prefix_Array,"1")	
-	}
-	return
-	
-}
+
+
 	Double_Click(x,y) ; no unit test needed
 	{
 Click %x%, %y%
@@ -1824,7 +1810,9 @@ return
 Added_Serial_Count(Add_Or_Subtract := "1") ; unit
 {
 	static Add_Count
-	Add_count += %Add_Or_Subtract%
+		Add_count += %Add_Or_Subtract%
+		If Add_Or_Subtract = Reset
+			Add_Count = 0
 return Add_count
 }
 
@@ -1883,50 +1871,35 @@ Macro Timeout Functions and GUI
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
 
+Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers) 
+ { 
+	;~ MsgBox, Serialnogo prefix is %Prefix% 
+	Serial_Number := Prefix First_Effectivity_Numbers "-" Second_Effectivity_Numbers 
+ 	Modifier = **Not In ACM** 
+ 	Add_To_Completed_LIst(Serial_Number, Modifier) 
+ 	GuiControlGet, Editfield 
+ Loop, Parse, Editfield, `n 
+ { 
+ 	;~ MsgBox, %A_LoopField% `n` is Serialnogo 
+ Prefix_Check := Extract_Prefix(A_LoopField) 
+ If Prefix_Check = %Prefix% 
+ { 
+ 	Modifier = **Not In ACM** 
+ 	First_Half_Serial_Num := Extract_First_Set_Of_Serial_Number(A_LoopField) 
+ 	Second_Half_Serial_Num := Extract_Second_Set_Of_Serial_Number(A_LoopField) 
+ 	 
+ 		Serial_number := Prefix First_Half_Serial_Num "-" Second_Half_Serial_Num 
+ 	Add_To_Completed_LIst(Serial_Number, Modifier) 
+ continue 
+ } 
+else 
+ EditfieldStore := EditfieldStore A_LoopField "`n" 
+ } 
+ Guicontrol,,Editfield, %EditfieldStore% 
+ Clear_ACM_Fields() 
+ return 
+ } 
 
-Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, ByRef Prefix_array, Final_check := 0)
-{
-	If (Final_check)
-	{
-	for index, element in Prefix_array
-	{
-	Prefix_Check := Extract_Prefix(element)
-	If Prefix_Check = %prefix%
-	{
-			First_Half_Serial_Num := Extract_First_Set_Of_Serial_Number(element)
-			Second_Half_Serial_Num := Extract_Second_Set_Of_Serial_Number(element)
-			
-		Serial_Number := Prefix First_Effectivity_Numbers "-" Second_Effectivity_Numbers
-	Modifier = **Not In ACM**
-	Add_To_Completed_LIst(Serial_Number, Modifier)
-	}
-	}
-	
-	}
-	
-	
-	GuiControlGet, Editfield
-Loop, Parse, Editfield, `n
-{
-	;~ MsgBox, %A_LoopField% `n` is Serialnogo
-Prefix_Check := Extract_Prefix(A_LoopField)
-If Prefix_Check = %Prefix%
-{
-	Modifier = **Not In ACM**
-	First_Half_Serial_Num := Extract_First_Set_Of_Serial_Number(A_LoopField)
-	Second_Half_Serial_Num := Extract_Second_Set_Of_Serial_Number(A_LoopField)
-	
-		Serial_number := Prefix First_Half_Serial_Num "-" Second_Half_Serial_Num
-	Add_To_Completed_LIst(Serial_Number, Modifier)
-continue
-}
-else
-EditfieldStore := EditfieldStore A_LoopField "`n"
-}
-Guicontrol,,Editfield, %EditfieldStore%
-Clear_ACM_Fields()
-return
-}
 
 Add_To_Completed_LIst(Serial_number, Modifier := "")
 {
