@@ -20,7 +20,6 @@ SetDefaultMouseSpeed, 0
 SetWinDelay, 0
 SetControlDelay, 0
 CoordMode, Mouse, Screen
-;~ CoordMode, Pixel, Screen
 #SingleInstance Force
 ++SetTitleMatchMode, 2
 DetectHiddenWindows On
@@ -32,11 +31,12 @@ DetectHiddenText on
 Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array, breakloop
 
 ; below is for testing between home and work computer
-If A_UserName = karnijs
+/*
+if A_UserName = karnijs
 At_home = 0
 else
 At_home = 1
-
+*/
 
 /*
 
@@ -59,7 +59,7 @@ New way to update and check, now it does it very quickly and every launch
 */
 
 
-Version_Number = 1.4 Beta
+Version_Number = 2.0 Beta
 ;~ Version_Number = 1.1 test
 Effectivity_Macro :=  "Effectivity Macro V" Version_Number
 Checkp=0
@@ -82,7 +82,7 @@ Prefixcount = 5
 TotalPrefixes = 0
 Radiobutton = 1
 
-Unit_Test = 1 ; Set this to 1 to perform unit tests  and offline testing
+Unit_Test = 0 ; Set this to 1 to perform unit tests  and offline testing
 Log_Events = 0 ;Set this to 1 to perform logging
 
 File_Install_Work_Folder = C:\SerialMacro
@@ -91,8 +91,6 @@ File_install_Image_Folder = %File_Install_Work_Folder%\images
 File_install_Icon_Folder = %File_Install_Work_Folder%\icons
 
 Image_Red_Exclamation_Point = %File_install_Image_Folder%\red_image.png
-IMage_Actve_Add_Button = %File_install_Image_Folder%\Active_plus.png
-Image_Active_Apply_Button = %File_install_Image_Folder%\orange_button.png
 Issues_Image = %File_install_Image_Folder%\Issues_Image.png
 
 
@@ -396,9 +394,9 @@ F1::
 
 	Config_File_Create(File, At_home:= 0) ; unit && Documentation
 	{
-			If (at_home)
-					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini, %File%,1
-			else
+		;	If (at_home)
+		;			FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini, %File%,1
+		;	else
 					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\Config.ini, %File%,1
 		Debug_Log_Event("File_Create() ......" File)
 		return ErrorLevel
@@ -449,9 +447,9 @@ F1::
 
 	Install_Requied_Files_Root( File_Install_Work_Folder, At_home:= 0) ; no unit testing as functions have built in error checking && Documentation
 	{
-		If (at_home)
-					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
-					else
+	;	If (at_home)
+	;				FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
+	;				else
 					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
 		return errorlevel
 
@@ -502,16 +500,16 @@ F1::
 	Install_Requied_Files_Icons( File_Install_Work_Folder, at_home := 0)  ; no unit testing as functions have built in error checking && Documentation
 	{
 		Problems = 0
-		If (at_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
-		else
+	;	If (at_home)
+	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
+	;	else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
 		If (Errorlevel)
 			Problems = 1
 
-		if (At_home)
-				FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
-		else
+	;	if (At_home)
+	;			FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
+	;	else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
 
 		If (Errorlevel)
@@ -569,59 +567,59 @@ F1::
 	Install_Requied_Files_Images( File_Install_Work_Folder, at_home := 0)  ; no unit testing as functions have built in error checking && Documentation
 	{
 		Problems = 0
-		if (At_home)
-					FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
-					else
+	;	if (At_home)
+	;				FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
+	;				else
 					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
 		If (Errorlevel)
 			Problems = 1
 
-		If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
-		else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
-		If (Errorlevel)
-			Problems = 1
-		If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
-		else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
-		If (Errorlevel)
-			Problems = 1
-		If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
-		else
+	;	If (At_home)
+	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
+	;	else
+		;~ FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
+		;~ If (Errorlevel)
+			;~ Problems = 1
+	;	If (At_home)
+	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
+	;	else
+		;~ FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
+		;~ If (Errorlevel)
+			;~ Problems = 1
+	;	If (At_home)
+	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
+	;	else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
 		If (Errorlevel)
 			Problems = 1
-		If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
-		else
+	;	If (At_home)
+	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
+	;	else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
 		If (Errorlevel)
 			Problems = 1
-		If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
-		else
+	;	If (At_home)
+	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
+	;	else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
 		If (Errorlevel)
 			Problems = 1
-		If (At_home)
-		FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
-		else
+	;	If (At_home)
+	;	FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
+	;	else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
 		If (Errorlevel)
 			Problems = 1
-		If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
-		else
+	;	If (At_home)
+	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
+	;	else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
 		If (Errorlevel)
 			Problems = 1
 
-			If (At_home)
-		FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
-		else
+	;		If (At_home)
+	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
+	;	else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
 		If (Errorlevel)
 			Problems = 1
@@ -688,142 +686,149 @@ F1::
 	}
 
 
-				Load_ini_file(Configuration_File_Location) ; unit && Documentation
-				{
-					global
-
-					Ini_var_store_array:= Object()
-					Tab_placeholder  =
-					loop,read,%Configuration_File_Location%
-					{
-						If A_LoopReadLine =
-						continue
-
-						if regexmatch(A_Loopreadline,"\[(.*)?]")
-						{
-							Section :=regexreplace(A_loopreadline,"(\[)(.*)?(])","$2")
-							StringReplace, Section,Section, %a_space%,,All
-
-							If Tab_PLaceholder =
-							{
-								Tab_placeholder := Section
-							}
-							Else
-								Tab_placeholder := Tab_placeholder "|" Section
-
-							continue
-						}
-
-						else if A_LoopReadLine !=
-						{
-							StringGetPos, keytemppos, A_LoopReadLine, =,
-							StringLeft, keytemp, A_LoopReadLine,%keytemppos%
-							StringReplace, keytemp,keytemp,%A_SPace%,,All
-							INIstoretemp := Keytemp ":" Section
-							Ini_var_store_array.Insert(INIstoretemp)
-							IniRead,%keytemp%, %Configuration_File_Location%, %Section%, %keytemp%
-						}}
-
-					return
-
-/*!
-	Function: 	Load_ini_file(Configuration_File_Location)
-			Loads the configuration Ini file from the  *Configuration_File_Location*
-
-	Parameters:
-		Configuration_File_Location - This should contain the full file path of the Root script working folder
-					 >  Configuration_File_Location = C:\SerialMacro\Config.ini
-					>  Load_ini_file(Configuration_File_Location)
-
-	Remarks:
-		Uses the AutoHotkey built in function of `IniRead` to read the config file.
-		The function stores the variable names into an array for later retrievial by the `Write_ini_file()` function
-
-	Returns:
-		There is no returned variable. The Funciton is Global, which makes all the variables it stores global variables, which makes the config file contents accessble to all functions
-
-	Extra:
-		### Additional Information
-			For more information on the `IniRead` function click on the link (Internet Connection Required) below:  
-			[IniRead](https://autohotkey.com/docs/commands/IniRead.htm)
-
-*/
-				}
-
-				Write_ini_file(Configuration_File_Location) ; unit && Documentation
-				{
-					global
-
-					for index, element in Ini_var_store_array
-					{
-					StringSplit, INI_Write,element, `:
-
-					Varname := INI_Write1
-					IniWrite ,% %INI_Write1%, %Configuration_File_Location%, %INI_Write2%, %INI_Write1%
-				}
-			return
-
-/*!
-	Function: 	Write_ini_file(Configuration_File_Location)
-			Writes the configuration variables to the configuration Ini file at  the  *Configuration_File_Location*
-
-	Parameters:
-		Configuration_File_Location - This should contain the full file path of the Root script working folder
-					 >  Configuration_File_Location = C:\SerialMacro\Config.ini
-					>  Write_ini_file(Configuration_File_Location)
-
-	Remarks:
-		Uses the AutoHotkey built in function of `IniWrite` to read the config file.
-		The  highlighted  (green) **%** in the below code is there so written value to the `config.ini`  file ithe actual value of the variable and not the name of the variable from  the `ini_store_Array'
-		`IniWrite ,*%* %INI_Write1%, %Configuration_File_Location%, %INI_Write2%, %INI_Write1%`
-
-
-
-	Returns:
-		There is no returned variable. The Funciton is Global, which makes all the variables it stores global variables, which makes the config file contents accessble to all functions
-
-	Extra:
-		### Additional Information
-			For more information on the `IniRead` function click on the link (Internet Connection Required) below:  
-			[IniWrite](https://autohotkey.com/docs/commands/IniWrite.htm)
-
-*/
-		}
-
-		Debug_Log_Event(Event) ; no unit tesing && Documentation
+	Load_ini_file(Configuration_File_Location) ; unit && Documentation
+{
+	global
+	
+	Ini_var_store_array:= Object()
+	Tab_placeholder  =
+	loop,read,%Configuration_File_Location%
+	{
+		If A_LoopReadLine =
+		continue
+		
+		if regexmatch(A_Loopreadline,"\[(.*)?]")
 		{
-			global Log_Events
-
-			If (Log_Events)
+			Section :=regexreplace(A_loopreadline,"(\[)(.*)?(])","$2")
+			StringReplace, Section,Section, %a_space%,,All
+			
+			If Tab_PLaceholder =
 			{
-			OutputDebug, %Event%
-			Sleep(.5)
-
+				Tab_placeholder := Section
+			}
+			Else
+				Tab_placeholder := Tab_placeholder "|" Section
+			
+			continue
+		}
+		
+		else if A_LoopReadLine !=
+		{
+			StringGetPos, keytemppos, A_LoopReadLine, =,
+			StringLeft, keytemp, A_LoopReadLine,%keytemppos%
+			StringReplace, keytemp,keytemp,%A_SPace%,,All
+			INIstoretemp := Keytemp ":" Section
+			Ini_var_store_array.Insert(INIstoretemp)
+			IniRead,%keytemp%, %Configuration_File_Location%, %Section%, %keytemp%
+		}
+		else if A_LoopReadLine !=
+		{
+		StringGetPos, keytemppos, A_LoopReadLine, =,
+		StringLeft, keytemp, A_LoopReadLine,%keytemppos%
+		StringReplace, keytemp,keytemp,%A_SPace%,,All
+		INIstoretemp := Keytemp ":" Section
+		Ini_var_store_array.Insert(INIstoretemp)
+		IniRead,%keytemp%, %Configuration_File_Location%, %Section%, %keytemp%
+		}}
+	
+	return
+	
+	/*!
+	Function: 	Load_ini_file(Configuration_File_Location)
+	Loads the configuration Ini file from the  *Configuration_File_Location*
+	
+	Parameters:
+	Configuration_File_Location - This should contain the full file path of the Root script working folder
+	>  Configuration_File_Location = C:\SerialMacro\Config.ini
+	>  Load_ini_file(Configuration_File_Location)
+	
+	Remarks:
+	Uses the AutoHotkey built in function of `IniRead` to read the config file.
+	The function stores the variable names into an array for later retrievial by the `Write_ini_file()` function
+	
+	Returns:
+	There is no returned variable. The Funciton is Global, which makes all the variables it stores global variables, which makes the config file contents accessble to all functions
+	
+	Extra:
+	### Additional Information
+	For more information on the `IniRead` function click on the link (Internet Connection Required) below:  
+	[IniRead](https://autohotkey.com/docs/commands/IniRead.htm)
+	
+	*/
+}              
+Write_ini_file(Configuration_File_Location) ; unit && Documentation
+{
+	global
+	
+	for index, element in Ini_var_store_array
+	{
+		StringSplit, INI_Write,element, `:
+		
+		Varname := INI_Write1
+		IniWrite ,% %INI_Write1%, %Configuration_File_Location%, %INI_Write2%, %INI_Write1%
 	}
 	return
-
-
-/*!
-	Function: Debug_Log_Event(Event)
-			Whe using the Debugger in the SciTE4AutoHotkey , this function will display the *Event* that is passed to it in a window. If `Log_events` = 1
-
+	
+	/*!
+	Function: 	Write_ini_file(Configuration_File_Location)
+	Writes the configuration variables to the configuration Ini file at  the  *Configuration_File_Location*
+	
 	Parameters:
-		Event - This is the text that will diaplay in the debugger window.
-
+	Configuration_File_Location - This should contain the full file path of the Root script working folder
+	>  Configuration_File_Location = C:\SerialMacro\Config.ini
+	>  Write_ini_file(Configuration_File_Location)
+	
 	Remarks:
-		Uses the AutoHotkey built in function of `OutputDebug`  
-		**NOTE:** the `Sleep(.5)` needs to be there or else the debugger window may not keep up with the even displays and crash.
-
+	Uses the AutoHotkey built in function of `IniWrite` to read the config file.
+	The  highlighted  (green) **%** in the below code is there so written value to the `config.ini`  file ithe actual value of the variable and not the name of the variable from  the `ini_store_Array'
+	`IniWrite ,*%* %INI_Write1%, %Configuration_File_Location%, %INI_Write2%, %INI_Write1%`
+	
+	
+	
 	Returns:
-		There is no returned variable.
-
+	There is no returned variable. The Funciton is Global, which makes all the variables it stores global variables, which makes the config file contents accessble to all functions
+	
 	Extra:
-		### Additional Information
-			For more information on the `OutputDebug` function click on the link (Internet Connection Required) below:  
-			[OutputDebug](https://autohotkey.com/docs/commands/OutputDebug.htm)
+	### Additional Information
+	For more information on the `IniRead` function click on the link (Internet Connection Required) below:  
+	[IniWrite](https://autohotkey.com/docs/commands/IniWrite.htm)
+	
+	*/
+}              
 
-*/
-}
+Debug_Log_Event(Event) ; no unit tesing && Documentation
+{
+	global Log_Events
+	
+	If (Log_Events)
+	{
+		OutputDebug, %Event%
+		Sleep(.5)
+	}
+	return
+	
+	
+	/*!
+	Function: Debug_Log_Event(Event)
+	Whe using the Debugger in the SciTE4AutoHotkey , this function will display the *Event* that is passed to it in a window. If `Log_events` = 1
+	
+	Parameters:
+	Event - This is the text that will diaplay in the debugger window.
+	
+	Remarks:
+	Uses the AutoHotkey built in function of `OutputDebug`  
+	**NOTE:** the `Sleep(.5)` needs to be there or else the debugger window may not keep up with the even displays and crash.
+	
+	Returns:
+	There is no returned variable.
+	
+	Extra:
+	### Additional Information
+	For more information on the `OutputDebug` function click on the link (Internet Connection Required) below:  
+	[OutputDebug](https://autohotkey.com/docs/commands/OutputDebug.htm)
+	
+	*/
+}              
 
 
 /*
@@ -911,50 +916,50 @@ Copy_text_and_Format(Input_text := "") ; no unit test needed as it all the other
 	Gui,Submit,NoHide
 	gosub, radio_button
 	Debug_Log_Event("Formatted text is " Formatted_Text)
-
+	
 	Formatted_Serial_Array := Object()
-
+	
 	Formatted_Serial_Array := Put_Formatted_Serials_into_Array(Formatted_Text)
-
+	
 	/* for testing********
 	*/
-
+	
 	Checked := SerialbreakquestionGUI() ; Goes to the Serialsgui.ahk and into the SerialbreakquestionGUI subroutine
 	;~ combine = 0
 	;~ Oneupserial = 0
-
+	
 	/*
 	Stop for testing
 	*/
-
+	
 	If (combine = "1") || (Oneupserial = "1")
 	{
 		Combined_Serial_Array := Combineserials(Formatted_Serial_Array) ;goes to the combine Serials subroutine
-
+		
 		Prefix_Count :=  Combined_Serial_Array.Length()
-
+		
 		If Oneupserial = 1
 		Combined_Serial_Array := One_Up_All(Combined_Serial_Array)
-
+		
 		Editfield := Extract_Serial_Array(Combined_Serial_Array)
-StringReplace, Editfield, Editfield, `,,,All
+		StringReplace, Editfield, Editfield, `,,,All
 		Guicontrol,1:, Editfield, %Editfield% - - - - - - - - - - - - - - - - - - - - - - - - - -  `n ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
 	}else  {
 		Prefix_Count :=  Formatted_Text_Serial_Count(Formatted_Text)
-	StringReplace, Formatted_Text, Formatted_Text, `,,,All
+		StringReplace, Formatted_Text, Formatted_Text, `,,,All
 		Guicontrol,1:, Editfield, %Formatted_Text% - - - - - - - - - - - - - - - - - - - - - - - - - - `n ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
 	}
 	totalprefixes = %Prefix_Count% ; Sets the totalprefixes variables to the Prefixcombinecount variable
-		Guicontrol,, reloadprefixtext,%totalprefixes% ; Changes the valuse in the main GUI screen
+	Guicontrol,, reloadprefixtext,%totalprefixes% ; Changes the valuse in the main GUI screen
 	Winactivate, Effectivity Macro ; Make the Main GUi window  Active
 	Guicontrol, Focus, Editfield ; Puts the cursor in the Editfield in teh Gui window
 	send {Ctrl Down}{Home}{Ctrl Up} ; sends keystrokes to move the cursor to the top of the listbox
-Gui, Submit, NoHide ; Updates the Gui screen
-Gui_Image_Show("Start")
-if (checked)
-gosub, Export_Serials
+	Gui, Submit, NoHide ; Updates the Gui screen
+	Gui_Image_Show("Start")
+	if (checked)
+		gosub, Export_Serials
 	return
-}
+}              
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -969,28 +974,28 @@ Format_Serial_Functions(Fullstring := "", Unit_test := 0) ; unit
 	If (Unit_test) && (FullString = "") ; For testing
 	Fullstring := "621s (SN: TRD00123, TRD00124-00165, TRD00001-00002, CHU00001-00002, CHU00003-00005,  gnz00001-00003,gnz00005-00008, gnz00010-00015, Apu00001-00150,apu00200-01000)"
 	Else if(!Unit_Test) && (Fullstring = "")
-		FullString := Copy_selected_Text()
-
-
+	FullString := Copy_selected_Text()
+	
+	
 	If FullString = No_Text_Selected
 	{
 		Move_Message_Box("0","Error","Please ensure that text is selected before pressing Ctrl + 1.")
 		Exit
 	}
 	Format_Removed_Text := Remove_Formatting(Fullstring) ; Goes to the Remove_Formatting funciton and stores the completed result into the Format_Removed_Text varialbe
-		Debug_Log_Event("Format_Serials() Format_Removed_Text is " Format_Removed_Text)
-;~ MsgBox, % "Format removed is " Format_Removed_Text
+	Debug_Log_Event("Format_Serials() Format_Removed_Text is " Format_Removed_Text)
+	;~ MsgBox, % "Format removed is " Format_Removed_Text
 	PreFormatted_Text := PreFormat_Text(Format_Removed_Text) ; Goes to the PreFormat_Text function and stors the completed result into the Preformatted_text variable
 	Debug_Log_Event("Format_Serials() PreFormatted_Text is " PreFormatted_Text)
 	PreFormatted_Text := Check_For_Single_Serials(PreFormatted_Text)
-Debug_Log_Event("Check_For_Single_Serials() PreFormatted_Text is " PreFormatted_Text)
-
+	Debug_Log_Event("Check_For_Single_Serials() PreFormatted_Text is " PreFormatted_Text)
+	
 	PreFormatted_Text := Prefix_Alone_Check_And_Add_One_UP(PreFormatted_Text) ;  Take info from the PreFormatted_Text variable and checks to see of it it just the serial with no numbers attached to it. If is, then adds 00001-99999 to prefix. Also changes the Parseclip variable to the Number of non combined Serials
 	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP() PreFormatted_Text is " PreFormatted_Text)
-PreFormatted_Text := add_digits(PreFormatted_Text)
-Debug_Log_Event("add_digits() PreFormatted_Text is " PreFormatted_Text)
+	PreFormatted_Text := add_digits(PreFormatted_Text)
+	Debug_Log_Event("add_digits() PreFormatted_Text is " PreFormatted_Text)
 	return PreFormatted_Text
-}
+}              
 
 
 
@@ -1048,15 +1053,6 @@ Combineserials(Formatted_Serial_Array) ; unit
 	Return Prefix_Combine_array
 }
 
-
-
-
-
-
-
-
-
-
 Extract_Serial_Array(Combined_Serial_Array) ; unit
 {
 	editfield =
@@ -1091,10 +1087,6 @@ Copy_selected_Text() ;Unit
 	else
 		return Clipboard ","
 }
-
-
-
-
 Check_For_Single_Serials(PreFormatted_Text) ; unit
 {
 	Loop, Parse, PreFormatted_Text, `,  ; loop to divide the Formatted_Text variable by the carraige returns
@@ -1102,55 +1094,53 @@ Check_For_Single_Serials(PreFormatted_Text) ; unit
 		Debug_Log_Event("Check_For_Single_Serials() Loopfield is " A_LoopField)
 		Prefix_Extract := Extract_Prefix(A_LoopField)
 		Debug_Log_Event("Check_for_single_Serials() Prefix_Extract is " Prefix_Extract)
-
+		
 		If (Prefix_Extract = "`," or Prefix_Extract ="" or Prefix_Extract = "`n" or Prefix_Extract = "`r") ; checks to see if the Prefix_Store variable is a comma
 		{
 			Debug_Log_Event("Check_For_Single_Serials() continue")
-
+			
 			;msgbox, nothing there
 			Prefix_Extract = ; sets the Prefix_Store variable to nothing
 			Second_Number_set =  ; sets the Second_Number_Set variable to nothirng
 			Continue ; skips over the rest of the loop and starts at the top of the parse loop
 		}
-If A_LoopField contains `-
-{
-Revised_PreFormatted_Text = %Revised_PreFormatted_Text%%A_LoopField%`,
-Debug_Log_Event("Check_For_Single_Serials() Revised_PreFormatted_Text is " Revised_PreFormatted_Text)
-continue
-}
-	StringTrimLeft, First_Number_Set,A_LoopField,3
-	If First_Number_Set =
+		If A_LoopField contains `-
+		{
+			Revised_PreFormatted_Text = %Revised_PreFormatted_Text%%A_LoopField%`,
+			Debug_Log_Event("Check_For_Single_Serials() Revised_PreFormatted_Text is " Revised_PreFormatted_Text)
+			continue
+		}
+		StringTrimLeft, First_Number_Set,A_LoopField,3
+		If First_Number_Set =
 		Combine_Serials_together := Prefix_Extract
-
-	else
-		Combine_Serials_together := Prefix_Extract First_Number_Set "-" First_Number_Set
-
+		
+		else
+			Combine_Serials_together := Prefix_Extract First_Number_Set "-" First_Number_Set
+		
 		Revised_PreFormatted_Text = %Revised_PreFormatted_Text%%Combine_Serials_together%`,
-
-
+		
+		
 		Debug_Log_Event("Check_For_Single_Serials() First_Number_Set is " First_Number_Set)
 		Debug_Log_Event("Check_For_Single_Serials() Revised_PreFormatted_Text is " Revised_PreFormatted_Text)
 		Debug_Log_Event("Check_For_Single_Serials() New Parse" )
 	}
 	return Revised_PreFormatted_Text
-}
-
+}              
 
 
 Combinecount(Prefix_Store_Array) ; unit
 {
 	Prefixcombinecount = 0 ; Sets the Prefixcombinecount variable to 0
-
+	
 	Loop, Parse, Prefix_Store_Array, `,  ; parse loop to breaks the Prefixmatching variable up at the commas
 	{
 		if a_loopfield =  ; If the text before the comma is nothing, then skip the rest of the loop.
 		Continue ; skip over the rest of the loop
-
+		
 		Prefixcombinecount++ ; Add one to Prefixcombinecount variable
 	}
 	return Prefixcombinecount
-}
-
+}              
 One_Up_All(Serial_Store_Array) ; unit
 {
 	One_Up_Prefix_array := Object()
@@ -1160,17 +1150,16 @@ One_Up_All(Serial_Store_Array) ; unit
 		If A_index > %Length%
 		Break
 		Result := Extract_Prefix(Element)
-
+		
 		if (Element = "" or Element = "`," or Element = "`r" or Element = "`n")  ; If the text before the comma is nothing, then skip the rest of the loop.
 		Continue ; skip over the rest of  the loop
-
+		
 		else
 			One_Up_Prefix_array.insert(Result "00001-99999") ; Sets the One_Up_Prefix_array variable to the Prefix variable and adds in 00001-99999
 	}
-
+	
 	return One_Up_Prefix_array
-}
-
+}              
 
 
 Extract_Prefix(Serial_Number) ; unit
@@ -1196,8 +1185,6 @@ Extract_Second_Set_Of_Serial_Number(Serial_Number) ; unit
 	Stringmid, Second_Half_Serial_Num,Serial_Number,10,5
 	return Second_Half_Serial_Num
 }
-
-
 
 Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0) ; unit
 {
@@ -1247,96 +1234,90 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0) ; un
 		return  Serial_Combine_Array
 	}
 
+Remove_Formatting(Selected_Text) ; unit
+{
+	StringReplace, Selected_Text,Selected_Text,`n,,All
+	StringReplace, Selected_Text,Selected_Text,`r,,All
+	StringReplace, Selected_Text,Selected_Text,`;,`,,All
+	StringReplace, Selected_Text,Selected_Text,%A_Space%,,All
+	StringReplace, Selected_Text,Selected_Text, `),`)`n,All
+	StringReplace, Selected_Text,Selected_Text, 1`-up,,All
+	StringReplace, Selected_Text,Selected_Text,  `-up,`-99999, All
+	StringReplace, Selected_Text,Selected_Text, and,,All
+	
+	Debug_Log_Event("Remove_formatting()  return value is "  Selected_Text)
+	
+	Return Selected_Text
+}              
 
 
-
-	Remove_Formatting(Selected_Text) ; unit
+PreFormat_Text(Format_Removed_Text) ; unit
+{
+	;Loops Format_Removed_Text variable to clean up the all the entereed text. Removes carriage returns with parse, removes any spaces, changes the ) to double ,
+	; Changes 1-up to nothing, changes -up to 999999, changes ), to nothing
+	Loop, Parse, Format_Removed_Text,`r`n`,
 	{
-		StringReplace, Selected_Text,Selected_Text,`n,,All
-		StringReplace, Selected_Text,Selected_Text,`r,,All
-		StringReplace, Selected_Text,Selected_Text,`;,`,,All
-		StringReplace, Selected_Text,Selected_Text,%A_Space%,,All
-		StringReplace, Selected_Text,Selected_Text, `),`)`n,All
-		StringReplace, Selected_Text,Selected_Text, 1`-up,,All
-		StringReplace, Selected_Text,Selected_Text,  `-up,`-99999, All
-		StringReplace, Selected_Text,Selected_Text, and,,All
-
-		Debug_Log_Event("Remove_formatting()  return value is "  Selected_Text)
-
-		Return Selected_Text
+		StringGetPos, pos, A_loopfield, :, 1
+		Format_Text := SubStr(A_LoopField, pos+2)
+		
+		StringReplace, New_Format_Text,Format_Text,%A_Space%,,All
+		StringReplace, New_Format_Text,New_Format_Text, `),`,,All
+		StringReplace, New_Format_Text,New_Format_Text, 1`-up,,All
+		StringReplace, New_Format_Text,New_Format_Text, `-up,`-99999, All
+		StringReplace, New_Format_Text,New_Format_Text, `,,`,`n, All
+		
+		If (New_Format_Text != "") && (New_Format_Text !=" ,")
+		Full_Text =  %Full_Text%%New_Format_Text%`,
+		
+		
+		Debug_Log_Event("Preformat_Text()  Format_Text is "  Format_Text)
+		Debug_Log_Event("Preformat_Text()  Format_Text is "  Format_Text)
+		Debug_Log_Event("Preformat_Text()  New_Format_Text is "  New_Format_Text)
 	}
+	Return Full_Text
+}              
 
-
-	PreFormat_Text(Format_Removed_Text) ; unit
+Prefix_Alone_Check_And_Add_One_UP(Text) ; unit
+{
+	;~ MsgBox, % "Test is `n" text
+	Loop, parse, Text, `,
 	{
-		;Loops Format_Removed_Text variable to clean up the all the entereed text. Removes carriage returns with parse, removes any spaces, changes the ) to double ,
-		; Changes 1-up to nothing, changes -up to 999999, changes ), to nothing
-		Loop, Parse, Format_Removed_Text,`r`n`,
+		If (a_loopfield = "") || (A_LoopField = "`n") || (A_LoopField = "`r")
 		{
-			StringGetPos, pos, A_loopfield, :, 1
-			Format_Text := SubStr(A_LoopField, pos+2)
-
-			StringReplace, New_Format_Text,Format_Text,%A_Space%,,All
-			StringReplace, New_Format_Text,New_Format_Text, `),`,,All
-			StringReplace, New_Format_Text,New_Format_Text, 1`-up,,All
-			StringReplace, New_Format_Text,New_Format_Text, `-up,`-99999, All
-			StringReplace, New_Format_Text,New_Format_Text, `,,`,`n, All
-
-			If (New_Format_Text != "") && (New_Format_Text !=" ,")
-			Full_Text =  %Full_Text%%New_Format_Text%`,
-
-
-			Debug_Log_Event("Preformat_Text()  Format_Text is "  Format_Text)
-			Debug_Log_Event("Preformat_Text()  Format_Text is "  Format_Text)
-			Debug_Log_Event("Preformat_Text()  New_Format_Text is "  New_Format_Text)
+			Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  A_LoopField is "  A_LoopField "`n Continue")
+			Continue
 		}
-			Return Full_Text
-	}
-
-	Prefix_Alone_Check_And_Add_One_UP(Text) ; unit
-	{
-;~ MsgBox, % "Test is `n" text
-		Loop, parse, Text, `,
+		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  A_LoopField is "  A_LoopField )
+		add_comma = %A_LoopField%`,
+		StringGetPos, pos, add_comma, `,, 1
+		
+		If pos = 3
 		{
-			If (a_loopfield = "") || (A_LoopField = "`n") || (A_LoopField = "`r")
-			{
-				Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  A_LoopField is "  A_LoopField "`n Continue")
-				Continue
-			}
-			Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  A_LoopField is "  A_LoopField )
-			add_comma = %A_LoopField%`,
-			StringGetPos, pos, add_comma, `,, 1
-
-			If pos = 3
-			{
-				StringReplace, Added_Serial_Numbers,add_comma,`,,00001`-99999`,`n,all
+			StringReplace, Added_Serial_Numbers,add_comma,`,,00001`-99999`,`n,all
 			TextStore = %TextStore%%Added_Serial_Numbers%
-			}
-			Else if pos != 3
-			{
-				;~ Prefix:= Extract_Prefix(A_loopfield)
-				;~ StringTrimLeft, Serial_Numbers, A_loopfield, 3
-				;~ Serial_Numbers := add_digits(Serial_Numbers)
-				;~ Serial_Numbers = %Prefix%%Serial_Numbers%
-				;~ StringReplace , Serial_Numbers,Serial_Numbers,`),`,`n,all
-				;~ TextStore = %TextStore%%Prefix%%Serial_Numbers%
-				TextStore = %TextStore%%A_LoopField%`,`n
-				}
-
 		}
-
-		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Initial text is "  Text )
-		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Addcomma is "  Addcomma )
-		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  pos is "  pos )
-		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Prefixstore is "  Prefixstore )
-		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Serial_Numbers is "  Serial_Numbers )
-		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  StringTemp_end is "  StringTemp_end )
-		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Stringtemp is "  Stringtemp )
-		Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Textstore is "  Textstore )
-
-		return Textstore
-	}
-
+		Else if pos != 3
+		{
+			;~ Prefix:= Extract_Prefix(A_loopfield)
+			;~ StringTrimLeft, Serial_Numbers, A_loopfield, 3
+			;~ Serial_Numbers := add_digits(Serial_Numbers)
+			;~ Serial_Numbers = %Prefix%%Serial_Numbers%
+			;~ StringReplace , Serial_Numbers,Serial_Numbers,`),`,`n,all
+			;~ TextStore = %TextStore%%Prefix%%Serial_Numbers%
+			TextStore = %TextStore%%A_LoopField%`,`n
+		}}
+	
+	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Initial text is "  Text )
+	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Addcomma is "  Addcomma )
+	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  pos is "  pos )
+	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Prefixstore is "  Prefixstore )
+	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Serial_Numbers is "  Serial_Numbers )
+	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  StringTemp_end is "  StringTemp_end )
+	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Stringtemp is "  Stringtemp )
+	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Textstore is "  Textstore )
+	
+	return Textstore
+}              
 
 	add_digits(Serial_Number) ; unit
 	{
@@ -1371,7 +1352,8 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0) ; un
 	}
 
 
-	Clear_Format_Variables(unit_test) ; unit no need
+
+Clear_Format_Variables(unit_test) ; unit no need
 	{
 		global
 		;Clear the variables
@@ -1382,63 +1364,59 @@ Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0) ; un
 		return
 	}
 
-
-
-
-
-
 Export_Serials:
 {
-if checked = 0
-Return
-
-Progress, b w200 ,,Creating CSV file (This may take a minute or two)
-Progress, 0
-
-Effectivitycount = 1
-WorkbookPath := A_Desktop "\Effectivity.CSV"    ; full path to your Workbook
-Loop
-{
-IfNotExist %WorkbookPath%
-Break
-
-IfExist %WorkbookPath%
-WorkbookPath := A_Desktop "\Effectivity" Effectivitycount ".CSV"    ; full path to your Workbook
-Effectivitycount++
-}
-
-
-FileAppend, Prefix`,Begin Serial`,End Serial`n,  %WorkbookPath%
-
-
-;msgbox, start export
-GuiControlGet, EditField
-
-
-Varcount = 0
-Loop, parse, Editfield, `n
-{
-Varcount++
-}
-
-Percent_complete := 100 / Varcount
-
-
-Loop, parse, Editfield, `n
-{
-	If A_LoopField contains - - - - - -
+	if checked = 0
+	Return
+	
+	Progress, b w200 ,,Creating CSV file (This may take a minute or two)
+	Progress, 0
+	
+	Effectivitycount = 1
+	WorkbookPath := A_Desktop "\Effectivity.CSV"    ; full path to your Workbook
+	Loop
+	{
+		IfNotExist %WorkbookPath%
+		Break
+		
+		IfExist %WorkbookPath%
+		WorkbookPath := A_Desktop "\Effectivity" Effectivitycount ".CSV"    ; full path to your Workbook
+		Effectivitycount++
+	}
+	
+	
+	FileAppend, Prefix`,Begin Serial`,End Serial`n,  %WorkbookPath%
+	
+	
+	;msgbox, start export
+	GuiControlGet, EditField
+	
+	
+	Varcount = 0
+	Loop, parse, Editfield, `n
+	{
+		Varcount++
+	}
+	
+	Percent_complete := 100 / Varcount
+	
+	
+	Loop, parse, Editfield, `n
+	{
+		If A_LoopField contains - - - - - -
 		continue
+		
+		Progress_total := Percent_Complete * A_Index
+		Progress,  %Progress_total%
+		Prefix := Extract_Prefix(A_LoopField)
+		First_Number_Set := Extract_First_Set_Of_Serial_Number(A_LoopField)
+		Second_Number_Set := Extract_Second_Set_Of_Serial_Number(A_LoopField)
+		FileAppend, %Prefix%`,%First_Number_Set%`,%Second_Number_Set%`n,  %WorkbookPath%
+	}
+	Progress, off
+	Return
+}              
 
-	Progress_total := Percent_Complete * A_Index
-	Progress,  %Progress_total%
-Prefix := Extract_Prefix(A_LoopField)
-First_Number_Set := Extract_First_Set_Of_Serial_Number(A_LoopField)
-Second_Number_Set := Extract_Second_Set_Of_Serial_Number(A_LoopField)
-FileAppend, %Prefix%`,%First_Number_Set%`,%Second_Number_Set%`n,  %WorkbookPath%
-}
-Progress, off
-Return
-}
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ENter Serias Section
@@ -1448,7 +1426,7 @@ Enter_Serials_Variable_Setup() ; no unit testing needed
 {
 	global
    Prefixcount = 5
-	 StartTime := A_TickCount
+	StartTime := A_TickCount
  }
 
 Start_Macro() ; no unit testing needed as all contained functions are tested
@@ -1456,74 +1434,49 @@ Start_Macro() ; no unit testing needed as all contained functions are tested
 	global
 	gui,Submit, NoHide
 	GuiControlGet, EditfieldCHeck,,Editfield 
-
+	
 	If Formatted_text_completed !=1
 	{
-			  Guicontrol,1:, Editfield,			  
-			  Copy_text_and_Format(EditfieldCHeck)	
+		Guicontrol,1:, Editfield,			  
+		Copy_text_and_Format(EditfieldCHeck)
 	}
 	else
 		Formatted_text_completed = 0
 	
 	GuiControlGet, Editfield
 	
-If Editfield =
-{
-Move_Message_Box("0","We Got A Problem","Oops! `nThere is no effectivity to input.`n`nPlease select the effectivity and press Ctrl +1. `nThank You!")
-Exit
-}
-
-
-	
-Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
- Enter_Serials_Variable_Setup()
-Move_Message_Box("262144","Select ACM Screen","Click on the ACM window that you want to add effectivity to and then press the OK button`n`nNote that is the window is not full screen, the macro will make it full screen to increase macro reliability. ")
-sleep(5)
-WinGet, Active_ID, Id, A
-SerialFullScreen(Active_ID)
-CoordMode, mouse, Screen
-Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
-   WinGet, Active_ID, Id, A
-Get_Prefix_Button_Screen_Position(prefixx, prefixy)
-Get_Apply_Button_Screen_Position(Applyx, Applyy)
-Enter_Effectivity_Loop()
-return
-}
-   ;~ gosub, Createtab
-
-   ;~ Comma_Check(Effectivity_Macro)
-
-	;~ Tabcount = 0
-   ;~ runcount = 21
+	If Editfield =
+	{
+		Move_Message_Box("0","We Got A Problem","Oops! `nThere is no effectivity to input.`n`nPlease select the effectivity and press Ctrl +1. `nThank You!")
+		Exit
+	}
+	Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
+	Enter_Serials_Variable_Setup()
+	Move_Message_Box("262144","Select ACM Screen","Click on the ACM window that you want to add effectivity to and then press the OK button`n`nNote that is the window is not full screen, the macro will make it full screen to increase macro reliability. ")
+	sleep(5)
+	WinGet, Active_ID, Id, A
+	SerialFullScreen(Active_ID)
+	CoordMode, mouse, Screen
+	Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
+	WinGet, Active_ID, Id, A
+	Get_Prefix_Button_Screen_Position(prefixx, prefixy)
+	Get_Apply_Button_Screen_Position(Applyx, Applyy)
+	Enter_Effectivity_Loop()
+	return
+}              
 
 Enter_Effectivity_Loop()
 {
-	
 global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location, prefixx, prefixy
 static ACM_Time= 5.0
-
+Bad_Prefix_Array := Object()
  Loop
-   {
+{
 Serial_number = 
-Sleep(3)
-	  ;~ tabcount++
+;~ Sleep(3.5)
+Sleep()
 Load_ini_file(Configuration_File_Location)
-;~ checkforactivity()
-
-
-;~ If Runcount > 20
-	  ;~ {
-	  ;~ runcount = 1
-	  ;~ Gosub, GetSerial
-	  ;~ Gosub, Copy_SerialTester
-	  ;~ }
-	  ;~ Send {ctrl down} %Tabcount% {Ctrl up}
-	  ;~ if tabcount = 2
-	  ;~ tabcount = 0
-
-
-;~ sleep(10)
-
+checkforactivity()
 Refresh_Screen()
 
 /*
@@ -1531,8 +1484,11 @@ Refresh_Screen()
 Ger prefix  section
 \/\/\/\/\/\/\/\/\/\/\/\/\
 */	
+
 Result = 
+
 	  sleep()
+	  
 	Serial_number := Get_Serial_Numbers()
 	
 	if Serial_Number  contains  - - - - -
@@ -1548,7 +1504,7 @@ Result =
 
 	 If Prefix =
    {
-	  Complete = 1
+	  Retry_bad_serials = 1
 	}
 	
 	Loop
@@ -1568,12 +1524,22 @@ If Result = Found
 			Exit
 		break
 	}
-		  Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
-		  Double_Click(Applyx,Applyy)			
+	If (Retry_bad_serials)
+	{
+	Bad_serial_repeat(Bad_Prefix_Array)
+	Complete = 1
+	}
+	
+	If (
+	 Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
+	Double_Click(Applyx,Applyy)			
 }
+
+
 
 if (!Stop_Issue_checks)
 {
+	
 			Sleep(ACM_Time)
 			Enter_time("Start")  
 			
@@ -1586,7 +1552,6 @@ Sleep()
 
 			Loop, 10
 			{
-				;~ Sleep()
 				If (breakloop)
 				break	
 				
@@ -1604,8 +1569,8 @@ Sleep()
 	If Result != Found
 	{
 		Enter_time("Pause_on")	
-ISSUE_Result := Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-	Enter_time("Pause_off")	
+			ISSUE_Result :=   Searchend_Isssue_Check()
+				Enter_time("Pause_off")	
 	
  IF ISSUE_Result = Dual_eng
 	{
@@ -1613,16 +1578,22 @@ ISSUE_Result := Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbe
 				SplashTextOn,400,100,, This serial has Multiple Engineering/  sales models. This Prefix will be moved to the End of the list.
 				Winmove, ,This serial has Multiple engeering Models,%amonx%, %Amony%
 				Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-				;~ Added_Serial_Count("-1")
-				SplashTextOff
-	
+				SplashTextOff	
 	Break
 	}
+	
 	 IF ISSUE_Result = Bad_Prefix
 	{
-		Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-		Added_Serial_Count("-1")
-		Break
+		Enter_time("Pause_on")	
+		Sleep(40)		
+		ISSUE_Result :=   Searchend_Isssue_Check()
+		Enter_time("Pause_off")	
+			IF ISSUE_Result = Bad_Prefix
+			{
+			Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Bad_Prefix_Array)
+			Added_Serial_Count("-1")
+			Break			
+			}		
 }
 
 If ISSUE_Result != Not_Found
@@ -1667,14 +1638,7 @@ loop
 		Break
 
 Result_check := Searchend_Isssue_Check()
-;~ MsgBox, % Result_check " is result_check"
 
-;~ If (Result_check = "Bad_Prefix")
-;~ {
-		;~ Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-		;~ Added_Serial_Count("-1")
-;~ }
-		
 If (Result_check = "Not_found")
 {
 			Sleep(3)
@@ -1696,7 +1660,6 @@ Loop
 	if (breakloop)
 		Break
 
-;~ Double_Click(Applyx,Applyy)
 Result := Searchend()
 If  Result = Found
 {
@@ -1707,15 +1670,35 @@ If  Result = Found
 		Gui,1:Submit,NoHide
 	break
 }
-}}
-
-;~ Serial_count := Added_Serial_Count()
-		;~ GuiControl,1:,serialsentered,%Serial_count%
-		;~ Gui,1:Submit,NoHide
+}}}
+return
    }
-   return
-   }
-
+ figure out Array
+Bad_serial_repeat(Bad_Prefix_Array)
+{
+	SplashTextOn,w300,h100, rechecking the Bad prefixes
+	Sleep(10)
+	SplashTextOff	
+for index, element in Bad_Prefix_Array
+	{
+		Refresh_Screen()
+	Prefix := Extract_Prefix(Serial_Number)
+	 First_Effectivity_Numbers := Extract_First_Set_Of_Serial_Number(Serial_Number)
+	 Second_Effectivity_Numbers := Extract_Second_Set_Of_Serial_Number(Serial_Number)
+	Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, "0")
+	Sleep(10)
+	ISSUE_Result :=   Searchend_Isssue_Check()
+	 IF ISSUE_Result = Bad_Prefix
+	{
+		Sleep(30)		
+		ISSUE_Result :=   Searchend_Isssue_Check()
+	 IF ISSUE_Result = Bad_Prefix
+		
+			Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Bad_Prefix_Array,"1")	
+	}
+	return
+	
+}
 	Double_Click(x,y) ; no unit test needed
 	{
 Click %x%, %y%
@@ -1772,31 +1755,6 @@ If Time = Pause_off
 Return
 }
 
-Check_For_Effectivity_Issues_Loop(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-{	
-	global breakloop
-Loop, 2
-{
-	If (breakloop)
-		break
-
-Result :=   Searchend_Isssue_Check()
-			If (Result = "Dual_Eng")
-			{
-
-				Return "Dual_Eng"
-				Break
-		  }
-			if (Result = "Bad_Prefix")
-			{
-			;~ MsgBox, Bad Prefix
-			   Return "Bad_Prefix"
-			   Break
-	  }
-	}
-
-   Return "Not_Found"
-}
 
 
 	Create_Dual_Instructions_GUI() ; no unit test needed
@@ -1881,11 +1839,11 @@ If (!Complete)
 CoordMode, mouse, Screen
    ;listlines on
 	win_check(Active_ID)
-	Sleep()
+	Sleep(1)
    Click, %prefixx%, %prefixy%
-   sleep(.5)
+   sleep()
    mousemove 300,300
-   sleep(.5)
+   sleep()
    SEndRaw, %Prefix_Holder_for_ACM_Input%
    sleep()
    Send {Tab}
@@ -1897,6 +1855,7 @@ CoordMode, mouse, Screen
    SendRaw, %Second_Effectivity_Numbers%
    sleep()
    Send {Tab}
+   Sleep(1.5)
    Sleep(Sleep_Delay)
 Sleep(2)
 }
@@ -1909,7 +1868,8 @@ else
 	  Serialcount := Added_Serial_Count("0")
 	   Move_Message_Box("0",""," The number of successful Serial additions to ACM is "  Serialcount "`n`nMacro Finished due to no more Serials to add. `n`n It took the macro " Total_Time " to perform tasks. `n`n Please close Serial Macro Window after checking to ensure serials were entered correctly.")
 	  Guicontrol,1:, Editfield,
-	  ;~ gosub, radio2h
+	 GuiControl,, Radio2, 1
+	 gosub, radio_button
   Gui_Image_Show("Stop")
 	  Exit
    }
@@ -1924,12 +1884,27 @@ Macro Timeout Functions and GUI
 */
 
 
-Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, ByRef Prefix_array, Final_check := 0)
 {
-	;~ MsgBox, Serialnogo prefix is %Prefix%
-	Serial_Number := Prefix First_Effectivity_Numbers "-" Second_Effectivity_Numbers
+	If (Final_check)
+	{
+	for index, element in Prefix_array
+	{
+	Prefix_Check := Extract_Prefix(element)
+	If Prefix_Check = %prefix%
+	{
+			First_Half_Serial_Num := Extract_First_Set_Of_Serial_Number(element)
+			Second_Half_Serial_Num := Extract_Second_Set_Of_Serial_Number(element)
+			
+		Serial_Number := Prefix First_Effectivity_Numbers "-" Second_Effectivity_Numbers
 	Modifier = **Not In ACM**
 	Add_To_Completed_LIst(Serial_Number, Modifier)
+	}
+	}
+	
+	}
+	
+	
 	GuiControlGet, Editfield
 Loop, Parse, Editfield, `n
 {
@@ -2070,7 +2045,7 @@ WinGetTitle, Title, ahk_id %Active_ID%
 checkforactivity() ; no unit test needed
 {
 	global breakloop, Active_ID
-   while A_TimeIdlePhysical < 4999 ; meaning there has been user activity
+   while A_TimeIdlePhysical < 2999 ; meaning there has been user activity
    {
 	  Gui 1: -AlwaysOnTop
 
@@ -2081,17 +2056,12 @@ checkforactivity() ; no unit test needed
 			Break
 			Return
 		 }
-
 		 If (A_TimeIdlePhysical > 0) and (A_TimeIdlePhysical < 1000)
-		 Timeleft = 5
+		 Timeleft = 3
 	
 		 If (A_TimeIdlePhysical > 1000) and (A_TimeIdlePhysical < 2000)
-		 Timeleft = 4
-		   If (A_TimeIdlePhysical > 2000) and (A_TimeIdlePhysical < 3000)
-		 Timeleft = 3
-		 If (A_TimeIdlePhysical > 3000) and (A_TimeIdlePhysical < 4000)
 		 Timeleft = 2
-		 If (A_TimeIdlePhysical > 4000) and (A_TimeIdlePhysical < 5000)
+		   If (A_TimeIdlePhysical > 2000) and (A_TimeIdlePhysical < 3000)
 		 Timeleft = 1
 }
 	 If (breakloop)
@@ -2100,20 +2070,21 @@ checkforactivity() ; no unit test needed
 			Break
 		}
 		 SplashTextOn,350,50,Macro paused, Macro is now paused due to user activity.`n Macro will resume after %timeleft% seconds of no user input
-				Gui_Image_Show("Pause") ; options are Stop, Run, Pause, Start
+		Gui_Image_Show("Pause") ; options are Stop, Run, Pause, Start
 		 Gui, Submit, NoHide
 		 sleep(10)
 	  }
 
-	  if A_TimeIdlePhysical > 5000 ; meaning there has been no user activity
+	  if A_TimeIdlePhysical > 3000 ; meaning there has been no user activity
 	  {
 		   splashtextoff
 			Gui 1: +AlwaysOnTop
 			win_check(Active_ID)
-			   Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
-			;~ gosub, radio1h
+		   Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
+		 Editfield_Control("Editfield")
+		Guicontrol,,Radio1,1
+		gosub, radio_button
 			Gui, Submit, NoHide
-			;~ gosub, SerialFullScreen
 		 }
 	  return
    }
@@ -2155,11 +2126,10 @@ return Serial_Number
 	  Else
 		 ;msgbox, not maxed
 	  CoordMode, mouse, Relative
-	  MouseMove 300,10
+	  MouseMove 300,4
 	  Click 2
-	  ;~ Click
 	  Coordmode, mouse, screen
-	  ;MouseMove, mmx, mmy
+
 	  return
    }
 
@@ -2184,13 +2154,11 @@ GetCurrentMonitor() ; no unit test needed
 Searchend()
 {
 global Image_Red_Exclamation_Point, Active_ID, 
-   ;msgbox, searchend
    listlines off
 
 	Current_Monitor := GetCurrentMonitor()
 	pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Image_Red_Exclamation_Point)
-   ;~ bmpHaystack := Gdip_BitmapFromScreen(Current_Monitor)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
    RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,10,0,0,0)
    Gdip_Shutdown(pToken)
@@ -2210,7 +2178,6 @@ global Image_Red_Exclamation_Point, Active_ID,
   Move_Message_Box("262144", Effectivity_Macro, "Error Searchend (bmpNeedle1)" RETSearch)
 	  Exit
    }
-
 
    If RETSearch > 0
    {
@@ -2239,8 +2206,6 @@ global Issues_Image, Active_ID, prefixx, prefixy
    RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,10,0,0,0)
 
    Gdip_Shutdown(pToken)
-	  ;listlines on
-	  ;~ MsgBox, % RETSearch
    If RETSearch < 0
    {
 	  if RETSearch = -1001
@@ -2296,7 +2261,6 @@ Comma_Check(Effectivity_Macro)
 
 Wait_For_Shift_Mouse_Click() ; no unit test needed
 {
-
    Keywait, Shift,D
    Keywait, Lbutton, D
    KeyWait, Shift
@@ -3897,6 +3861,7 @@ SetStretchBltMode(hdc, iStretchMode=4)
 ;
 ; return				If the function succeeds, the return value is nonzero
 
+/*
 SetImage(hwnd, hBitmap)
 {
 	SendMessage, 0x172, 0x0, hBitmap,, ahk_id %hwnd%
@@ -3968,6 +3933,7 @@ SetSysColorToControl(hwnd, SysColor=15)
    Gdip_DeleteGraphics(G), Gdip_DisposeImage(pBitmap), DeleteObject(hBitmap)
    return 0
 }
+*/
 
 ;#####################################################################################
 
@@ -4369,534 +4335,6 @@ Gdip_LibrarySubVersion()
 
 ;#####################################################################################
 
-; Function:    			Gdip_BitmapFromBRA
-; Description: 			Gets a pointer to a gdi+ bitmap from a BRA file
-;
-; BRAFromMemIn			The variable for a BRA file read to memory
-; File					The name of the file, or its number that you would like (This depends on alternate parameter)
-; Alternate				Changes whether the File parameter is the file name or its number
-;
-; return      			If the function succeeds, the return value is a pointer to a gdi+ bitmap
-;						-1 = The BRA variable is empty
-;						-2 = The BRA has an incorrect header
-;						-3 = The BRA has information missing
-;						-4 = Could not find file inside the BRA
-
-Gdip_BitmapFromBRA(ByRef BRAFromMemIn, File, Alternate=0)
-{
-	Static FName = "ObjRelease"
-
-	if !BRAFromMemIn
-		return -1
-	Loop, Parse, BRAFromMemIn, `n
-	{
-		if (A_Index = 1)
-		{
-			StringSplit, Header, A_LoopField, |
-			if (Header0 != 4 || Header2 != "BRA!")
-				return -2
-		}
-		else if (A_Index = 2)
-		{
-			StringSplit, Info, A_LoopField, |
-			if (Info0 != 3)
-				return -3
-		}
-		else
-			break
-	}
-	if !Alternate
-		StringReplace, File, File, \, \\, All
-	RegExMatch(BRAFromMemIn, "mi`n)^" (Alternate ? File "\|.+?\|(\d+)\|(\d+)" : "\d+\|" File "\|(\d+)\|(\d+)") "$", FileInfo)
-	if !FileInfo
-		return -4
-
-	hData := DllCall("GlobalAlloc", "uint", 2, Ptr, FileInfo2, Ptr)
-	pData := DllCall("GlobalLock", Ptr, hData, Ptr)
-	DllCall("RtlMoveMemory", Ptr, pData, Ptr, &BRAFromMemIn+Info2+FileInfo1, Ptr, FileInfo2)
-	DllCall("GlobalUnlock", Ptr, hData)
-	DllCall("ole32\CreateStreamOnHGlobal", Ptr, hData, "int", 1, A_PtrSize ? "UPtr*" : "UInt*", pStream)
-	DllCall("gdiplus\GdipCreateBitmapFromStream", Ptr, pStream, A_PtrSize ? "UPtr*" : "UInt*", pBitmap)
-	If (A_PtrSize)
-		%FName%(pStream)
-	Else
-		DllCall(NumGet(NumGet(1*pStream)+8), "uint", pStream)
-	return pBitmap
-}
-
-;#####################################################################################
-
-; Function				Gdip_DrawRectangle
-; Description			This function uses a pen to draw the outline of a rectangle into the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pPen					Pointer to a pen
-; x						x-coordinate of the top left of the rectangle
-; y						y-coordinate of the top left of the rectangle
-; w						width of the rectanlge
-; h						height of the rectangle
-;
-; return				status enumeration. 0 = success
-;
-; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
-
-Gdip_DrawRectangle(pGraphics, pPen, x, y, w, h)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	return DllCall("gdiplus\GdipDrawRectangle", Ptr, pGraphics, Ptr, pPen, "float", x, "float", y, "float", w, "float", h)
-}
-
-;#####################################################################################
-
-; Function				Gdip_DrawRoundedRectangle
-; Description			This function uses a pen to draw the outline of a rounded rectangle into the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pPen					Pointer to a pen
-; x						x-coordinate of the top left of the rounded rectangle
-; y						y-coordinate of the top left of the rounded rectangle
-; w						width of the rectanlge
-; h						height of the rectangle
-; r						radius of the rounded corners
-;
-; return				status enumeration. 0 = success
-;
-; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
-
-Gdip_DrawRoundedRectangle(pGraphics, pPen, x, y, w, h, r)
-{
-	Gdip_SetClipRect(pGraphics, x-r, y-r, 2*r, 2*r, 4)
-	Gdip_SetClipRect(pGraphics, x+w-r, y-r, 2*r, 2*r, 4)
-	Gdip_SetClipRect(pGraphics, x-r, y+h-r, 2*r, 2*r, 4)
-	Gdip_SetClipRect(pGraphics, x+w-r, y+h-r, 2*r, 2*r, 4)
-	E := Gdip_DrawRectangle(pGraphics, pPen, x, y, w, h)
-	Gdip_ResetClip(pGraphics)
-	Gdip_SetClipRect(pGraphics, x-(2*r), y+r, w+(4*r), h-(2*r), 4)
-	Gdip_SetClipRect(pGraphics, x+r, y-(2*r), w-(2*r), h+(4*r), 4)
-	Gdip_DrawEllipse(pGraphics, pPen, x, y, 2*r, 2*r)
-	Gdip_DrawEllipse(pGraphics, pPen, x+w-(2*r), y, 2*r, 2*r)
-	Gdip_DrawEllipse(pGraphics, pPen, x, y+h-(2*r), 2*r, 2*r)
-	Gdip_DrawEllipse(pGraphics, pPen, x+w-(2*r), y+h-(2*r), 2*r, 2*r)
-	Gdip_ResetClip(pGraphics)
-	return E
-}
-
-;#####################################################################################
-
-; Function				Gdip_DrawEllipse
-; Description			This function uses a pen to draw the outline of an ellipse into the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pPen					Pointer to a pen
-; x						x-coordinate of the top left of the rectangle the ellipse will be drawn into
-; y						y-coordinate of the top left of the rectangle the ellipse will be drawn into
-; w						width of the ellipse
-; h						height of the ellipse
-;
-; return				status enumeration. 0 = success
-;
-; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
-
-Gdip_DrawEllipse(pGraphics, pPen, x, y, w, h)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	return DllCall("gdiplus\GdipDrawEllipse", Ptr, pGraphics, Ptr, pPen, "float", x, "float", y, "float", w, "float", h)
-}
-
-;#####################################################################################
-
-; Function				Gdip_DrawBezier
-; Description			This function uses a pen to draw the outline of a bezier (a weighted curve) into the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pPen					Pointer to a pen
-; x1					x-coordinate of the start of the bezier
-; y1					y-coordinate of the start of the bezier
-; x2					x-coordinate of the first arc of the bezier
-; y2					y-coordinate of the first arc of the bezier
-; x3					x-coordinate of the second arc of the bezier
-; y3					y-coordinate of the second arc of the bezier
-; x4					x-coordinate of the end of the bezier
-; y4					y-coordinate of the end of the bezier
-;
-; return				status enumeration. 0 = success
-;
-; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
-
-Gdip_DrawBezier(pGraphics, pPen, x1, y1, x2, y2, x3, y3, x4, y4)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	return DllCall("gdiplus\GdipDrawBezier"
-					, Ptr, pgraphics
-					, Ptr, pPen
-					, "float", x1
-					, "float", y1
-					, "float", x2
-					, "float", y2
-					, "float", x3
-					, "float", y3
-					, "float", x4
-					, "float", y4)
-}
-
-;#####################################################################################
-
-; Function				Gdip_DrawArc
-; Description			This function uses a pen to draw the outline of an arc into the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pPen					Pointer to a pen
-; x						x-coordinate of the start of the arc
-; y						y-coordinate of the start of the arc
-; w						width of the arc
-; h						height of the arc
-; StartAngle			specifies the angle between the x-axis and the starting point of the arc
-; SweepAngle			specifies the angle between the starting and ending points of the arc
-;
-; return				status enumeration. 0 = success
-;
-; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
-
-Gdip_DrawArc(pGraphics, pPen, x, y, w, h, StartAngle, SweepAngle)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	return DllCall("gdiplus\GdipDrawArc"
-					, Ptr, pGraphics
-					, Ptr, pPen
-					, "float", x
-					, "float", y
-					, "float", w
-					, "float", h
-					, "float", StartAngle
-					, "float", SweepAngle)
-}
-
-;#####################################################################################
-
-; Function				Gdip_DrawPie
-; Description			This function uses a pen to draw the outline of a pie into the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pPen					Pointer to a pen
-; x						x-coordinate of the start of the pie
-; y						y-coordinate of the start of the pie
-; w						width of the pie
-; h						height of the pie
-; StartAngle			specifies the angle between the x-axis and the starting point of the pie
-; SweepAngle			specifies the angle between the starting and ending points of the pie
-;
-; return				status enumeration. 0 = success
-;
-; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
-
-Gdip_DrawPie(pGraphics, pPen, x, y, w, h, StartAngle, SweepAngle)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	return DllCall("gdiplus\GdipDrawPie", Ptr, pGraphics, Ptr, pPen, "float", x, "float", y, "float", w, "float", h, "float", StartAngle, "float", SweepAngle)
-}
-
-;#####################################################################################
-
-; Function				Gdip_DrawLine
-; Description			This function uses a pen to draw a line into the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pPen					Pointer to a pen
-; x1					x-coordinate of the start of the line
-; y1					y-coordinate of the start of the line
-; x2					x-coordinate of the end of the line
-; y2					y-coordinate of the end of the line
-;
-; return				status enumeration. 0 = success
-
-Gdip_DrawLine(pGraphics, pPen, x1, y1, x2, y2)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	return DllCall("gdiplus\GdipDrawLine"
-					, Ptr, pGraphics
-					, Ptr, pPen
-					, "float", x1
-					, "float", y1
-					, "float", x2
-					, "float", y2)
-}
-
-;#####################################################################################
-
-; Function				Gdip_DrawLines
-; Description			This function uses a pen to draw a series of joined lines into the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pPen					Pointer to a pen
-; Points				the coordinates of all the points passed as x1,y1|x2,y2|x3,y3.....
-;
-; return				status enumeration. 0 = success
-
-Gdip_DrawLines(pGraphics, pPen, Points)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-	StringSplit, Points, Points, |
-	VarSetCapacity(PointF, 8*Points0)
-	Loop, %Points0%
-	{
-		StringSplit, Coord, Points%A_Index%, `,
-		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
-	}
-	return DllCall("gdiplus\GdipDrawLines", Ptr, pGraphics, Ptr, pPen, Ptr, &PointF, "int", Points0)
-}
-
-;#####################################################################################
-
-; Function				Gdip_FillRectangle
-; Description			This function uses a brush to fill a rectangle in the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pBrush				Pointer to a brush
-; x						x-coordinate of the top left of the rectangle
-; y						y-coordinate of the top left of the rectangle
-; w						width of the rectanlge
-; h						height of the rectangle
-;
-; return				status enumeration. 0 = success
-
-Gdip_FillRectangle(pGraphics, pBrush, x, y, w, h)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	return DllCall("gdiplus\GdipFillRectangle"
-					, Ptr, pGraphics
-					, Ptr, pBrush
-					, "float", x
-					, "float", y
-					, "float", w
-					, "float", h)
-}
-
-;#####################################################################################
-
-; Function				Gdip_FillRoundedRectangle
-; Description			This function uses a brush to fill a rounded rectangle in the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pBrush				Pointer to a brush
-; x						x-coordinate of the top left of the rounded rectangle
-; y						y-coordinate of the top left of the rounded rectangle
-; w						width of the rectanlge
-; h						height of the rectangle
-; r						radius of the rounded corners
-;
-; return				status enumeration. 0 = success
-
-Gdip_FillRoundedRectangle(pGraphics, pBrush, x, y, w, h, r)
-{
-	Region := Gdip_GetClipRegion(pGraphics)
-	Gdip_SetClipRect(pGraphics, x-r, y-r, 2*r, 2*r, 4)
-	Gdip_SetClipRect(pGraphics, x+w-r, y-r, 2*r, 2*r, 4)
-	Gdip_SetClipRect(pGraphics, x-r, y+h-r, 2*r, 2*r, 4)
-	Gdip_SetClipRect(pGraphics, x+w-r, y+h-r, 2*r, 2*r, 4)
-	E := Gdip_FillRectangle(pGraphics, pBrush, x, y, w, h)
-	Gdip_SetClipRegion(pGraphics, Region, 0)
-	Gdip_SetClipRect(pGraphics, x-(2*r), y+r, w+(4*r), h-(2*r), 4)
-	Gdip_SetClipRect(pGraphics, x+r, y-(2*r), w-(2*r), h+(4*r), 4)
-	Gdip_FillEllipse(pGraphics, pBrush, x, y, 2*r, 2*r)
-	Gdip_FillEllipse(pGraphics, pBrush, x+w-(2*r), y, 2*r, 2*r)
-	Gdip_FillEllipse(pGraphics, pBrush, x, y+h-(2*r), 2*r, 2*r)
-	Gdip_FillEllipse(pGraphics, pBrush, x+w-(2*r), y+h-(2*r), 2*r, 2*r)
-	Gdip_SetClipRegion(pGraphics, Region, 0)
-	Gdip_DeleteRegion(Region)
-	return E
-}
-
-;#####################################################################################
-
-; Function				Gdip_FillPolygon
-; Description			This function uses a brush to fill a polygon in the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pBrush				Pointer to a brush
-; Points				the coordinates of all the points passed as x1,y1|x2,y2|x3,y3.....
-;
-; return				status enumeration. 0 = success
-;
-; notes					Alternate will fill the polygon as a whole, wheras winding will fill each new "segment"
-; Alternate 			= 0
-; Winding 				= 1
-
-Gdip_FillPolygon(pGraphics, pBrush, Points, FillMode=0)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	StringSplit, Points, Points, |
-	VarSetCapacity(PointF, 8*Points0)
-	Loop, %Points0%
-	{
-		StringSplit, Coord, Points%A_Index%, `,
-		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
-	}
-	return DllCall("gdiplus\GdipFillPolygon", Ptr, pGraphics, Ptr, pBrush, Ptr, &PointF, "int", Points0, "int", FillMode)
-}
-
-;#####################################################################################
-
-; Function				Gdip_FillPie
-; Description			This function uses a brush to fill a pie in the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pBrush				Pointer to a brush
-; x						x-coordinate of the top left of the pie
-; y						y-coordinate of the top left of the pie
-; w						width of the pie
-; h						height of the pie
-; StartAngle			specifies the angle between the x-axis and the starting point of the pie
-; SweepAngle			specifies the angle between the starting and ending points of the pie
-;
-; return				status enumeration. 0 = success
-
-Gdip_FillPie(pGraphics, pBrush, x, y, w, h, StartAngle, SweepAngle)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	return DllCall("gdiplus\GdipFillPie"
-					, Ptr, pGraphics
-					, Ptr, pBrush
-					, "float", x
-					, "float", y
-					, "float", w
-					, "float", h
-					, "float", StartAngle
-					, "float", SweepAngle)
-}
-
-;#####################################################################################
-
-; Function				Gdip_FillEllipse
-; Description			This function uses a brush to fill an ellipse in the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pBrush				Pointer to a brush
-; x						x-coordinate of the top left of the ellipse
-; y						y-coordinate of the top left of the ellipse
-; w						width of the ellipse
-; h						height of the ellipse
-;
-; return				status enumeration. 0 = success
-
-Gdip_FillEllipse(pGraphics, pBrush, x, y, w, h)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	return DllCall("gdiplus\GdipFillEllipse", Ptr, pGraphics, Ptr, pBrush, "float", x, "float", y, "float", w, "float", h)
-}
-
-;#####################################################################################
-
-; Function				Gdip_FillRegion
-; Description			This function uses a brush to fill a region in the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pBrush				Pointer to a brush
-; Region				Pointer to a Region
-;
-; return				status enumeration. 0 = success
-;
-; notes					You can create a region Gdip_CreateRegion() and then add to this
-
-Gdip_FillRegion(pGraphics, pBrush, Region)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	return DllCall("gdiplus\GdipFillRegion", Ptr, pGraphics, Ptr, pBrush, Ptr, Region)
-}
-
-;#####################################################################################
-
-; Function				Gdip_FillPath
-; Description			This function uses a brush to fill a path in the Graphics of a bitmap
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pBrush				Pointer to a brush
-; Region				Pointer to a Path
-;
-; return				status enumeration. 0 = success
-
-Gdip_FillPath(pGraphics, pBrush, Path)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	return DllCall("gdiplus\GdipFillPath", Ptr, pGraphics, Ptr, pBrush, Ptr, Path)
-}
-
-;#####################################################################################
-
-; Function				Gdip_DrawImagePointsRect
-; Description			This function draws a bitmap into the Graphics of another bitmap and skews it
-;
-; pGraphics				Pointer to the Graphics of a bitmap
-; pBitmap				Pointer to a bitmap to be drawn
-; Points				Points passed as x1,y1|x2,y2|x3,y3 (3 points: top left, top right, bottom left) describing the drawing of the bitmap
-; sx					x-coordinate of source upper-left corner
-; sy					y-coordinate of source upper-left corner
-; sw					width of source rectangle
-; sh					height of source rectangle
-; Matrix				a matrix used to alter image attributes when drawing
-;
-; return				status enumeration. 0 = success
-;
-; notes					if sx,sy,sw,sh are missed then the entire source bitmap will be used
-;						Matrix can be omitted to just draw with no alteration to ARGB
-;						Matrix may be passed as a digit from 0 - 1 to change just transparency
-;						Matrix can be passed as a matrix with any delimiter
-
-Gdip_DrawImagePointsRect(pGraphics, pBitmap, Points, sx="", sy="", sw="", sh="", Matrix=1)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	StringSplit, Points, Points, |
-	VarSetCapacity(PointF, 8*Points0)
-	Loop, %Points0%
-	{
-		StringSplit, Coord, Points%A_Index%, `,
-		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
-	}
-
-	if (Matrix&1 = "")
-		ImageAttr := Gdip_SetImageAttributesColorMatrix(Matrix)
-	else if (Matrix != 1)
-		ImageAttr := Gdip_SetImageAttributesColorMatrix("1|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0|0|" Matrix "|0|0|0|0|0|1")
-
-	if (sx = "" && sy = "" && sw = "" && sh = "")
-	{
-		sx := 0, sy := 0
-		sw := Gdip_GetImageWidth(pBitmap)
-		sh := Gdip_GetImageHeight(pBitmap)
-	}
-
-	E := DllCall("gdiplus\GdipDrawImagePointsRect"
-				, Ptr, pGraphics
-				, Ptr, pBitmap
-				, Ptr, &PointF
-				, "int", Points0
-				, "float", sx
-				, "float", sy
-				, "float", sw
-				, "float", sh
-				, "int", 2
-				, Ptr, ImageAttr
-				, Ptr, 0
-				, Ptr, 0)
-	if ImageAttr
-		Gdip_DisposeImageAttributes(ImageAttr)
-	return E
-}
-
-;#####################################################################################
-
 ; Function				Gdip_DrawImage
 ; Description			This function draws a bitmap into the Graphics of another bitmap
 ;
@@ -5007,6 +4445,7 @@ Gdip_SetImageAttributesColorMatrix(Matrix)
 	DllCall("gdiplus\GdipSetImageAttributesColorMatrix", Ptr, ImageAttr, "int", 1, "int", 1, Ptr, &ColourMatrix, Ptr, 0, "int", 0)
 	return ImageAttr
 }
+*/
 
 ;#####################################################################################
 
@@ -5092,141 +4531,6 @@ Gdip_GraphicsClear(pGraphics, ARGB=0x00ffffff)
 	return DllCall("gdiplus\GdipGraphicsClear", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", ARGB)
 }
 
-;#####################################################################################
-
-; Function				Gdip_BlurBitmap
-; Description			Gives a pointer to a blurred bitmap from a pointer to a bitmap
-;
-; pBitmap				Pointer to a bitmap to be blurred
-; Blur					The Amount to blur a bitmap by from 1 (least blur) to 100 (most blur)
-;
-; return				If the function succeeds, the return value is a pointer to the new blurred bitmap
-;						-1 = The blur parameter is outside the range 1-100
-;
-; notes					This function will not dispose of the original bitmap
-
-Gdip_BlurBitmap(pBitmap, Blur)
-{
-	if (Blur > 100) || (Blur < 1)
-		return -1
-
-	sWidth := Gdip_GetImageWidth(pBitmap), sHeight := Gdip_GetImageHeight(pBitmap)
-	dWidth := sWidth//Blur, dHeight := sHeight//Blur
-
-	pBitmap1 := Gdip_CreateBitmap(dWidth, dHeight)
-	G1 := Gdip_GraphicsFromImage(pBitmap1)
-	Gdip_SetInterpolationMode(G1, 7)
-	Gdip_DrawImage(G1, pBitmap, 0, 0, dWidth, dHeight, 0, 0, sWidth, sHeight)
-
-	Gdip_DeleteGraphics(G1)
-
-	pBitmap2 := Gdip_CreateBitmap(sWidth, sHeight)
-	G2 := Gdip_GraphicsFromImage(pBitmap2)
-	Gdip_SetInterpolationMode(G2, 7)
-	Gdip_DrawImage(G2, pBitmap1, 0, 0, sWidth, sHeight, 0, 0, dWidth, dHeight)
-
-	Gdip_DeleteGraphics(G2)
-	Gdip_DisposeImage(pBitmap1)
-	return pBitmap2
-}
-
-;#####################################################################################
-
-; Function:     		Gdip_SaveBitmapToFile
-; Description:  		Saves a bitmap to a file in any supported format onto disk
-;
-; pBitmap				Pointer to a bitmap
-; sOutput      			The name of the file that the bitmap will be saved to. Supported extensions are: .BMP,.DIB,.RLE,.JPG,.JPEG,.JPE,.JFIF,.GIF,.TIF,.TIFF,.PNG
-; Quality      			If saving as jpg (.JPG,.JPEG,.JPE,.JFIF) then quality can be 1-100 with default at maximum quality
-;
-; return      			If the function succeeds, the return value is zero, otherwise:
-;						-1 = Extension supplied is not a supported file format
-;						-2 = Could not get a list of encoders on system
-;						-3 = Could not find matching encoder for specified file format
-;						-4 = Could not get WideChar name of output file
-;						-5 = Could not save file to disk
-;
-; notes					This function will use the extension supplied from the sOutput parameter to determine the output format
-
-Gdip_SaveBitmapToFile(pBitmap, sOutput, Quality=75)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	SplitPath, sOutput,,, Extension
-	if Extension not in BMP,DIB,RLE,JPG,JPEG,JPE,JFIF,GIF,TIF,TIFF,PNG
-		return -1
-	Extension := "." Extension
-
-	DllCall("gdiplus\GdipGetImageEncodersSize", "uint*", nCount, "uint*", nSize)
-	VarSetCapacity(ci, nSize)
-	DllCall("gdiplus\GdipGetImageEncoders", "uint", nCount, "uint", nSize, Ptr, &ci)
-	if !(nCount && nSize)
-		return -2
-
-	If (A_IsUnicode){
-		StrGet_Name := "StrGet"
-		Loop, %nCount%
-		{
-			sString := %StrGet_Name%(NumGet(ci, (idx := (48+7*A_PtrSize)*(A_Index-1))+32+3*A_PtrSize), "UTF-16")
-			if !InStr(sString, "*" Extension)
-				continue
-
-			pCodec := &ci+idx
-			break
-		}
-	} else {
-		Loop, %nCount%
-		{
-			Location := NumGet(ci, 76*(A_Index-1)+44)
-			nSize := DllCall("WideCharToMultiByte", "uint", 0, "uint", 0, "uint", Location, "int", -1, "uint", 0, "int",  0, "uint", 0, "uint", 0)
-			VarSetCapacity(sString, nSize)
-			DllCall("WideCharToMultiByte", "uint", 0, "uint", 0, "uint", Location, "int", -1, "str", sString, "int", nSize, "uint", 0, "uint", 0)
-			if !InStr(sString, "*" Extension)
-				continue
-
-			pCodec := &ci+76*(A_Index-1)
-			break
-		}
-	}
-
-	if !pCodec
-		return -3
-
-	if (Quality != 75)
-	{
-		Quality := (Quality < 0) ? 0 : (Quality > 100) ? 100 : Quality
-		if Extension in .JPG,.JPEG,.JPE,.JFIF
-		{
-			DllCall("gdiplus\GdipGetEncoderParameterListSize", Ptr, pBitmap, Ptr, pCodec, "uint*", nSize)
-			VarSetCapacity(EncoderParameters, nSize, 0)
-			DllCall("gdiplus\GdipGetEncoderParameterList", Ptr, pBitmap, Ptr, pCodec, "uint", nSize, Ptr, &EncoderParameters)
-			Loop, % NumGet(EncoderParameters, "UInt")      ;%
-			{
-				elem := (24+(A_PtrSize ? A_PtrSize : 4))*(A_Index-1) + 4 + (pad := A_PtrSize = 8 ? 4 : 0)
-				if (NumGet(EncoderParameters, elem+16, "UInt") = 1) && (NumGet(EncoderParameters, elem+20, "UInt") = 6)
-				{
-					p := elem+&EncoderParameters-pad-4
-					NumPut(Quality, NumGet(NumPut(4, NumPut(1, p+0)+20, "UInt")), "UInt")
-					break
-				}
-			}
-		}
-	}
-
-	if (!A_IsUnicode)
-	{
-		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sOutput, "int", -1, Ptr, 0, "int", 0)
-		VarSetCapacity(wOutput, nSize*2)
-		DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sOutput, "int", -1, Ptr, &wOutput, "int", nSize)
-		VarSetCapacity(wOutput, -1)
-		if !VarSetCapacity(wOutput)
-			return -4
-		E := DllCall("gdiplus\GdipSaveImageToFile", Ptr, pBitmap, Ptr, &wOutput, Ptr, pCodec, "uint", p ? p : 0)
-	}
-	else
-		E := DllCall("gdiplus\GdipSaveImageToFile", Ptr, pBitmap, Ptr, &sOutput, Ptr, pCodec, "uint", p ? p : 0)
-	return E ? -5 : 0
-}
 
 ;#####################################################################################
 
@@ -5746,250 +5050,6 @@ Gdip_DeleteFontFamily(hFamily)
 Gdip_DeleteMatrix(Matrix)
 {
    return DllCall("gdiplus\GdipDeleteMatrix", A_PtrSize ? "UPtr" : "UInt", Matrix)
-}
-
-;#####################################################################################
-; Text functions
-;#####################################################################################
-
-Gdip_TextToGraphics(pGraphics, Text, Options, Font="Arial", Width="", Height="", Measure=0)
-{
-	IWidth := Width, IHeight:= Height
-
-	RegExMatch(Options, "i)X([\-\d\.]+)(p*)", xpos)
-	RegExMatch(Options, "i)Y([\-\d\.]+)(p*)", ypos)
-	RegExMatch(Options, "i)W([\-\d\.]+)(p*)", Width)
-	RegExMatch(Options, "i)H([\-\d\.]+)(p*)", Height)
-	RegExMatch(Options, "i)C(?!(entre|enter))([a-f\d]+)", Colour)
-	RegExMatch(Options, "i)Top|Up|Bottom|Down|vCentre|vCenter", vPos)
-	RegExMatch(Options, "i)NoWrap", NoWrap)
-	RegExMatch(Options, "i)R(\d)", Rendering)
-	RegExMatch(Options, "i)S(\d+)(p*)", Size)
-
-	if !Gdip_DeleteBrush(Gdip_CloneBrush(Colour2))
-		PassBrush := 1, pBrush := Colour2
-
-	if !(IWidth && IHeight) && (xpos2 || ypos2 || Width2 || Height2 || Size2)
-		return -1
-
-	Style := 0, Styles := "Regular|Bold|Italic|BoldItalic|Underline|Strikeout"
-	Loop, Parse, Styles, |
-	{
-		if RegExMatch(Options, "\b" A_loopField)
-		Style |= (A_LoopField != "StrikeOut") ? (A_Index-1) : 8
-	}
-
-	Align := 0, Alignments := "Near|Left|Centre|Center|Far|Right"
-	Loop, Parse, Alignments, |
-	{
-		if RegExMatch(Options, "\b" A_loopField)
-			Align |= A_Index//2.1      ; 0|0|1|1|2|2
-	}
-
-	xpos := (xpos1 != "") ? xpos2 ? IWidth*(xpos1/100) : xpos1 : 0
-	ypos := (ypos1 != "") ? ypos2 ? IHeight*(ypos1/100) : ypos1 : 0
-	Width := Width1 ? Width2 ? IWidth*(Width1/100) : Width1 : IWidth
-	Height := Height1 ? Height2 ? IHeight*(Height1/100) : Height1 : IHeight
-	if !PassBrush
-		Colour := "0x" (Colour2 ? Colour2 : "ff000000")
-	Rendering := ((Rendering1 >= 0) && (Rendering1 <= 5)) ? Rendering1 : 4
-	Size := (Size1 > 0) ? Size2 ? IHeight*(Size1/100) : Size1 : 12
-
-	hFamily := Gdip_FontFamilyCreate(Font)
-	hFont := Gdip_FontCreate(hFamily, Size, Style)
-	FormatStyle := NoWrap ? 0x4000 | 0x1000 : 0x4000
-	hFormat := Gdip_StringFormatCreate(FormatStyle)
-	pBrush := PassBrush ? pBrush : Gdip_BrushCreateSolid(Colour)
-	if !(hFamily && hFont && hFormat && pBrush && pGraphics)
-		return !pGraphics ? -2 : !hFamily ? -3 : !hFont ? -4 : !hFormat ? -5 : !pBrush ? -6 : 0
-
-	CreateRectF(RC, xpos, ypos, Width, Height)
-	Gdip_SetStringFormatAlign(hFormat, Align)
-	Gdip_SetTextRenderingHint(pGraphics, Rendering)
-	ReturnRC := Gdip_MeasureString(pGraphics, Text, hFont, hFormat, RC)
-
-	if vPos
-	{
-		StringSplit, ReturnRC, ReturnRC, |
-
-		if (vPos = "vCentre") || (vPos = "vCenter")
-			ypos += (Height-ReturnRC4)//2
-		else if (vPos = "Top") || (vPos = "Up")
-			ypos := 0
-		else if (vPos = "Bottom") || (vPos = "Down")
-			ypos := Height-ReturnRC4
-
-		CreateRectF(RC, xpos, ypos, Width, ReturnRC4)
-		ReturnRC := Gdip_MeasureString(pGraphics, Text, hFont, hFormat, RC)
-	}
-
-	if !Measure
-		E := Gdip_DrawString(pGraphics, Text, hFont, hFormat, pBrush, RC)
-
-	if !PassBrush
-		Gdip_DeleteBrush(pBrush)
-	Gdip_DeleteStringFormat(hFormat)
-	Gdip_DeleteFont(hFont)
-	Gdip_DeleteFontFamily(hFamily)
-	return E ? E : ReturnRC
-}
-
-;#####################################################################################
-
-Gdip_DrawString(pGraphics, sString, hFont, hFormat, pBrush, ByRef RectF)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	if (!A_IsUnicode)
-	{
-		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, Ptr, 0, "int", 0)
-		VarSetCapacity(wString, nSize*2)
-		DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, Ptr, &wString, "int", nSize)
-	}
-
-	return DllCall("gdiplus\GdipDrawString"
-					, Ptr, pGraphics
-					, Ptr, A_IsUnicode ? &sString : &wString
-					, "int", -1
-					, Ptr, hFont
-					, Ptr, &RectF
-					, Ptr, hFormat
-					, Ptr, pBrush)
-}
-
-;#####################################################################################
-
-Gdip_MeasureString(pGraphics, sString, hFont, hFormat, ByRef RectF)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	VarSetCapacity(RC, 16)
-	if !A_IsUnicode
-	{
-		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, "uint", 0, "int", 0)
-		VarSetCapacity(wString, nSize*2)
-		DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, Ptr, &wString, "int", nSize)
-	}
-
-	DllCall("gdiplus\GdipMeasureString"
-					, Ptr, pGraphics
-					, Ptr, A_IsUnicode ? &sString : &wString
-					, "int", -1
-					, Ptr, hFont
-					, Ptr, &RectF
-					, Ptr, hFormat
-					, Ptr, &RC
-					, "uint*", Chars
-					, "uint*", Lines)
-
-	return &RC ? NumGet(RC, 0, "float") "|" NumGet(RC, 4, "float") "|" NumGet(RC, 8, "float") "|" NumGet(RC, 12, "float") "|" Chars "|" Lines : 0
-}
-
-; Near = 0
-; Center = 1
-; Far = 2
-Gdip_SetStringFormatAlign(hFormat, Align)
-{
-   return DllCall("gdiplus\GdipSetStringFormatAlign", A_PtrSize ? "UPtr" : "UInt", hFormat, "int", Align)
-}
-
-; StringFormatFlagsDirectionRightToLeft    = 0x00000001
-; StringFormatFlagsDirectionVertical       = 0x00000002
-; StringFormatFlagsNoFitBlackBox           = 0x00000004
-; StringFormatFlagsDisplayFormatControl    = 0x00000020
-; StringFormatFlagsNoFontFallback          = 0x00000400
-; StringFormatFlagsMeasureTrailingSpaces   = 0x00000800
-; StringFormatFlagsNoWrap                  = 0x00001000
-; StringFormatFlagsLineLimit               = 0x00002000
-; StringFormatFlagsNoClip                  = 0x00004000
-Gdip_StringFormatCreate(Format=0, Lang=0)
-{
-   DllCall("gdiplus\GdipCreateStringFormat", "int", Format, "int", Lang, A_PtrSize ? "UPtr*" : "UInt*", hFormat)
-   return hFormat
-}
-
-; Regular = 0
-; Bold = 1
-; Italic = 2
-; BoldItalic = 3
-; Underline = 4
-; Strikeout = 8
-Gdip_FontCreate(hFamily, Size, Style=0)
-{
-   DllCall("gdiplus\GdipCreateFont", A_PtrSize ? "UPtr" : "UInt", hFamily, "float", Size, "int", Style, "int", 0, A_PtrSize ? "UPtr*" : "UInt*", hFont)
-   return hFont
-}
-
-Gdip_FontFamilyCreate(Font)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	if (!A_IsUnicode)
-	{
-		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &Font, "int", -1, "uint", 0, "int", 0)
-		VarSetCapacity(wFont, nSize*2)
-		DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &Font, "int", -1, Ptr, &wFont, "int", nSize)
-	}
-
-	DllCall("gdiplus\GdipCreateFontFamilyFromName"
-					, Ptr, A_IsUnicode ? &Font : &wFont
-					, "uint", 0
-					, A_PtrSize ? "UPtr*" : "UInt*", hFamily)
-
-	return hFamily
-}
-
-;#####################################################################################
-; Matrix functions
-;#####################################################################################
-
-Gdip_CreateAffineMatrix(m11, m12, m21, m22, x, y)
-{
-   DllCall("gdiplus\GdipCreateMatrix2", "float", m11, "float", m12, "float", m21, "float", m22, "float", x, "float", y, A_PtrSize ? "UPtr*" : "UInt*", Matrix)
-   return Matrix
-}
-
-Gdip_CreateMatrix()
-{
-   DllCall("gdiplus\GdipCreateMatrix", A_PtrSize ? "UPtr*" : "UInt*", Matrix)
-   return Matrix
-}
-
-;#####################################################################################
-; GraphicsPath functions
-;#####################################################################################
-
-; Alternate = 0
-; Winding = 1
-Gdip_CreatePath(BrushMode=0)
-{
-	DllCall("gdiplus\GdipCreatePath", "int", BrushMode, A_PtrSize ? "UPtr*" : "UInt*", Path)
-	return Path
-}
-
-Gdip_AddPathEllipse(Path, x, y, w, h)
-{
-	return DllCall("gdiplus\GdipAddPathEllipse", A_PtrSize ? "UPtr" : "UInt", Path, "float", x, "float", y, "float", w, "float", h)
-}
-
-Gdip_AddPathPolygon(Path, Points)
-{
-	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	StringSplit, Points, Points, |
-	VarSetCapacity(PointF, 8*Points0)
-	Loop, %Points0%
-	{
-		StringSplit, Coord, Points%A_Index%, `,
-		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
-	}
-
-	return DllCall("gdiplus\GdipAddPathPolygon", Ptr, Path, Ptr, &PointF, "int", Points0)
-}
-
-Gdip_DeletePath(Path)
-{
-	return DllCall("gdiplus\GdipDeletePath", A_PtrSize ? "UPtr" : "UInt", Path)
 }
 
 ;#####################################################################################
