@@ -28,7 +28,7 @@ DetectHiddenText on
 #InstallMouseHook
 
 
-Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array, breakloop
+Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array, breakloop,Creating_image
 
 ; below is for testing between home and work computer
 /*
@@ -78,7 +78,6 @@ ToPause = 0
 badserial = 0
 Serialzcounter2 = 0
 Serialzcounter = 0
-Prefixcount = 5
 TotalPrefixes = 0
 Radiobutton = 1
 
@@ -92,6 +91,7 @@ File_install_Icon_Folder = %File_Install_Work_Folder%\icons
 
 Image_Red_Exclamation_Point = %File_install_Image_Folder%\red_image.png
 Issues_Image = %File_install_Image_Folder%\Issues_Image.png
+Creating_image = %File_install_Image_Folder%\Creating_image.png
 
 
 
@@ -153,6 +153,8 @@ Create_Tray_Menu()
 Create_Main_GUI_Menu()
 
 editfield := Temp_File_Read(File_Install_Work_Folder,"TempAdd.txt")
+If Editfield != 
+	Formatted_text_completed = 1
 
 Temp_File_Delete(File_Install_Work_Folder,"TempAdd.txt")
 
@@ -162,11 +164,16 @@ Temp_File_Delete(File_Install_Work_Folder,"TempAdded.txt")
 TotalPrefixes := Temp_File_Read(File_Install_Work_Folder,"TempAmount.txt")
 Temp_File_Delete(File_Install_Work_Folder,"TempAmount.txt")
 
-If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null")
+
+Serialcount := Temp_File_Read(File_Install_Work_Folder,"Tempcount.txt")
+Temp_File_Delete(File_Install_Work_Folder,"Tempcount.txt")
+
+If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null") || (Serialcount = "Null")
 {
 	editfield =
 	editfield2 =
 	TotalPrefixes =
+	Serialcount = 0
 }
 
 
@@ -177,8 +184,8 @@ Versioncheck("0")
 SplashTextOff
 
 
-Serials_GUI_Screen(editfield, editfield2, TotalPrefixes)
-
+Serials_GUI_Screen(editfield, editfield2, TotalPrefixes, Serialcount)
+Formatted_text_completed = 0
 If WinExist("What's New") or WinExist("New Version!")
 	WinActivate
 
@@ -244,6 +251,7 @@ $^1::
 Added_Serial_Count(Add_Or_Subtract := "Reset")
 Copy_text_and_Format()
 Formatted_text_completed = 1
+Start_Macro()
 return
 }
 
@@ -398,7 +406,7 @@ F1::
 		;	If (at_home)
 		;			FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini, %File%,1
 		;	else
-					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\Config.ini, %File%,1
+					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\Config.ini, %File%,0
 		Debug_Log_Event("File_Create() ......" File)
 		return ErrorLevel
 /*!
@@ -622,6 +630,10 @@ F1::
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
 	;	else
 		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
+		If (Errorlevel)
+			Problems = 1
+		
+			FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Creating_image.png, %File_Install_Work_Folder%\images\Creating_image.png,1
 		If (Errorlevel)
 			Problems = 1
 
@@ -911,6 +923,7 @@ Debug_Log_Event(Event) ; no unit tesing && Documentation
 
 Copy_text_and_Format(Input_text := "") ; no unit test needed as it all the other functions are tested individually.
 {
+	global combine, Oneupserial
 	Formatted_Text := Format_Serial_Functions(Input_text,Unit_Test) ; Goes to the Formatserials subroutine
 	Sort, Formatted_Text ; Sorts the prefixes in order
 	Guicontrol,,Radio1,1
@@ -932,20 +945,22 @@ Copy_text_and_Format(Input_text := "") ; no unit test needed as it all the other
 	/*
 	Stop for testing
 	*/
+
 	
-	If (combine = "1") || (Oneupserial = "1")
+	If (combine = "1") ||  (Oneupserial = "1")
 	{
 		Combined_Serial_Array := Combineserials(Formatted_Serial_Array) ;goes to the combine Serials subroutine
 		
 		Prefix_Count :=  Combined_Serial_Array.Length()
 		
 		If Oneupserial = 1
-		Combined_Serial_Array := One_Up_All(Combined_Serial_Array)
+		Combined_Serial_Array := One_Up_All(Combined_Serial_Array)			
 		
 		Editfield := Extract_Serial_Array(Combined_Serial_Array)
 		StringReplace, Editfield, Editfield, `,,,All
 		Guicontrol,1:, Editfield, %Editfield% - - - - - - - - - - - - - - - - - - - - - - - - - -  `n ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
-	}else  {
+	}
+	else  {
 		Prefix_Count :=  Formatted_Text_Serial_Count(Formatted_Text)
 		StringReplace, Formatted_Text, Formatted_Text, `,,,All
 		Guicontrol,1:, Editfield, %Formatted_Text% - - - - - - - - - - - - - - - - - - - - - - - - - - `n ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
@@ -1426,13 +1441,12 @@ ENter Serias Section
 Enter_Serials_Variable_Setup() ; no unit testing needed
 {
 	global
-   Prefixcount = 5
 	StartTime := A_TickCount
  }
 
 Start_Macro() ; no unit testing needed as all contained functions are tested
 {
-	global
+	global 
 	gui,Submit, NoHide
 	GuiControlGet, EditfieldCHeck,,Editfield 
 	
@@ -1460,182 +1474,317 @@ Start_Macro() ; no unit testing needed as all contained functions are tested
 	CoordMode, mouse, Screen
 	Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
 	WinGet, Active_ID, Id, A
+	Sleep()
 	Get_Prefix_Button_Screen_Position(prefixx, prefixy)
+	Sleep()
 	Get_Apply_Button_Screen_Position(Applyx, Applyy)
+	Sleep()
+	Find_issue_Check_images()
 	Enter_Effectivity_Loop()
 	return
 }              
 
 Enter_Effectivity_Loop()
 {
-global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location, prefixx, prefixy
-static ACM_Time= 5.0
-value = 0
+global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location, prefixx, prefixy, Sleep_Delay
+static Apply_Button_Click_Delay= 1
+static value = 0
+static First_Loop = 1, Rate = 1
+Start_Dual_Eng_Model_Enter = 0
 
  Loop
 {
-	if (breakloop)
-		exit
+SplashTextOff
+
+if (breakloop)
+	exit
 	
 Serial_number = 
-;~ Sleep(3.5)
 Sleep()
 Load_ini_file(Configuration_File_Location)
 checkforactivity()
 
-If (value > 0 )
-{
+;~ MsgBox, value is %value% and CheckValue is %CheckValue%
 value := Added_Serial_Count("0")
-if ( Mod(value , Refreshrate ) = 0 )
-Refresh_Screen()
-}
-
-/*
-\/\/\/\//\/\/\/\/\//\/\/\
-Ger prefix  section
-\/\/\/\/\/\/\/\/\/\/\/\/\
-*/	
+;~ MsgBox, %value%
+Refreshcheckrate := (Refreshrate * Rate)
+If value >= %Refreshcheckrate%
+	{
+	Rate++
+	Refresh_Screen()
+	}
 
 Result = 
-
-	  sleep()
-	  
-	Serial_number := Get_Serial_Numbers()
+sleep()
+Serial_number := Get_Serial_Numbers()
 	
-	if Serial_Number  contains  - - - - -
-		{
-		Stop_Issue_checks = 1
-		continue
+if Serial_Number  contains  - - - - -
+	{
+	Start_Dual_Eng_Model_Enter = 1
+	continue
 	}
 	
-	 Prefix := Extract_Prefix(Serial_Number)
+Prefix := Extract_Prefix(Serial_Number)
+First_Effectivity_Numbers := LTrim(Extract_First_Set_Of_Serial_Number(Serial_Number), "0")
+Second_Effectivity_Numbers := LTrim(Extract_Second_Set_Of_Serial_Number(Serial_Number), "0")	 
 
-	 First_Effectivity_Numbers := Extract_First_Set_Of_Serial_Number(Serial_Number)
-	 Second_Effectivity_Numbers := Extract_Second_Set_Of_Serial_Number(Serial_Number)
-
-	 If Prefix =
+If Prefix =
    {
-	  Complete = 1
+  Complete = 1
 	}
+
+if breakloop = 1
+	{
+	Exit
+	break
+	}
+
+Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
+If ( First_Loop)
+	{
+	Debug_Log_Event("Sleep first run")
+	Sleep(2)
+	First_Loop = 1
+	}
+else
+	{
+	Sleep(Sleep_Delay)
+	Debug_Log_Event("Sleep delay " Sleep_Delay)
+	}
+
+Apply_button_Click_Delay_Timer("Start")  
+if (!Start_Dual_Eng_Model_Enter)
+	{
+	;~ MsgBox, % Apply_Button_Click_Delay
+	Apply_Button_Click_Delayr_end_total = 0
 	
 	Loop
 	{
 		if (breakloop)
-			Break
+		exit		
 		
-	Double_Click(Applyx,Applyy)	
-	Result := Searchend()
-	
-} until (result = "Found")
-
-If Result = Found
-	{
-		if breakloop = 1
+		Apply_Button_Click_Delayr_Start := A_TickCount
+		First_check :=   Find_issue_Check_images()
+		Debug_Log_Event("Apply_Button_Click_Delay -First_check =  " First_check)
+		If First_check != Not_Found
 			{
-			Exit
-		break
+			Apply_Button_Click_Delayr_end := (A_TickCount - Apply_Button_Click_Delayr_Start) / 10
+			Apply_Button_Click_Delayr_end_total :=  (Apply_Button_Click_Delayr_end_total + Apply_Button_Click_Delayr_end)
+			;~ MsgBox, % "Not found time total " Apply_Button_Click_Delayr_end_total		 "`n`nACM time end is " Apply_Button_Click_Delayr_end	
+			}
+			
+		If Apply_Button_Click_Delayr_end_total >= %Apply_Button_Click_Delay%
+			{
+				;~ MsgBox, % "OVer time total "Apply_Button_Click_Delayr_end_total "`n`nAcm time is " Apply_Button_Click_Delay
+				Apply_Button_Click_Delayr_end_total = 0	
+				Debug_Log_Event("Apply_Button_Click_Delay  >=  Apply_Button_Click_Delay -- BREAK loop")
+				Break
+			}
+				
+		If First_check = Not_Found
+			{
+			Skip_Dual_NoSerial_Checks = 1
+			Apply_button_Click_Delay_Timer("End")
+			Break			
+			}	
 	}
+			
 	
-	 Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
-	Double_Click(Applyx,Applyy)			
+
+Click %Applyx%,%Applyy%	
+	Debug_Log_Event("Click apply")
+	
+	Loop, 10
+	{
+		if (breakloop)
+			exit
+		
+	Result := ACM_Creating_Box_Find()
+	Debug_Log_Event("ACM_Creating_Box_Find result  is " result " on loop cycle" A_Index)
+	ListLines, on 
+	If result = Found		
+	{
+		Creating_found = 1
+		Break
+	}
 }
 
-
-
-if (!Stop_Issue_checks)
+if (Creating_found = 1)
 {
+	Creating_found =  0
+		found = 0
+		Add_To_Completed_LIst(Serial_number)
+	Serial_count := Added_Serial_Count("1")
+	GuiControl,1:,serialsentered,%Serial_count%
+	Gui,1:Submit,NoHide
 	
-			Sleep(ACM_Time)
-			Enter_time("Start")  
-			
-	Loop
+Loop
 {
-	If (breakloop)
-		break
-									
-Sleep()
+		if (breakloop)
+			exit
+		
+Result := ACM_Creating_Box_Find()	
+Found = 1
+} until (result = "Not_Found")
 
-			Loop, 5
+Debug_Log_Event("wait for creating box to disappear =  complete")
+continue
+}
+
+else
+{
+	Skip_Dual_NoSerial_Checks = 0			
+	Loop
+		{
+			If found = 1
+			{
+				Skip_Dual_NoSerial_Checks = 1
+				Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")  
+				Break
+			}
+			
+			If (breakloop)
+				exit
+
+			Loop, 5 ; changes this from 10 to try to speed up dual effectivity check
 			{
 				If (breakloop)
-				break	
-				
-					Enter_time("Pause_on")							
-				Result := Searchend()
-				Enter_time("Pause_off")
-				
-					If (Result = "Found")
-						{
-						Modifier =
-						Break
-					}
-					Enter_time("Pause_on")	
-					Sleep(".5")
-					Enter_time("Pause_off")
-			}  ; end loop,10
+					exit	
 
-	If Result != Found
-	{
-		Enter_time("Pause_on")	
-			ISSUE_Result :=   Searchend_Isssue_Check()
-				Enter_time("Pause_off")	
-	
- IF ISSUE_Result = Dual_eng
-	{
-				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-				SplashTextOn,400,100,, This serial has Multiple Engineering/  sales models. This Prefix will be moved to the End of the list.
-				Winmove, ,This serial has Multiple engeering Models,%amonx%, %Amony%
-				Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-				SplashTextOff	
-	Break
-	}
-	
-	 IF ISSUE_Result = Bad_Prefix
-	{
-		SplashTextOn,100,20, Waiting to confirm Not In ACM...
-		Enter_time("Pause_on")	
-		Sleep(50)		
-		Splashtextoff
-		ISSUE_Result :=   Searchend_Isssue_Check()
-		Enter_time("Pause_off")	
-			IF ISSUE_Result = Bad_Prefix
+				Searchend_Result :=	Find_issue_Check_images()
+				Debug_Log_Event("searchend_result = " Searchend_Result)
+
+				If (Searchend_Result = "Empty")				
+				{
+					Modifier =
+					Skip_Dual_NoSerial_Checks = 1
+					Found = 1
+					Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")  
+					Break
+				}
+			}  ; end loop,5
+
+		If Skip_Dual_NoSerial_Checks = 0
+		{
+			ISSUE_Result :=   Find_issue_Check_images()
+			Debug_Log_Event("Skippad = 0, Issue_result = " ISSUE_Result)
+		
+			If ISSUE_Result = empty
 			{
-			Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-			Added_Serial_Count("-1")
-			Break			
-			}		
+			Found = 1
+				break
+			}
+			
+			 IF ISSUE_Result = Bad_Prefix
+				{
+					SplashTextOn, 300,25,, Waiting to confirm Prefix is NOT In ACM...
+					Sleep(5)
+					ISSUE_Result :=   Find_issue_Check_images()		
+					Debug_Log_Event("Double check for bad prefix = " ISSUE_Result)
+					If ISSUE_Result = empty
+						{
+							Found = 1
+							SplashTextOff
+							break
+						}
+					Loop, 3
+						{		
+							if (breakloop)
+							exit
+							
+							Splashtextoff
+							ISSUE_Result :=   Find_issue_Check_images()
+							Debug_Log_Event("Double check 3 cycle Loop = " ISSUE_Result " in loop cycle" A_Index)
+							IF ISSUE_Result = Empty
+								break
+							
+							IF ISSUE_Result = Bad_Prefix
+								{
+									Splashtextoff
+									Debug_Log_Event("serial no go Prefix = " Prefix)
+										First_Effectivity_Numbers := Extract_First_Set_Of_Serial_Number(Serial_Number)
+										Second_Effectivity_Numbers := Extract_Second_Set_Of_Serial_Number(Serial_Number)	 
+									Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+									Skip_Dual_NoSerial_Checks = 1
+									Break			
+								}		
+							else if ISSUE_Result = Not_Found
+								Break			
+							else
+								Sleep(10)
+						}
+				}
+			
+			Splashtextoff
+			
+			IF ISSUE_Result = Dual_eng
+				{
+					First_Effectivity_Numbers := Extract_First_Set_Of_Serial_Number(Serial_Number)
+					Second_Effectivity_Numbers := Extract_Second_Set_Of_Serial_Number(Serial_Number)	 
+					activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+					SplashTextOn,325,50,, This serial has Multiple Engineering/  sales models. `nThis Prefix will be moved to the End of the list.
+					Winmove, ,This serial has Multiple engeering Models,%amonx%, %Amony%
+					Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+					SplashTextOff	
+					Break
+				}
+		}				
+
+		If Skip_Dual_NoSerial_Checks = 1
+		{
+			Debug_Log_Event("Skip_Dual_NoSerial_Checks = 1, click on apply button")
+			Click %Applyx%, %Applyy%
+			Break
+		}				
+							
+		Searchend_Result := Searchend()
+			Debug_Log_Event("Searchend_Result = "  Searchend_Result)
+						
+		if Searchend_Result = Found
+		{	
+			if Skip_Dual_NoSerial_Checks != 1
+			{	
+			Add_To_Completed_LIst(Serial_number)
+			Serial_count := Added_Serial_Count("1")
+			GuiControl,1:,serialsentered,%Serial_count%
+			Gui,1:Submit,NoHide
+		}
+			break
+		}
+
+		else
+		{
+					ISSUE_Result :=   Find_issue_Check_images()
+					IF ISSUE_Result != Empty
+				{
+						Double_count++
+					 If Double_count = 7
+							{
+								Click %Applyx%, %Applyy%
+								Double_count = 0
+							}
+							
+						else if ISSUE_Result = Empty
+								{
+								Found = 1
+								break
+							}
+				}
+		}
+
+		} ; end loop
 }
 
-If ISSUE_Result != Not_Found
-{
-	Break
-}}
-
-if REsult = Found
-{
-	 LoopCount--
-Break
-}
-
-If Result != Found
-{
-	
- Double_Click(Applyx,Applyy)	
-}
-} ; end loop
-
-
-if Result = Found
-{
-ACM_Time := Enter_time("End")  
-
-Add_To_Completed_LIst(Serial_number)
-Serial_count := Added_Serial_Count("1")
+	If Found = 1
+	{
+		found = 0
+			Add_To_Completed_LIst(Serial_number)
+		Serial_count := Added_Serial_Count("1")
 		GuiControl,1:,serialsentered,%Serial_count%
 		Gui,1:Submit,NoHide
+	}
 }
-}
-else If (Stop_Issue_checks)
+else If (Start_Dual_Eng_Model_Enter)
 {
 Modifier = **Multiple Engineering Models**
 Create_Dual_Instructions_GUI()
@@ -1645,19 +1794,19 @@ Counter = 0
 loop
 {
 	if breakloop = 1
-		Break
+		exit
 
-Result_check := Searchend_Isssue_Check()
+Result_check := Find_issue_Check_images()
 
 If (Result_check = "Not_found")
 {
 			Sleep(3)
 			Gui, 70:Destroy
-			Double_Click(Applyx,Applyy)	
+			Click %Applyx%, %Applyy%
 			Loop
 			{
 				result := Searchend()			
-;~ MsgBox, result is %result%				
+				;~ MsgBox, result is %result%				
 			} until (Result = "Found")
 			
 break
@@ -1665,10 +1814,11 @@ break
 Gui 70: Flash
 Sleep(10)
 } 
+
 Loop
 {
 	if (breakloop)
-		Break
+		exit
 
 Result := Searchend()
 If  Result = Found
@@ -1676,68 +1826,73 @@ If  Result = Found
 	Gui, 70:Destroy
 	Add_To_Completed_LIst(Serial_number, Modifier)
 	Serial_count := Added_Serial_Count("1")
-			GuiControl,1:,serialsentered,%Serial_count%
-		Gui,1:Submit,NoHide
-	break
+	GuiControl,1:,serialsentered,%Serial_count%
+	Gui,1:Submit,NoHide
+	Sleep()
 }
-}}}
+}until (result = "found")
+}}
 return
-   }
-
-
-	Double_Click(x,y) ; no unit test needed
-	{
-Click %x%, %y%
-Click %x%, %y%
 }
 
-Enter_time(Time)  
+Apply_button_Click_Delay_Timer(Time)  
 {	
-	static Average_time = 1
+static Average_time = 1
 static Start_time = 0
 static End_time = 0
-static paused = 0
-static Pause_Off = 0
+static Time_off= 0
 static paused_off_store = 0
 static paused_Start = 0
 
-
+ListLines, off
 If time = Get
 	Return Average_time
 
 If  time = Start
 {
+	paused_off_store = 0	
+	paused_Start = 0
+	Time_off = 0
 		Start_time := A_TickCount
 return
 }
-	If time = End
-	{
-		End_time := (A_TickCount - Start_time) / 100
-		Total_Time := End_time -  (paused_off_store / 100)
-		Average_time := (Total_Time + Average_time) / 2.0
-		;~ Tooltip %Average_time%
-		;~ MsgBox, % "end time is " End_time "`ntotaltime is " Total_Time "`naveragetime is " Average_time "`n paused off store is " paused_off_store
-		paused_off_store = 0	
-		Return Average_time	
-}
 
+ListLines, on
 If time = Pause_on
-{
-paused_Start := A_TickCount
-;~ MsgBox % paused_Start " paused start"
+{	
+	paused_Start := A_TickCount
 return
 }
 
+
 If Time = Pause_off
 {
-	Pause_Off := A_TickCount - paused_Start
+	Time_off := A_TickCount - paused_Start
 	;~ MsgBox % Pause_Off " Pause_Off"
-	paused = 0
-	paused_off_store := paused_off_store + Pause_Off
+	paused_off_store := paused_off_store + Time_off
 		;~ MsgBox % paused_off_store " paused_off_store"
-	Pause_Off = 0
+	Time_off = 0
 	return
 }
+ListLines, off
+	If time = End
+	{
+		End_time := A_TickCount
+		Total_Time := (End_time - Start_time) 
+		Total_Time := (Total_Time - paused_off_store)  / 10
+		Average_time := ((Total_Time + Average_time) / 1.6) 
+		If Average_time < 1
+			{
+Average_time := 1
+	}
+		;~ Tooltip %Average_time%
+		;~ MsgBox, % "end time is " End_time "`ntotaltime is " Total_Time "`naveragetime is " Average_time "`n paused off store is " paused_off_store
+		Average_time := Round(Average_time,2)
+		paused_off_store = 0	
+		Return Average_time	
+}
+ListLines, off
+
 Return
 }
 
@@ -1757,8 +1912,6 @@ Refresh_Screen()
 {
 	global Applyx, Applyy, prefixx, prefixy,Active_ID, breakloop, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location
 	
-	static LoopCount = -1
-	
 	If breakloop = 1
 	  {
 		 Gui 1: -AlwaysOnTop
@@ -1769,10 +1922,7 @@ Refresh_Screen()
 		  Exit
 	  }
 
-	  LoopCount++
-				  If LoopCount >= %Refreshrate%
-				   {
-					Double_Click(Applyx,Applyy)
+					Click %Applyx%, %Applyy%
 					 sleep(10)
 					 Result :=   Searchend()
 					  If (Result = Failure) or (Result = Timedout)
@@ -1784,14 +1934,17 @@ Refresh_Screen()
 					 sleep()
 					 Send {F5}
 					 sleep(10)
+					 Counter = 0
 					Loop
 								{									
 									If (breakloop)
 										break
 									
 									sleep()
-									Double_Click(Add_Button_X_Location,Add_Button_Y_Location)
-										 
+								
+								Click %Add_Button_X_Location%,%Add_Button_Y_Location%
+						
+									
 								Result :=   Searchend()
 										  If (Result = Failure) or (Result = Timedout)
 											Exit
@@ -1802,7 +1955,6 @@ Refresh_Screen()
 					 LoopCount = 0
 
 					 sleep(10)
-				  } ; End Refresh loop	  
 				  
 return
 }
@@ -1810,9 +1962,11 @@ return
 Added_Serial_Count(Add_Or_Subtract := "1") ; unit
 {
 	static Add_Count
+Debug_Log_Event("added_serial_count add " Add_Or_Subtract)
 		Add_count += %Add_Or_Subtract%
 		If Add_Or_Subtract = Reset
 			Add_Count = 0
+Debug_Log_Event("added_serial_count current total is  " Add_count)
 return Add_count
 }
 
@@ -1827,7 +1981,7 @@ If (!Complete)
 CoordMode, mouse, Screen
    ;listlines on
 	win_check(Active_ID)
-	Sleep(1)
+	Sleep()
    Click, %prefixx%, %prefixy%
    sleep()
    mousemove 300,300
@@ -1841,11 +1995,9 @@ CoordMode, mouse, Screen
    Send {Tab}
   win_check(Active_ID)
    SendRaw, %Second_Effectivity_Numbers%
-   sleep()
-   Send {Tab}
-   Sleep(1.5)
-   Sleep(Sleep_Delay)
-Sleep(2)
+   sleep(3)
+   Send {Tab 2}
+   Debug_Log_Event("Entered " Prefix_Holder_for_ACM_Input  First_Effectivity_Numbers "-"  Second_Effectivity_Numbers " into ACM window") 
 }
 else
 	  {
@@ -1862,7 +2014,9 @@ else
 	  Exit
    }
    Return
+   
 }
+
 
 
 /*
@@ -1888,8 +2042,9 @@ Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
  	First_Half_Serial_Num := Extract_First_Set_Of_Serial_Number(A_LoopField) 
  	Second_Half_Serial_Num := Extract_Second_Set_Of_Serial_Number(A_LoopField) 
  	 
- 		Serial_number := Prefix First_Half_Serial_Num "-" Second_Half_Serial_Num 
+ 	Serial_number := Prefix First_Half_Serial_Num "-" Second_Half_Serial_Num 
  	Add_To_Completed_LIst(Serial_Number, Modifier) 
+
  continue 
  } 
 else 
@@ -1911,6 +2066,8 @@ GuiControlGet, Editfield2
 	;~ MsgBox % Editfield2 Serial_Number  Modifier
 		GuiControl,, Editfield2, %Editfield2%%Serial_number%  %Modifier% `n
 		gui,Submit,NoHide
+		
+			Debug_Log_Event("Add serial =   " Serial_Number Modifier )
 Return
 }
 
@@ -2133,7 +2290,7 @@ global Image_Red_Exclamation_Point, Active_ID,
 	pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Image_Red_Exclamation_Point)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
-   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,10,0,0,0)
+   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
    Gdip_Shutdown(pToken)
 	  ;listlines on
    If RETSearch < 0
@@ -2158,25 +2315,138 @@ global Image_Red_Exclamation_Point, Active_ID,
 	  Refreshchecks = 0
 	  SleepStill = 0
 	  ;Msgbox, found
+	  ;~ MsgBox, %foundlist%
 	  Return "Found"
 	}
-	
-	else
+
+   Return "Not_Found"
+}
+
+ACM_Creating_Box_Find()
+{
+global Creating_image, Active_ID, 
+   listlines off
+
+	Current_Monitor := GetCurrentMonitor()
+	pToken := Gdip_Startup()
+	bmpNeedle1 := Gdip_CreateBitmapFromFile(Creating_image)
+   bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
+   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
+   Gdip_Shutdown(pToken)
+	  ;listlines on
+   If RETSearch < 0
+   {
+	  if RETSearch = -1001
+	  RETSearch = invalid haystack or needle bitmap pointer
+	  if RETSearch = -1002
+	  RETSearch = invalid variation value
+	  if RETSearch = -1003
+	  RETSearch = Unable to lock haystack bitmap bits
+	  if RETSearch = -1004
+	  RETSearch = Unable to lock needle bitmap bits
+	  if RETSearch = -1005
+	  RETSearch = Cannot find monitor for screen capture
+  Move_Message_Box("262144", Effectivity_Macro, "Error Searchend (bmpNeedle1)" RETSearch)
+	  Exit
+   }
+
+   If RETSearch > 0
+   {
+	  ;~ SetTimer, refreshcheck, Off
+	  Refreshchecks = 0
+	  SleepStill = 0
+	  ;Msgbox, found
+	  ;~ MsgBox, %foundlist%
+	  Return "Found"
+	}
+
    Return "Not_Found"
 }
 
 
-Searchend_Isssue_Check()
+Find_issue_Check_images()
 {
-global Issues_Image, Active_ID, prefixx, prefixy
-
+global Issues_Image, Active_ID
+static First_check = 1, salesmodel1 = , salesmodel2 = , Engmodel1 = , Engmodel2 = , Prefixmodel1 = , Prefixmodel2 = , IE_type = 
    listlines off
 	Current_Monitor := GetCurrentMonitor()
 	pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Issues_Image)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
 
-   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,,0,0,0,0,10,0,0,0)
+   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,List_Found,0,0,0,0,10,0,0,0)
+
+If (First_check)
+{
+	If RETSearch = 6
+	{
+		IE_type = Non_SI
+	Loop, Parse, list_found,`n
+{
+	StringSplit, coord, A_LoopField, `,
+If A_Index =1
+	Engmodel1 := Coord1
+
+If A_Index =2
+	Engmodel2 := Coord1
+
+If A_Index =3
+	Prefixmodel1 := Coord1
+
+If A_Index =4
+	Prefixmodel2 := Coord1
+}
+First_check = 0
+}	
+else if RETSearch = 8
+{
+	Ie_type = SI
+Loop, Parse, list_found,`n
+{
+	StringSplit, coord, A_LoopField, `,
+If A_Index =1
+	salesmodel1 := Coord1
+
+If A_Index =2
+	salesmodel2 := Coord1
+
+If A_Index =3
+	Engmodel1 := Coord1
+
+If A_Index =4
+	Engmodel2 := Coord1
+
+If A_Index =5
+	Prefixmodel1 := Coord1
+
+If A_Index =6
+	Prefixmodel2 := Coord1
+}
+First_check = 0
+}}
+else
+{
+	Loop, Parse, list_found,`n
+{
+	StringSplit, coord, A_LoopField, `,
+	IF Ie_type = SI
+{
+If (Coord1 = salesmodel1)  or (Coord1 = salesmodel2) or (Coord1 = Engmodel1) or (Coord1 = Engmodel2)
+		listresult = Dual_eng
+}
+else 
+{
+If  (Coord1 = Engmodel1) or (Coord1 = Engmodel2)
+		listresult = Dual_eng	
+}
+
+iF (Coord1 = Prefixmodel1) or (Coord1 = Prefixmodel2)
+	listresult = Bad_Prefix
+}
+
+}
+
+;~ MsgBox, % salesmodel1 "`n" salesmodel2 "`n"  Engmodel1 "`n" Engmodel2 "`n"  Prefixmodel1 "`n"  Prefixmodel2 "`n listbelow `n" list_found
 
    Gdip_Shutdown(pToken)
    If RETSearch < 0
@@ -2196,21 +2466,24 @@ global Issues_Image, Active_ID, prefixx, prefixy
 	  Exit
    }
 
-   If (RETSearch = "4") or (RETSearch = "2")
-   {
-	  Return "Dual_Eng"
-   }
-	If (RETSearch = "3") or (RETSearch = "5") or (RETSearch = "6")
-   {
-	  Return "Bad_Prefix"
-	}
-	
-		 If (RETSearch = "0")
-   Return "Not_found"
+If RETSearch = 0
+	listresult = Not_Found
 
-		else
-   Return "Issues_found"
+If Ie_type = SI
+{
+if RETSearch = 8
+	listresult = Empty
 }
+else IF Ie_type = Non_SI
+{
+if RETSearch = 6
+	listresult = Empty
+}
+   Return listresult
+}
+
+
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 Below is the Functions to support the initial starting before entering the seirals
@@ -2357,7 +2630,6 @@ ToolTip, Please Shift + mouse button click on the "Apply button" in the ACM effe
 	{
 		GuiControlGet, serialsentered
 		Result := Move_Message_Box("262148",Effectivity_Macro, " The number of successful Serial additions to ACM is "  serialsentered "`n`n Are you sure you want to Quit the macro?.`n`n Press YES to Quit the Macro.`n`n No to keep going.")
-
 		If Result = Yes
 		{		
 			Gui 1: -AlwaysOnTop
@@ -2430,7 +2702,7 @@ return
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
-	Serials_GUI_Screen(editfieldamount, editfield2amount, TotalPrefixestemp) ; no unit test needed
+	Serials_GUI_Screen(editfieldamount, editfield2amount, TotalPrefixestemp, Serialcount) ; no unit test needed
 	{
 		Global
 
@@ -2653,7 +2925,11 @@ return
 				Gui, 8:Add, Checkbox, XP-190 yp+30 vcreateexcel, Export Effectivity to Excel file (Effectivity.CSV)
 				Gui, 8:show, x%amonx% y%amony% w400 h90
 				gui 8: +alwaysontop
+				CoordMode, Mouse, Relative
+				MouseMove 200,75
+				CoordMode, Mouse, Screen
 				Pausescript()			
+				gui 1: +alwaysontop
 				return checked
 			}
 
@@ -2676,23 +2952,23 @@ return
 
 			oneup()
 			{
-				global checked
+				global checked, Oneupserial
 				UnPausescript()
 				GuiControlGet, checked,, createexcel
 				gui 1: +alwaysontop
 				Oneupserial = 1
 				Gui, 8:destroy
-			Return Checked
+				Return Checked
 			}
 
 			combinequstion()
 			{
-				global checked
+				global checked, combine
 				UnPausescript()
 				GuiControlGet, checked,, createexcel
 				gui 1: +alwaysontop
-				Gui, 8:destroy
 				combine = 1
+				Gui, 8:destroy				
 				Return Checked
 			}
 
