@@ -1,3 +1,23 @@
+/*
+ * * * Compile_AHK SETTINGS BEGIN * * *
+
+[AHK2EXE]
+Exe_File=%In_Dir%\Effectivity Macro 2.0B.exe
+Created_Date=1
+[VERSION]
+Set_Version_Info=1
+File_Description=Effectivity Macro 2.0 Beta
+File_Version=2.0.1.2
+Inc_File_Version=0
+Legal_Copyright=Jarett Karnia
+Product_Version=2.0.0.0
+[ICONS]
+Icon_1=%In_Dir%\Rewrite of 1.4 Revised.ahk_1.ico
+Icon_4=%In_Dir%\Rewrite of 1.4 Revised.ahk_4.ico
+
+* * * Compile_AHK SETTINGS END * * *
+*/
+
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 #ErrorStdOut
 ; #Warn  ; Enable warnings to assist with detecting common errors.
@@ -15,7 +35,7 @@ SetWorkingDir   %A_ScriptDir% ; Ensures a consistent starting directory.
 
 
 #KeyHistory 0
-SetBatchLines, -1
+SetBatchLines, 20ms
 SetDefaultMouseSpeed, 0
 SetWinDelay, 0
 SetControlDelay, 0
@@ -28,7 +48,7 @@ DetectHiddenText on
 #InstallMouseHook
 
 
-Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array, breakloop,Creating_image
+Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array, breakloop,Creating_image, Log_Events
 
 ; below is for testing between home and work computer
 /*
@@ -59,7 +79,7 @@ New way to update and check, now it does it very quickly and every launch
 */
 
 
-Version_Number = 2.0 Beta
+Version_Number = 2.01 Beta
 ;~ Version_Number = 1.1 test
 Effectivity_Macro :=  "Effectivity Macro V" Version_Number
 Checkp=0
@@ -180,12 +200,14 @@ If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null") || (
 
 
 SplashTextOn,,20,,Checking for update....
-Versioncheck("0")
+;~ Versioncheck("0")
 SplashTextOff
-
+Formatted_text_completed = 0
+If Editfield <>
+	Formatted_text_completed = 1
 
 Serials_GUI_Screen(editfield, editfield2, TotalPrefixes, Serialcount)
-Formatted_text_completed = 0
+
 If WinExist("What's New") or WinExist("New Version!")
 	WinActivate
 
@@ -406,7 +428,7 @@ F1::
 		;	If (at_home)
 		;			FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini, %File%,1
 		;	else
-					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\Config.ini, %File%,0
+					FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\config.ini, %File%,0
 		Debug_Log_Event("File_Create() ......" File)
 		return ErrorLevel
 /*!
@@ -435,7 +457,7 @@ F1::
 		> At_home = 0
 		> else
 		> At_home = 1
-		If I am on the work computer it will detect my username, or else it will be the home computer.   I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run.
+		If I am on the work computer it will detect my username, or else it will be the home computer.   I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run. Note: I did have to comment them out becasue the program would not compile.
 
 	Returns:
 		The Errorlevel for the `Fileinstall` function
@@ -459,7 +481,7 @@ F1::
 	;	If (at_home)
 	;				FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
 	;				else
-					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
+					FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
 		return errorlevel
 
 /*!
@@ -488,7 +510,7 @@ F1::
 		> At_home = 0
 		> else
 		> At_home = 1
-		If I am on the work computer it will detect my username, or else it will be the home computer.   I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run.
+		If I am on the work computer it will detect my username, or else it will be the home computer.   I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run. Note: I did have to comment them out becasue the program would not compile.
 
 
 	Returns:
@@ -512,14 +534,14 @@ F1::
 	;	If (at_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
 	;	else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
+		FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
 		If (Errorlevel)
 			Problems = 1
 
 	;	if (At_home)
 	;			FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
 	;	else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
+		FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
 
 		If (Errorlevel)
 			Problems = 1
@@ -554,7 +576,7 @@ F1::
 		> At_home = 0
 		> else
 		> At_home = 1
-		If I am on the work computer it will detect my username, or else it will be the home computer. I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run.
+		If I am on the work computer it will detect my username, or else it will be the home computer. I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run. Note: I did have to comment them out becasue the program would not compile.
 
 
 	Returns:
@@ -579,7 +601,7 @@ F1::
 	;	if (At_home)
 	;				FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
 	;				else
-					FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
+					FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
 		If (Errorlevel)
 			Problems = 1
 
@@ -598,42 +620,42 @@ F1::
 	;	If (At_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
 	;	else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
+		FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
 		If (Errorlevel)
 			Problems = 1
 	;	If (At_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
 	;	else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
+		FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
 		If (Errorlevel)
 			Problems = 1
 	;	If (At_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
 	;	else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
+		FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
 		If (Errorlevel)
 			Problems = 1
 	;	If (At_home)
 	;	FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
 	;	else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
+		FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
 		If (Errorlevel)
 			Problems = 1
 	;	If (At_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
 	;	else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
+		FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
 		If (Errorlevel)
 			Problems = 1
 
 	;		If (At_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
 	;	else
-		FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
+		FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
 		If (Errorlevel)
 			Problems = 1
 		
-			FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Creating_image.png, %File_Install_Work_Folder%\images\Creating_image.png,1
+			FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Creating_image.png, %File_Install_Work_Folder%\images\Creating_image.png,1
 		If (Errorlevel)
 			Problems = 1
 
@@ -679,7 +701,7 @@ F1::
 		> At_home = 0
 		> else
 		> At_home = 1
-		If I am on the work computer it will detect my username, or else it will be the home computer. I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run.
+		If I am on the work computer it will detect my username, or else it will be the home computer. I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run. Note: I did have to comment them out becasue the program would not compile.
 
 
 	Returns:
@@ -816,7 +838,7 @@ Debug_Log_Event(Event) ; no unit tesing && Documentation
 	If (Log_Events)
 	{
 		OutputDebug, %Event%
-		Sleep(.5)
+		Sleep, 10
 	}
 	return
 	
@@ -988,7 +1010,7 @@ Format_Serial_Functions(Fullstring := "", Unit_test := 0) ; unit
 	newline = `n
 	sleep()
 	If (Unit_test) && (FullString = "") ; For testing
-	Fullstring := "621s (SN: TRD00123, TRD00124-00165, TRD00001-00002, CHU00001-00002, CHU00003-00005,  gnz00001-00003,gnz00005-00008, gnz00010-00015, Apu00001-00150,apu00200-01000)"
+	Fullstring := "GNN00288-00327, fag00001-00002,GNZ00001-00442,GNZ00444-00558,ML600001-00113,P6500001-00124,RLM00001-00105,TFZ00001-00358,TJ500001-00536,TJ500538-00539,TJ500545-00545,TJF00001-00446,TRS00001-00144,"
 	Else if(!Unit_Test) && (Fullstring = "")
 	FullString := Copy_selected_Text()
 	
@@ -1458,6 +1480,7 @@ Start_Macro() ; no unit testing needed as all contained functions are tested
 	else
 		Formatted_text_completed = 0
 	
+
 	GuiControlGet, Editfield
 	
 	If Editfield =
@@ -1479,6 +1502,8 @@ Start_Macro() ; no unit testing needed as all contained functions are tested
 	Sleep()
 	Get_Apply_Button_Screen_Position(Applyx, Applyy)
 	Sleep()
+	Clear_ACM_Fields()
+	Sleep(10)
 	Find_issue_Check_images()
 	Enter_Effectivity_Loop()
 	return
@@ -1489,10 +1514,12 @@ Enter_Effectivity_Loop()
 global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location, prefixx, prefixy, Sleep_Delay
 static Apply_Button_Click_Delay= 1
 static value = 0
-static First_Loop = 1, Rate = 1
+static First_Loop = 1, Rate = 1, Engineering_location_x = 
+static RefreshrateTemp = 1
 Start_Dual_Eng_Model_Enter = 0
+Skip_Dual_NoSerial_Checks = 0		
 
- Loop
+Loop
 {
 SplashTextOff
 
@@ -1500,16 +1527,24 @@ if (breakloop)
 	exit
 	
 Serial_number = 
-Sleep()
+;~ Sleep()
 Load_ini_file(Configuration_File_Location)
 checkforactivity()
+found = 0
+value := Added_Serial_Count("Get")
+if RefreshrateTemp <> %Refreshrate%
+{
+	Rate := value / Refreshrate
+	Rate :=  Floor(Rate)
+	if Rate = 0
+		Rate++
+RefreshrateTemp := Refreshrate
+	;~ tooltip, New Refreshrate is %Refreshrate% Rate is %Rate% RefreshrateTemp is %RefreshrateTemp%
+}
 
-;~ MsgBox, value is %value% and CheckValue is %CheckValue%
-value := Added_Serial_Count("0")
-;~ MsgBox, %value%
 Refreshcheckrate := (Refreshrate * Rate)
 If value >= %Refreshcheckrate%
-	{
+	{		
 	Rate++
 	Refresh_Screen()
 	}
@@ -1529,10 +1564,8 @@ First_Effectivity_Numbers := LTrim(Extract_First_Set_Of_Serial_Number(Serial_Num
 Second_Effectivity_Numbers := LTrim(Extract_Second_Set_Of_Serial_Number(Serial_Number), "0")	 
 
 If Prefix =
-   {
   Complete = 1
-	}
-
+	
 if breakloop = 1
 	{
 	Exit
@@ -1540,22 +1573,14 @@ if breakloop = 1
 	}
 
 Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
-If ( First_Loop)
-	{
-	Debug_Log_Event("Sleep first run")
-	Sleep(2)
-	First_Loop = 1
-	}
-else
-	{
-	Sleep(Sleep_Delay)
-	Debug_Log_Event("Sleep delay " Sleep_Delay)
-	}
+
+Sleep(Sleep_Delay)
+Debug_Log_Event("Sleep delay " Sleep_Delay)
 
 Apply_button_Click_Delay_Timer("Start")  
+
 if (!Start_Dual_Eng_Model_Enter)
 	{
-	;~ MsgBox, % Apply_Button_Click_Delay
 	Apply_Button_Click_Delayr_end_total = 0
 	
 	Loop
@@ -1566,158 +1591,88 @@ if (!Start_Dual_Eng_Model_Enter)
 		Apply_Button_Click_Delayr_Start := A_TickCount
 		First_check :=   Find_issue_Check_images()
 		Debug_Log_Event("Apply_Button_Click_Delay -First_check =  " First_check)
-		If First_check != Not_Found
+				
+			If (Unit_Test)
+			{
+				If Apply_Button_Click_Delay > 5
+					Apply_Button_Click_Delay = 5
+			}
+			
+				If First_check = Not_Found
+			{
+				;~ MsgBox, firstcheck is notfound
+			Skip_Dual_NoSerial_Checks = 1
+			Found = 1
+			Apply_button_Click_Delay_Timer("End")
+				Break			
+			}	
+	else
 			{
 			Apply_Button_Click_Delayr_end := (A_TickCount - Apply_Button_Click_Delayr_Start) / 10
 			Apply_Button_Click_Delayr_end_total :=  (Apply_Button_Click_Delayr_end_total + Apply_Button_Click_Delayr_end)
-			;~ MsgBox, % "Not found time total " Apply_Button_Click_Delayr_end_total		 "`n`nACM time end is " Apply_Button_Click_Delayr_end	
+			Sleep()
 			}
 			
 		If Apply_Button_Click_Delayr_end_total >= %Apply_Button_Click_Delay%
 			{
-				;~ MsgBox, % "OVer time total "Apply_Button_Click_Delayr_end_total "`n`nAcm time is " Apply_Button_Click_Delay
-				Apply_Button_Click_Delayr_end_total = 0	
 				Debug_Log_Event("Apply_Button_Click_Delay  >=  Apply_Button_Click_Delay -- BREAK loop")
 				Break
 			}
-				
-		If First_check = Not_Found
-			{
-			Skip_Dual_NoSerial_Checks = 1
-			Apply_button_Click_Delay_Timer("End")
-			Break			
-			}	
 	}
 			
-	
-
-Click %Applyx%,%Applyy%	
-	Debug_Log_Event("Click apply")
-	
-	Loop, 10
-	{
-		if (breakloop)
-			exit
+Loop, 5
+{
+		Complete_Check :=   Find_issue_Check_images()
 		
-	Result := ACM_Creating_Box_Find()
-	Debug_Log_Event("ACM_Creating_Box_Find result  is " result " on loop cycle" A_Index)
-	ListLines, on 
-	If result = Found		
-	{
-		Creating_found = 1
-		Break
-	}
-}
-
-if (Creating_found = 1)
-{
-	Creating_found =  0
-		found = 0
-		Add_To_Completed_LIst(Serial_number)
-	Serial_count := Added_Serial_Count("1")
-	GuiControl,1:,serialsentered,%Serial_count%
-	Gui,1:Submit,NoHide
-	
-Loop
-{
-		if (breakloop)
-			exit
-		
-Result := ACM_Creating_Box_Find()	
-Found = 1
-} until (result = "Not_Found")
-
-Debug_Log_Event("wait for creating box to disappear =  complete")
-continue
-}
-
-else
-{
-	Skip_Dual_NoSerial_Checks = 0			
-	Loop
+		If Complete_Check = Not_Found
 		{
-			If found = 1
-			{
-				Skip_Dual_NoSerial_Checks = 1
-				Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")  
-				Break
-			}
-			
-			If (breakloop)
+		Found = 1
+		Apply_button_Click_Delay_Timer("End")
+		Break		
+		}
+	Sleep(5)
+}
+ 
+	If Found <> 1
+{		
+	If (breakloop)
 				exit
-
-			Loop, 5 ; changes this from 10 to try to speed up dual effectivity check
-			{
-				If (breakloop)
-					exit	
 
 				Searchend_Result :=	Find_issue_Check_images()
 				Debug_Log_Event("searchend_result = " Searchend_Result)
-
+ ;~ ToolTip, %Searchend_Result% `n after the notfound 8 loop
+ 
 				If (Searchend_Result = "Empty")				
 				{
 					Modifier =
-					Skip_Dual_NoSerial_Checks = 1
 					Found = 1
-					Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")  
-					Break
+					
 				}
-			}  ; end loop,5
-
-		If Skip_Dual_NoSerial_Checks = 0
-		{
-			ISSUE_Result :=   Find_issue_Check_images()
-			Debug_Log_Event("Skippad = 0, Issue_result = " ISSUE_Result)
-		
-			If ISSUE_Result = empty
-			{
-			Found = 1
-				break
+				else If (Searchend_Result = "Not_Found")
+				{
+				Click %Applyx%, %Applyy%
+				continue
 			}
 			
-			 IF ISSUE_Result = Bad_Prefix
+			else IF (Searchend_Result = "Bad_Prefix")
 				{
-					SplashTextOn, 300,25,, Waiting to confirm Prefix is NOT In ACM...
-					Sleep(5)
-					ISSUE_Result :=   Find_issue_Check_images()		
-					Debug_Log_Event("Double check for bad prefix = " ISSUE_Result)
-					If ISSUE_Result = empty
-						{
-							Found = 1
-							SplashTextOff
-							break
-						}
-					Loop, 3
-						{		
-							if (breakloop)
-							exit
-							
-							Splashtextoff
-							ISSUE_Result :=   Find_issue_Check_images()
-							Debug_Log_Event("Double check 3 cycle Loop = " ISSUE_Result " in loop cycle" A_Index)
-							IF ISSUE_Result = Empty
-								break
-							
-							IF ISSUE_Result = Bad_Prefix
-								{
-									Splashtextoff
-									Debug_Log_Event("serial no go Prefix = " Prefix)
-										First_Effectivity_Numbers := Extract_First_Set_Of_Serial_Number(Serial_Number)
-										Second_Effectivity_Numbers := Extract_Second_Set_Of_Serial_Number(Serial_Number)	 
-									Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-									Skip_Dual_NoSerial_Checks = 1
-									Break			
-								}		
-							else if ISSUE_Result = Not_Found
-								Break			
-							else
-								Sleep(10)
-						}
+					
+					Bad_Prefix_Check := Bad_Prefix_check(Serial_number)
+					;~ MsgBox, %Bad_Prefix_check% `nis the result of the bad prefix check
+						Debug_Log_Event("Bad prefix check = " Bad_Prefix_check)			
+						If  Bad_Prefix_Check = Empty
+									{
+									Found = 1
+									break
+								}
+						else if Bad_Prefix_Check = End_loop
+							{
+							found = 0
+							}
 				}
 			
-			Splashtextoff
-			
-			IF ISSUE_Result = Dual_eng
+		
+			else IF (Searchend_Result = "Dual_eng")
 				{
 					First_Effectivity_Numbers := Extract_First_Set_Of_Serial_Number(Serial_Number)
 					Second_Effectivity_Numbers := Extract_Second_Set_Of_Serial_Number(Serial_Number)	 
@@ -1726,70 +1681,50 @@ else
 					Winmove, ,This serial has Multiple engeering Models,%amonx%, %Amony%
 					Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 					SplashTextOff	
-					Break
-				}
+					}
 		}				
+			Splashtextoff
 
-		If Skip_Dual_NoSerial_Checks = 1
-		{
-			Debug_Log_Event("Skip_Dual_NoSerial_Checks = 1, click on apply button")
-			Click %Applyx%, %Applyy%
-			Break
-		}				
-							
-		Searchend_Result := Searchend()
-			Debug_Log_Event("Searchend_Result = "  Searchend_Result)
-						
-		if Searchend_Result = Found
-		{	
-			if Skip_Dual_NoSerial_Checks != 1
-			{	
-			Add_To_Completed_LIst(Serial_number)
-			Serial_count := Added_Serial_Count("1")
-			GuiControl,1:,serialsentered,%Serial_count%
-			Gui,1:Submit,NoHide
-		}
-			break
-		}
+If Found= 1
+{
+Sleep()
+Click %Applyx%,%Applyy%	
+Debug_Log_Event("Click apply")
 
-		else
-		{
-					ISSUE_Result :=   Find_issue_Check_images()
-					IF ISSUE_Result != Empty
+Loop
+{
+Found := Find_ACM_Creating_Box_Loop()
+
+			If Found = 1
+			{
+				Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")  
+				Loop
 				{
-						Double_count++
-					 If Double_count = 7
-							{
-								Click %Applyx%, %Applyy%
-								Double_count = 0
-							}
-							
-						else if ISSUE_Result = Empty
-								{
-								Found = 1
-								break
-							}
-				}
-		}
+					Result := Searchend()
+					Sleep()
+				} until (Result = "Found")
 
-		} ; end loop
+				Add_To_Completed_LIst_and_serial_count(Serial_Number)	
+				Sleep()
+				Break
+			}
+			else
+			{
+				Click %Applyx%,%Applyy%	
+				Sleep(3)
+			}
 }
-
-	If Found = 1
-	{
-		found = 0
-			Add_To_Completed_LIst(Serial_number)
-		Serial_count := Added_Serial_Count("1")
-		GuiControl,1:,serialsentered,%Serial_count%
-		Gui,1:Submit,NoHide
-	}
+}
 }
 else If (Start_Dual_Eng_Model_Enter)
 {
 Modifier = **Multiple Engineering Models**
 Create_Dual_Instructions_GUI()
+if Engineering_location_x = 
 Engineering_location_x := prefixx - 110
+
 MouseMove %Engineering_location_x%, %prefixy%
+
 Counter = 0
 loop
 {
@@ -1800,6 +1735,7 @@ Result_check := Find_issue_Check_images()
 
 If (Result_check = "Not_found")
 {
+	MouseGetPos, Engineering_location_x, Engineering_location_y
 			Sleep(3)
 			Gui, 70:Destroy
 			Click %Applyx%, %Applyy%
@@ -1824,17 +1760,105 @@ Result := Searchend()
 If  Result = Found
 {
 	Gui, 70:Destroy
-	Add_To_Completed_LIst(Serial_number, Modifier)
-	Serial_count := Added_Serial_Count("1")
-	GuiControl,1:,serialsentered,%Serial_count%
-	Gui,1:Submit,NoHide
+Add_To_Completed_LIst_and_serial_count(Serial_Number, Modifier)	
 	Sleep()
 }
-}until (result = "found")
+} until (result = "found")
 }}
+
 return
 }
 
+Find_ACM_Creating_Box_Loop()
+{
+	global breakloop, Applyx, Applyy
+	Found = 0
+Loop, 5
+	{
+		if (breakloop)
+			exit
+		
+	Result := ACM_Creating_Box_Find()
+	Debug_Log_Event("ACM_Creating_Box_Find result  is " result " on loop cycle " A_Index)
+	ListLines, on 
+	If Result = Found		
+	{
+		;~ MsgBox, found creating box
+		sleep(2)
+		Loop
+		{
+			if (breakloop)
+			exit
+			
+			Result := ACM_Creating_Box_Find()	
+			Debug_Log_Event("Acm Creating Box find result is " Result)
+		} until (result = "Not_Found")
+		;~ MsgBox, not found
+found = 1
+Break
+	}
+	Sleep()
+	;~ If (A_Index = 2) or (A_Index = 4)
+	;~ Click, %Applyx%, %Applyy%
+}	
+
+return Found
+}
+
+Add_To_Completed_LIst_and_serial_count(Serial_Number, Modifier = "")
+{
+	
+		Add_To_Completed_LIst(Serial_number, Modifier)
+		Sleep()
+			Serial_count := Added_Serial_Count("Add")
+					Sleep()
+					Debug_Log_Event("Add_To_completed_list_and Serial_count()** Serial_number is " Serial_Number " Modifier is " Modifier "  Serial_count is " Serial_count)
+				
+			GuiControl,1:,serialsentered,%Serial_count%
+			Gui,1:Submit,NoHide
+	
+	return
+	
+}
+Bad_Prefix_check(Serial_number)
+{
+					SplashTextOn, 300,25,, Waiting to confirm Prefix is NOT In ACM...
+					Sleep(10)
+					ISSUE_Result :=   Find_issue_Check_images()		
+					Debug_Log_Event("Double check for bad prefix = " ISSUE_Result)
+					If ISSUE_Result = empty
+						{
+							SplashTextOff
+							return "Empty"
+						}
+					Loop, 2
+						{		
+							if (breakloop)
+							exit
+							
+							Splashtextoff
+							ISSUE_Result :=   Find_issue_Check_images()
+							Debug_Log_Event("Double check 3 cycle Loop = " ISSUE_Result " in loop cycle" A_Index)
+							IF ISSUE_Result = Empty
+								return "Empty"
+							
+							IF ISSUE_Result = Bad_Prefix
+								{
+									Splashtextoff
+									Debug_Log_Event("serial no go Prefix = " Prefix)
+									Prefix := Extract_Prefix(Serial_Number)
+										First_Effectivity_Numbers := Extract_First_Set_Of_Serial_Number(Serial_Number)
+										Second_Effectivity_Numbers := Extract_Second_Set_Of_Serial_Number(Serial_Number)	 
+									Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+									return "End_loop"			
+								}		
+							else if ISSUE_Result = Not_Found
+								return "Not_found"			
+							else
+								Sleep(10)
+						}
+						return "0"
+}
 Apply_button_Click_Delay_Timer(Time)  
 {	
 static Average_time = 1
@@ -1844,7 +1868,6 @@ static Time_off= 0
 static paused_off_store = 0
 static paused_Start = 0
 
-ListLines, off
 If time = Get
 	Return Average_time
 
@@ -1853,28 +1876,10 @@ If  time = Start
 	paused_off_store = 0	
 	paused_Start = 0
 	Time_off = 0
-		Start_time := A_TickCount
+	Start_time := A_TickCount
 return
 }
 
-ListLines, on
-If time = Pause_on
-{	
-	paused_Start := A_TickCount
-return
-}
-
-
-If Time = Pause_off
-{
-	Time_off := A_TickCount - paused_Start
-	;~ MsgBox % Pause_Off " Pause_Off"
-	paused_off_store := paused_off_store + Time_off
-		;~ MsgBox % paused_off_store " paused_off_store"
-	Time_off = 0
-	return
-}
-ListLines, off
 	If time = End
 	{
 		End_time := A_TickCount
@@ -1883,20 +1888,14 @@ ListLines, off
 		Average_time := ((Total_Time + Average_time) / 1.6) 
 		If Average_time < 1
 			{
-Average_time := 1
-	}
-		;~ Tooltip %Average_time%
-		;~ MsgBox, % "end time is " End_time "`ntotaltime is " Total_Time "`naveragetime is " Average_time "`n paused off store is " paused_off_store
+				Average_time := 1
+			}
 		Average_time := Round(Average_time,2)
 		paused_off_store = 0	
 		Return Average_time	
 }
-ListLines, off
-
 Return
 }
-
-
 
 	Create_Dual_Instructions_GUI() ; no unit test needed
 	{
@@ -1940,33 +1939,38 @@ Refresh_Screen()
 									If (breakloop)
 										break
 									
-									sleep()
 								
 								Click %Add_Button_X_Location%,%Add_Button_Y_Location%
-						
-									
+									sleep(5)
 								Result :=   Searchend()
 										  If (Result = Failure) or (Result = Timedout)
 											Exit
 											If Result = Found
 												Break
 								} 
-
 					 LoopCount = 0
-
-					 sleep(10)
-				  
+					 sleep(10)  
 return
 }
 
-Added_Serial_Count(Add_Or_Subtract := "1") ; unit
+Added_Serial_Count(Add_Or_Subtract) ; unit
 {
-	static Add_Count
-Debug_Log_Event("added_serial_count add " Add_Or_Subtract)
-		Add_count += %Add_Or_Subtract%
-		If Add_Or_Subtract = Reset
+	static Add_Count = 0
+Debug_Log_Event("added_serial_count() add is  " Add_Or_Subtract)
+			If Add_Or_Subtract = Reset
+		{
 			Add_Count = 0
+			Debug_Log_Event("reset add or subtract")
+		}
+else if Add_Or_Subtract = Add
+		Add_count ++
+else If Add_Or_Subtract = Get
+	return Add_count
+	;~ Tooltip,  %Add_count%  is the serial count and the added amount is %Add_Or_Subtract% 
+
+		
 Debug_Log_Event("added_serial_count current total is  " Add_count)
+	;~ Tooltip,  %Add_count%  is the serial count and the added amount is %Add_Or_Subtract% 
 return Add_count
 }
 
@@ -1979,20 +1983,22 @@ Enterserials(Prefix_Holder_for_ACM_Input,First_Effectivity_Numbers,Second_Effect
 If (!Complete)
 {
 CoordMode, mouse, Screen
-   ;listlines on
 	win_check(Active_ID)
-	Sleep()
+	Sleep(2)
    Click, %prefixx%, %prefixy%
-   sleep()
+   sleep(1.5)
    mousemove 300,300
-   sleep()
+   sleep(3)
    SEndRaw, %Prefix_Holder_for_ACM_Input%
-   sleep()
+   sleep(1.5)
    Send {Tab}
  win_check(Active_ID)
    Sendraw, %First_Effectivity_Numbers%
-   sleep()
+   sleep(1.5)
    Send {Tab}
+   If Second_Effectivity_Numbers = 99999
+	Second_Effectivity_Numbers = 
+	
   win_check(Active_ID)
    SendRaw, %Second_Effectivity_Numbers%
    sleep(3)
@@ -2094,6 +2100,7 @@ win_check(Active_ID)
    Guicontrol, 1:,Editfield2, %Editfield2%
    Gui 1: +alwaysontop
    Modifier =
+   sleep(2)
    Return
 }
 
@@ -2136,7 +2143,27 @@ Clear_ACM_Fields()
 return
 }
 
+Stopped here
 
+Set_Up_Tabs()
+{
+	Send {Ctrl Down}{l}
+	Sleep()
+	SEnd {C}{Ctrl Up}
+	Sleep()
+	Send {Ctrl Down}{N}
+	Sleep(20)
+	Send {V}{Ctrl Up}
+	Sleep()
+	Send {Enter}
+	Sleep(20)
+Send {Alt Down}{d}
+Sleep()
+Send {Enter}{ALT Up}
+Sleep()
+Send {Ctrl Down} {1} {Ctrl UP}
+	return
+}
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -2179,21 +2206,23 @@ checkforactivity() ; no unit test needed
    {
 	  Gui 1: -AlwaysOnTop
 
-	  {
+	  
 		 If breakloop = 1
 		 {
 			SplashTextOff
 			Break
 			Return
 		 }
+		 
 		 If (A_TimeIdlePhysical > 0) and (A_TimeIdlePhysical < 1000)
 		 Timeleft = 3
 	
 		 If (A_TimeIdlePhysical > 1000) and (A_TimeIdlePhysical < 2000)
 		 Timeleft = 2
+		 
 		   If (A_TimeIdlePhysical > 2000) and (A_TimeIdlePhysical < 3000)
 		 Timeleft = 1
-}
+
 	 If (breakloop)
 			{
 			SplashTextOff
@@ -2216,6 +2245,7 @@ checkforactivity() ; no unit test needed
 		gosub, radio_button
 			Gui, Submit, NoHide
 		 }
+		 SplashTextOff
 	  return
    }
 
@@ -2291,7 +2321,11 @@ global Image_Red_Exclamation_Point, Active_ID,
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Image_Red_Exclamation_Point)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
    RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
+   Gdip_DisposeImage(bmpHaystack)
+   Gdip_DisposeImage(bmpNeedle1)
+    DeleteObject(ErrorLevel)   
    Gdip_Shutdown(pToken)
+   
 	  ;listlines on
    If RETSearch < 0
    {
@@ -2332,6 +2366,9 @@ global Creating_image, Active_ID,
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Creating_image)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
    RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
+      Gdip_DisposeImage(bmpHaystack)
+   Gdip_DisposeImage(bmpNeedle1)
+    DeleteObject(ErrorLevel)   
    Gdip_Shutdown(pToken)
 	  ;listlines on
    If RETSearch < 0
@@ -2369,12 +2406,18 @@ Find_issue_Check_images()
 global Issues_Image, Active_ID
 static First_check = 1, salesmodel1 = , salesmodel2 = , Engmodel1 = , Engmodel2 = , Prefixmodel1 = , Prefixmodel2 = , IE_type = 
    listlines off
+   listresult = error
 	Current_Monitor := GetCurrentMonitor()
 	pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Issues_Image)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
 
    RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,List_Found,0,0,0,0,10,0,0,0)
+   ;~ MsgBox, %RETSearch% is the issue checks findings
+      Gdip_DisposeImage(bmpHaystack)
+   Gdip_DisposeImage(bmpNeedle1)
+    DeleteObject(ErrorLevel)   
+   Gdip_Shutdown(pToken)
 
 If (First_check)
 {
