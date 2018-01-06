@@ -2,12 +2,12 @@
  * * * Compile_AHK SETTINGS BEGIN * * *
 
 [AHK2EXE]
-Exe_File=%In_Dir%\Effectivity Macro 2.0B.exe
+Exe_File=%In_Dir%\Effectivity Macro 2.02B.exe
 Created_Date=1
 [VERSION]
 Set_Version_Info=1
 File_Description=Effectivity Macro 2.0 Beta
-File_Version=2.0.1.2
+File_Version=2.0.2.0
 Inc_File_Version=0
 Legal_Copyright=Jarett Karnia
 Product_Version=2.0.0.0
@@ -35,7 +35,7 @@ SetWorkingDir   %A_ScriptDir% ; Ensures a consistent starting directory.
 
 
 #KeyHistory 0
-SetBatchLines, 20ms
+SetBatchLines, 10ms
 SetDefaultMouseSpeed, 0
 SetWinDelay, 0
 SetControlDelay, 0
@@ -48,7 +48,7 @@ DetectHiddenText on
 #InstallMouseHook
 
 
-Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array, breakloop,Creating_image, Log_Events
+Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array, breakloop,Creating_image, Log_Events, Plus_SIgn, Enable_Two_Tabs, pToken
 
 ; below is for testing between home and work computer
 /*
@@ -79,7 +79,7 @@ New way to update and check, now it does it very quickly and every launch
 */
 
 
-Version_Number = 2.01 Beta
+Version_Number = 2.03 Beta
 ;~ Version_Number = 1.1 test
 Effectivity_Macro :=  "Effectivity Macro V" Version_Number
 Checkp=0
@@ -112,7 +112,7 @@ File_install_Icon_Folder = %File_Install_Work_Folder%\icons
 Image_Red_Exclamation_Point = %File_install_Image_Folder%\red_image.png
 Issues_Image = %File_install_Image_Folder%\Issues_Image.png
 Creating_image = %File_install_Image_Folder%\Creating_image.png
-
+Plus_SIgn = %File_install_Image_Folder%\Plus_SIgn.png
 
 
 Result := Folder_Exist_Check(File_Install_Work_Folder)
@@ -213,6 +213,8 @@ If WinExist("What's New") or WinExist("New Version!")
 
 If (Unit_test)
 	Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, "1")
+
+pToken := Gdip_Startup()
 return
 
 /*
@@ -658,6 +660,11 @@ F1::
 			FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Creating_image.png, %File_Install_Work_Folder%\images\Creating_image.png,1
 		If (Errorlevel)
 			Problems = 1
+		
+				FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Plus_SIgn.png, %File_Install_Work_Folder%\images\Plus_SIgn.png,1
+		If (Errorlevel)
+			Problems = 1
+
 
 		return Problems
 
@@ -954,9 +961,16 @@ Copy_text_and_Format(Input_text := "") ; no unit test needed as it all the other
 	Debug_Log_Event("Formatted text is " Formatted_Text)
 	
 	Formatted_Serial_Array := Object()
-	
+
 	Formatted_Serial_Array := Put_Formatted_Serials_into_Array(Formatted_Text)
 	
+	;~ If (Enable_Two_Tabs)
+	;~ {
+	;~ Tab_1_Array := Object()
+	;~ Tab_2_Array := Object()
+	;~ Tab_1_Array := Formatted_Serial_Array[1]
+	;~ Tab_2_Array := Formatted_Serial_Array[2]
+	;~ }
 	/* for testing********
 	*/
 	
@@ -971,22 +985,59 @@ Copy_text_and_Format(Input_text := "") ; no unit test needed as it all the other
 	
 	If (combine = "1") ||  (Oneupserial = "1")
 	{
+		;~ If (Enable_Two_Tabs)
+		;~ {
+					;~ Combined_Serial_Array1 := Combineserials(Tab_1_Array) ;goes to the combine Serials subroutine
+					;~ Combined_Serial_Array2 := Combineserials(Tab_2_Array) ;goes to the combine Serials subroutine
+		;~ }
+		;~ else
 		Combined_Serial_Array := Combineserials(Formatted_Serial_Array) ;goes to the combine Serials subroutine
 		
+		;~ If (Enable_Two_Tabs)
+			;~ Prefix_Count :=  ((Combined_Serial_Array1.Length()) + (Combined_Serial_Array2.Length()))
+		;~ else
 		Prefix_Count :=  Combined_Serial_Array.Length()
 		
 		If Oneupserial = 1
+		{
+	;~ If (Enable_Two_Tabs)		
+	;~ {
+		;~ Combined_Serial_Array1 := One_Up_All(Combined_Serial_Array1)		
+		;~ Combined_Serial_Array2 := One_Up_All(Combined_Serial_Array2)		
+	;~ }
+	;~ else
 		Combined_Serial_Array := One_Up_All(Combined_Serial_Array)			
-		
-		Editfield := Extract_Serial_Array(Combined_Serial_Array)
-		StringReplace, Editfield, Editfield, `,,,All
-		Guicontrol,1:, Editfield, %Editfield% - - - - - - - - - - - - - - - - - - - - - - - - - -  `n ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
 	}
+	
+;~ If (Enable_Two_Tabs)
+;~ {
+;~ Editfield := Extract_Serial_Array(Combined_Serial_Array1)
+;~ Editfield7 := Extract_Serial_Array(Combined_Serial_Array2)
+;~ StringReplace, Editfield, Editfield, `,,,All
+;~ StringReplace, Editfield7, Editfield7, `,,,All
+;~ Guicontrol,1:, Editfield, %Editfield%- - - - - - - - - - - - - - - - - - `n ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
+;~ Guicontrol,1:, Editfield7, %Editfield7%- - - - - - - - - - - - - - - - - - `n ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
+;~ }
+;~ else
+;~ {
+Editfield := Extract_Serial_Array(Combined_Serial_Array)
+		StringReplace, Editfield, Editfield, `,,,All
+		Guicontrol,1:, Editfield, %Editfield%- - - - - - - - - - - - - - - - - - `n  ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
+;~ }
+}
 	else  {
+		;~ If (Enable_Two_Tabs)
+		;~ {
+			;~ Prefix_Count :=  ((Tab_1_Array.Length()) + (Tab_2_Array.Length()))
+		;~ }
+		;~ else
+		;~ {
 		Prefix_Count :=  Formatted_Text_Serial_Count(Formatted_Text)
 		StringReplace, Formatted_Text, Formatted_Text, `,,,All
-		Guicontrol,1:, Editfield, %Formatted_Text% - - - - - - - - - - - - - - - - - - - - - - - - - - `n ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
+		Guicontrol,1:, Editfield, %Formatted_Text% - - - - - - - - - - - - - - - - - - `n  ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
+	;~ }
 	}
+	
 	totalprefixes = %Prefix_Count% ; Sets the totalprefixes variables to the Prefixcombinecount variable
 	Guicontrol,, reloadprefixtext,%totalprefixes% ; Changes the valuse in the main GUI screen
 	Winactivate, Effectivity Macro ; Make the Main GUi window  Active
@@ -1039,13 +1090,35 @@ Format_Serial_Functions(Fullstring := "", Unit_test := 0) ; unit
 
 Put_Formatted_Serials_into_Array(Formatted_Text) ; unit
 {
+	;~ Array_start = 2
+	;~ Prefixstore= 
+	;~ Formatted_Array1 := Object()
+	;~ Formatted_Array2 := Object()
 	Formatted_Array := Object()
 	Loop, Parse, Formatted_Text, `r`n
 	{
 		If A_LoopField =
 		continue
+		;~ Prefix := Extract_Prefix(A_LoopField)
+		;~ If Prefix != %Prefixstore%
+		;~ {
+			;~ If Array_start = 1
+			;~ Array_start = 2				
+			;~ else
+				;~ Array_start = 1			
+			;~ Prefixstore := Prefix
+		;~ }
+				
+		;~ Formatted_Array%Array_start%.Insert(A_LoopField)
 		Formatted_Array.Insert(A_LoopField)
 	}
+	
+	;~ Formatted_Array.Insert(Formatted_Array1)
+	;~ Formatted_Array.Insert(Formatted_Array2)
+	
+	;~ For index, element in Formatted_Array
+		;~ catch = %element%
+
 	return Formatted_Array
 }
 
@@ -1460,10 +1533,14 @@ Export_Serials:
 ENter Serias Section
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
-Enter_Serials_Variable_Setup() ; no unit testing needed
+Enter_Serials_Variable_Setup(Type) ; no unit testing needed
 {
 	global
+	If Type = Start
 	StartTime := A_TickCount
+	If Type = Total
+		Start_Total_Time := A_TickCount
+	return
  }
 
 Start_Macro() ; no unit testing needed as all contained functions are tested
@@ -1489,12 +1566,21 @@ Start_Macro() ; no unit testing needed as all contained functions are tested
 		Exit
 	}
 	Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
-	Enter_Serials_Variable_Setup()
-	Move_Message_Box("262144","Select ACM Screen","Click on the ACM window that you want to add effectivity to and then press the OK button`n`nNote that is the window is not full screen, the macro will make it full screen to increase macro reliability. ")
+
+	Move_Message_Box("262144","Select ACM Screen","Click on the ACM window that you want to add effectivity to and then press the OK button`n`nNote that is the window is not full screen, the macro will make it full screen to increase macro reliability. `nAlso required so that macro can make the tab a new window for two tab operations reliability")
 	sleep(5)
+	Enter_Serials_Variable_Setup("total") 
 	WinGet, Active_ID, Id, A
 	SerialFullScreen(Active_ID)
 	CoordMode, mouse, Screen
+	If (Enable_Two_Tabs)
+	{
+	Make_New_Window(Active_ID)
+		SerialFullScreen(Active_ID)
+		Get_Effectivity_Tab_Location(Effectivityx, Effectivityy)
+	Sleep()
+	}
+
 	Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
 	WinGet, Active_ID, Id, A
 	Sleep()
@@ -1502,7 +1588,16 @@ Start_Macro() ; no unit testing needed as all contained functions are tested
 	Sleep()
 	Get_Apply_Button_Screen_Position(Applyx, Applyy)
 	Sleep()
+	
+	If (Enable_Two_Tabs)
+{
+Set_Up_Tabs(Effectivityx,Effectivityy, Add_Button_X_Location, Add_Button_Y_Location, Active_ID)
+Select_tab(1)
+		sleep()
+}
+
 	Clear_ACM_Fields()
+	
 	Sleep(10)
 	Find_issue_Check_images()
 	Enter_Effectivity_Loop()
@@ -1511,16 +1606,23 @@ Start_Macro() ; no unit testing needed as all contained functions are tested
 
 Enter_Effectivity_Loop()
 {
-global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location, prefixx, prefixy, Sleep_Delay
-static Apply_Button_Click_Delay= 1
+global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location, prefixx, prefixy, Sleep_Delay, Enable_Two_Tabs
+static Apply_Button_Click_Delay = 1, Lock_Tab_one = 0
 static value = 0
-static First_Loop = 1, Rate = 1, Engineering_location_x = 
-static RefreshrateTemp = 1
+static First_Loop = 1, Engineering_location_x = 
+
+static Reset_Serial = 0
 Start_Dual_Eng_Model_Enter = 0
 Skip_Dual_NoSerial_Checks = 0		
 
+Enter_Serials_Variable_Setup("start")
+
+If (Enable_Two_Tabs)
+Tab_count = 2
+
 Loop
 {
+	Click, %prefixx%, %prefixy%
 SplashTextOff
 
 if (breakloop)
@@ -1531,31 +1633,44 @@ Serial_number =
 Load_ini_file(Configuration_File_Location)
 checkforactivity()
 found = 0
-value := Added_Serial_Count("Get")
-if RefreshrateTemp <> %Refreshrate%
+If(Enable_Two_Tabs)
 {
-	Rate := value / Refreshrate
-	Rate :=  Floor(Rate)
-	if Rate = 0
-		Rate++
-RefreshrateTemp := Refreshrate
-	;~ tooltip, New Refreshrate is %Refreshrate% Rate is %Rate% RefreshrateTemp is %RefreshrateTemp%
+	if Lock_Tab_one != 1
+	{
+If Tab_count = 2
+	Tab_count = 1
+else 
+	Tab_count = 2
+}
+else 
+Tab_count = 1
 }
 
-Refreshcheckrate := (Refreshrate * Rate)
-If value >= %Refreshcheckrate%
-	{		
-	Rate++
-	Refresh_Screen()
-	}
+Refresh_Screen_Check(Refreshrate, tab_one_refresh)
 
 Result = 
-sleep()
+
+
+If (First_Loop = 1) || (Reset_Serial = 1)
+{
+Reset_Serial = 0
 Serial_number := Get_Serial_Numbers()
-	
+if (Enable_Two_Tabs)
+Tab%Tab_count%_Serial_Number := Serial_Number
+}
+else 
+{
+	Serial_Number := Serial_Number_Store
+if (Enable_Two_Tabs)
+Tab%Tab_count%_Serial_Number := Serial_Number
+}
+
 if Serial_Number  contains  - - - - -
 	{
 	Start_Dual_Eng_Model_Enter = 1
+	Reset_Serial = 1
+	if (Enable_Two_Tabs)
+	Lock_Tab_one = 1
 	continue
 	}
 	
@@ -1571,6 +1686,21 @@ if breakloop = 1
 	Exit
 	break
 	}
+
+If (Enable_Two_Tabs)
+{
+Select_Tab(Tab_count)
+Sleep(2)
+}
+
+loop, 
+{
+Result := Searchend()
+Sleep()
+if breakloop
+	exit
+}
+until (Result = "found")
 
 Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
 
@@ -1588,6 +1718,8 @@ if (!Start_Dual_Eng_Model_Enter)
 		if (breakloop)
 		exit		
 		
+		;~ ToolTip, %Apply_Button_Click_Delayr_end% is delay end and %Apply_Button_Click_Delayr_end_total% is delay total and %Apply_Button_Click_Delay% is click delay
+		
 		Apply_Button_Click_Delayr_Start := A_TickCount
 		First_check :=   Find_issue_Check_images()
 		Debug_Log_Event("Apply_Button_Click_Delay -First_check =  " First_check)
@@ -1597,13 +1729,12 @@ if (!Start_Dual_Eng_Model_Enter)
 				If Apply_Button_Click_Delay > 5
 					Apply_Button_Click_Delay = 5
 			}
-			
 				If First_check = Not_Found
 			{
 				;~ MsgBox, firstcheck is notfound
 			Skip_Dual_NoSerial_Checks = 1
 			Found = 1
-			Apply_button_Click_Delay_Timer("End")
+			Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")
 				Break			
 			}	
 	else
@@ -1620,24 +1751,29 @@ if (!Start_Dual_Eng_Model_Enter)
 			}
 	}
 			
-Loop, 5
+Loop,5
 {
 		Complete_Check :=   Find_issue_Check_images()
-		
+
 		If Complete_Check = Not_Found
 		{
 		Found = 1
-		Apply_button_Click_Delay_Timer("End")
+		Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")
 		Break		
 		}
+		else
 	Sleep(5)
+	;~ Tooltip, Loop index is %A_Index%
 }
+ 
+ ;~ SplashTextOff
  
 	If Found <> 1
 {		
+		
 	If (breakloop)
 				exit
-
+Sleep(5)
 				Searchend_Result :=	Find_issue_Check_images()
 				Debug_Log_Event("searchend_result = " Searchend_Result)
  ;~ ToolTip, %Searchend_Result% `n after the notfound 8 loop
@@ -1645,14 +1781,20 @@ Loop, 5
 				If (Searchend_Result = "Empty")				
 				{
 					Modifier =
-					Found = 1
-					
+					Found = 1					
 				}
 				else If (Searchend_Result = "Not_Found")
 				{
-				Click %Applyx%, %Applyy%
-				continue
-			}
+					Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")  
+					Found = 1	
+						If First_Loop = 1
+					{
+					First_Loop=0
+				Serial_Number_Store := Get_Serial_Numbers()
+					}
+					else 
+						Serial_Number_Store := Get_Serial_Numbers()
+				}
 			
 			else IF (Searchend_Result = "Bad_Prefix")
 				{
@@ -1668,10 +1810,9 @@ Loop, 5
 						else if Bad_Prefix_Check = End_loop
 							{
 							found = 0
+							Reset_Serial = 1
 							}
-				}
-			
-		
+				}		
 			else IF (Searchend_Result = "Dual_eng")
 				{
 					First_Effectivity_Numbers := Extract_First_Set_Of_Serial_Number(Serial_Number)
@@ -1681,38 +1822,57 @@ Loop, 5
 					Winmove, ,This serial has Multiple engeering Models,%amonx%, %Amony%
 					Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
 					SplashTextOff	
+					Reset_Serial = 1
 					}
 		}				
 			Splashtextoff
 
 If Found= 1
 {
-Sleep()
-Click %Applyx%,%Applyy%	
-Debug_Log_Event("Click apply")
 
+Click %Applyx%,%Applyy%	
+
+If First_Loop = 1
+					{
+					First_Loop=0
+				Serial_Number_Store := Get_Serial_Numbers()
+					}
+					else 
+						Serial_Number_Store := Get_Serial_Numbers()
+Debug_Log_Event("Click apply")
+Add_To_Completed_LIst_and_serial_count(Serial_Number)	
+IF (Enable_Two_Tabs)
+continue
+else
+{
 Loop
 {
 Found := Find_ACM_Creating_Box_Loop()
 
 			If Found = 1
 			{
-				Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")  
+				;~ Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")  
 				Loop
 				{
 					Result := Searchend()
 					Sleep()
 				} until (Result = "Found")
 
-				Add_To_Completed_LIst_and_serial_count(Serial_Number)	
-				Sleep()
+				;~ Add_To_Completed_LIst_and_serial_count(Serial_Number)	
+				
 				Break
 			}
 			else
 			{
+				Searchend_Result :=	Find_issue_Check_images()
+				If (Searchend_Result = "Empty")				
+								break
+								
 				Click %Applyx%,%Applyy%	
 				Sleep(3)
+				
 			}
+}
 }
 }
 }
@@ -1739,6 +1899,7 @@ If (Result_check = "Not_found")
 			Sleep(3)
 			Gui, 70:Destroy
 			Click %Applyx%, %Applyy%
+			Serial_Number_Store := Get_Serial_Numbers()
 			Loop
 			{
 				result := Searchend()			
@@ -1767,6 +1928,39 @@ Add_To_Completed_LIst_and_serial_count(Serial_Number, Modifier)
 }}
 
 return
+}
+
+Select_tab(Tab_Number)
+{
+Send {Ctrl Down}{%tab_number%}{Ctrl Up}	
+return
+}
+
+Refresh_Screen_Check(refreshrate, tab_one_refresh)
+{
+	static RefreshrateTemp = 1 , Rate = 1
+	
+value := Added_Serial_Count("Get")
+if RefreshrateTemp <> %Refreshrate%
+{
+	Rate := value / Refreshrate
+	Rate :=  Floor(Rate)
+	if Rate = 0
+		Rate++
+RefreshrateTemp := Refreshrate
+	;~ tooltip, New Refreshrate is %Refreshrate% Rate is %Rate% RefreshrateTemp is %RefreshrateTemp%
+}
+
+Refreshcheckrate := (Refreshrate * Rate)
+If (Enable_Two_Tabs)
+	value := value/2
+If value >= %Refreshcheckrate%
+	{		
+	Rate++
+	Refresh_Screen()
+	Sleep(10)
+	}
+	Return	
 }
 
 Find_ACM_Creating_Box_Loop()
@@ -1884,8 +2078,8 @@ return
 	{
 		End_time := A_TickCount
 		Total_Time := (End_time - Start_time) 
-		Total_Time := (Total_Time - paused_off_store)  / 10
-		Average_time := ((Total_Time + Average_time) / 1.6) 
+		Total_Time := (Total_Time - paused_off_store)  / 100
+		Average_time := ((Total_Time + Average_time) / 2.0) 
 		If Average_time < 1
 			{
 				Average_time := 1
@@ -1909,7 +2103,7 @@ return
 
 Refresh_Screen()
 {
-	global Applyx, Applyy, prefixx, prefixy,Active_ID, breakloop, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location
+	global Applyx, Applyy, prefixx, prefixy,Active_ID, breakloop, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location, Enable_Two_Tabs
 	
 	If breakloop = 1
 	  {
@@ -1921,35 +2115,97 @@ Refresh_Screen()
 		  Exit
 	  }
 
-					Click %Applyx%, %Applyy%
-					 sleep(10)
+					 If (Enable_Two_Tabs)
+					 {
+						Tab = 2
+					 Loop, 2
+					{
+						Win_check(Active_ID)
+						Select_tab(Tab)
+						Tab--
+						Sleep()
+							If (breakloop)
+									break		
+						Loop
+						{
 					 Result :=   Searchend()
+					Sleep()
 					  If (Result = Failure) or (Result = Timedout)
 						Exit
+					} until (Result = "Found")
+					
+					Sleep()
+								Win_check(Active_ID)
+								
+					 Send {F5}
+					 Sleep(3)	
+					}					 
 
+					Tab = 2
+						Loop, 2
+						{
+							Win_check(Active_ID)
+							Select_tab(Tab)
+							Tab--
+							Sleep(3)
+							Loop
+									{									
+										If (breakloop)
+											break									
+									
+									Click %Add_Button_X_Location%,%Add_Button_Y_Location%
+									sleep(15)
+									Result :=   Searchend()
+											  If (Result = Failure) or (Result = Timedout)
+												Exit
+												If Result = Found
+													Break
+									} 
+							}
+					}
+				else		 
+			 {
+					 Loop
+					{
+						if (breakloop)
+							exit
+					 Result :=   Searchend()
+					Sleep()
+					  If (Result = Failure) or (Result = Timedout)
+						Exit
+					} until (Result = "Found")
+					
 					 sleep(3)
-
 					Win_check(Active_ID)
 					 sleep()
 					 Send {F5}
 					 sleep(10)
-					 Counter = 0
+					  Counter = 0
+					  Loop
+					{
+						if (breakloop)
+							exit
+					Add_Result :=	PLus_Sign_Search(Active_ID)
+						
+					} until Add_Result = "Found"
+					
+					Sleep()
 					Loop
 								{									
 									If (breakloop)
 										break
-									
 								
 								Click %Add_Button_X_Location%,%Add_Button_Y_Location%
-									sleep(5)
-								Result :=   Searchend()
-										  If (Result = Failure) or (Result = Timedout)
-											Exit
-											If Result = Found
-												Break
-								} 
-					 LoopCount = 0
-					 sleep(10)  
+									Sleep(15)
+					 Result :=   Searchend()
+					  If (Result = Failure) or (Result = Timedout)
+						Exit
+					if (Result = "Found")
+								break
+								else
+									Sleep(15)
+					}
+				}
 return
 }
 
@@ -1978,7 +2234,7 @@ return Add_count
 Enterserials(Prefix_Holder_for_ACM_Input,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete)
 {
 
-	global  prefixx, prefixy, Applyx, Applyy, Add_Button_X_Location, Add_Button_Y_Location, StartTime, Sleep_Delay
+	global  prefixx, prefixy, Applyx, Applyy, Add_Button_X_Location, Add_Button_Y_Location, StartTime, Sleep_Delay, Start_Total_Time
 
 If (!Complete)
 {
@@ -2008,7 +2264,12 @@ CoordMode, mouse, Screen
 else
 	  {
 	  ElapsedTime := A_TickCount - StartTime
+	  Complete_Operation_time :=  A_TickCount - Start_Total_Time
+	  ;~ Complete_Operation_time := ElaspedTime + Start_Total_Time
 	  Total_Time := milli2hms(ElapsedTime, h, m, s)
+	  Complete_Operation_time := milli2hms(Complete_Operation_time, h, m, s)
+	  
+	  ToolTip %Complete_Operation_time% was the total time
 	  sleep(5)
 	  Send {f5}
 	  Serialcount := Added_Serial_Count("0")
@@ -2089,8 +2350,8 @@ win_check(Active_ID)
    Send {Del}{Tab}
    Send {Del}{Tab}
    Send {Del}{Tab}
-   Click, %prefixx%, %prefixy%
-   Send {Del}
+   ;~ Click, %prefixx%, %prefixy%
+   ;~ Send {Del}
    ;msgbox, Beforetrim:`n %EditField2%
    StringTrimRight, EditField2, Editfield2,1
    ;msgbox, after trim :`n %EditField2%`n Prefixstore is %PrefixStore1%`nSerial is %Serialstore1%-%Serialstore3% Mod is %Modifier%
@@ -2143,27 +2404,73 @@ Clear_ACM_Fields()
 return
 }
 
-Stopped here
-
-Set_Up_Tabs()
+Make_New_Window(ByRef Active_ID)
 {
+	global File_Install_Work_Folder
+	CLipboard = 
+	SetTitleMatchMode, 2
 	Send {Ctrl Down}{l}
+	Sleep(5)
+	SEnd {c}
+	;~ Tooltip %Clipboard%
+	Sleep(5)
+	If Clipboard  !=
+		FileAppend, %clipboard%, %File_Install_Work_Folder%\TempAddress.txt
+	Send {n}{Ctrl Up}
 	Sleep()
-	SEnd {C}{Ctrl Up}
-	Sleep()
-	Send {Ctrl Down}{N}
-	Sleep(20)
-	Send {V}{Ctrl Up}
-	Sleep()
+	FileRead, TempAddress, %File_Install_Work_Folder%\TempAddress.txt
+sleep(3)
+CoordMode, mouse, Relative
+Click 10, 300
+CoordMode, mouse, Screen
+WinGet, Active_ID, Id, A
+sleep()
+Win_check(Active_ID)
+Sleep(5)
+ Send {Ctrl Down}{l}{Ctrl up}
+ Sleep(3)
+ SendRaw %Tempaddress%
+ Sleep(5)
+ FileDelete, %File_Install_Work_Folder%\TempAddress.txt
+ ;~ tooltip deleted file
+ Sleep(5)
+;~ WinGet, Active_ID, Id, A
+;~ Sleep(5)
 	Send {Enter}
-	Sleep(20)
-Send {Alt Down}{d}
-Sleep()
-Send {Enter}{ALT Up}
-Sleep()
-Send {Ctrl Down} {1} {Ctrl UP}
+	Sleep(5)
 	return
 }
+
+Set_Up_Tabs(Effx,Effy, Addx,addy, Active_ID)
+{
+Send {Alt Down}{d}
+Sleep(5)
+Send {Enter}{ALT Up}
+Sleep(5)
+Loop
+{
+	If (breakloop)
+		Exit
+Click, %Effx%,%Effy%
+Sleep(5)
+Winget, Active_ID, ID, a
+REsult := PLus_Sign_Search(Active_ID)
+} until (Result = "Found")
+
+Sleep(2)
+
+Loop,
+{
+	If (breakloop)
+		Exit
+	Click %Addx%,%addy%
+	Sleep(3)
+Result := Searchend()
+} until (Result = "Found")
+
+	return
+}
+
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -2313,18 +2620,20 @@ GetCurrentMonitor() ; no unit test needed
 
 Searchend()
 {
-global Image_Red_Exclamation_Point, Active_ID, 
+global Image_Red_Exclamation_Point, Active_ID, pToken
    listlines off
 
 	Current_Monitor := GetCurrentMonitor()
-	pToken := Gdip_Startup()
+	;~ pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Image_Red_Exclamation_Point)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
    RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
-   Gdip_DisposeImage(bmpHaystack)
+   Gdip_DisposeImage(bmpHaystack)   
    Gdip_DisposeImage(bmpNeedle1)
-    DeleteObject(ErrorLevel)   
-   Gdip_Shutdown(pToken)
+    DeleteObject(bmpHaystack)   
+    DeleteObject(bmpNeedle1)   
+    ;~ DeleteObject(ErrorLevel)   
+   ;~ Gdip_Shutdown(pToken)
    
 	  ;listlines on
    If RETSearch < 0
@@ -2358,18 +2667,21 @@ global Image_Red_Exclamation_Point, Active_ID,
 
 ACM_Creating_Box_Find()
 {
-global Creating_image, Active_ID, 
+global Creating_image, Active_ID, pToken
+
    listlines off
 
 	Current_Monitor := GetCurrentMonitor()
-	pToken := Gdip_Startup()
+	;~ pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Creating_image)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
    RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
       Gdip_DisposeImage(bmpHaystack)
    Gdip_DisposeImage(bmpNeedle1)
-    DeleteObject(ErrorLevel)   
-   Gdip_Shutdown(pToken)
+  DeleteObject(bmpHaystack)   
+    DeleteObject(bmpNeedle1)   
+;~ DeleteObject(ErrorLevel)   
+   ;~ Gdip_Shutdown(pToken)
 	  ;listlines on
    If RETSearch < 0
    {
@@ -2403,12 +2715,12 @@ global Creating_image, Active_ID,
 
 Find_issue_Check_images()
 {
-global Issues_Image, Active_ID
+global Issues_Image, Active_ID, pToken
 static First_check = 1, salesmodel1 = , salesmodel2 = , Engmodel1 = , Engmodel2 = , Prefixmodel1 = , Prefixmodel2 = , IE_type = 
-   listlines off
+   listlines on
    listresult = error
 	Current_Monitor := GetCurrentMonitor()
-	pToken := Gdip_Startup()
+	;~ pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Issues_Image)
    bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
 
@@ -2416,9 +2728,10 @@ static First_check = 1, salesmodel1 = , salesmodel2 = , Engmodel1 = , Engmodel2 
    ;~ MsgBox, %RETSearch% is the issue checks findings
       Gdip_DisposeImage(bmpHaystack)
    Gdip_DisposeImage(bmpNeedle1)
+     DeleteObject(bmpHaystack)   
+    DeleteObject(bmpNeedle1)   
     DeleteObject(ErrorLevel)   
-   Gdip_Shutdown(pToken)
-
+   ;~ Gdip_Shutdown(pToken)
 If (First_check)
 {
 	If RETSearch = 6
@@ -2491,7 +2804,7 @@ iF (Coord1 = Prefixmodel1) or (Coord1 = Prefixmodel2)
 
 ;~ MsgBox, % salesmodel1 "`n" salesmodel2 "`n"  Engmodel1 "`n" Engmodel2 "`n"  Prefixmodel1 "`n"  Prefixmodel2 "`n listbelow `n" list_found
 
-   Gdip_Shutdown(pToken)
+   ;~ Gdip_Shutdown(pToken)
    If RETSearch < 0
    {
 	  if RETSearch = -1001
@@ -2525,6 +2838,48 @@ if RETSearch = 6
    Return listresult
 }
 
+PLus_Sign_Search(Active_ID)
+{
+global Plus_SIgn, pToken
+   listlines off
+
+	Current_Monitor := GetCurrentMonitor()
+	;~ pToken := Gdip_Startup()
+	bmpNeedle1 := Gdip_CreateBitmapFromFile(Plus_SIgn)
+   bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
+   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
+      Gdip_DisposeImage(bmpHaystack)
+   Gdip_DisposeImage(bmpNeedle1)
+  DeleteObject(bmpHaystack)   
+    DeleteObject(bmpNeedle1)   
+;~ DeleteObject(ErrorLevel)   
+   ;~ Gdip_Shutdown(pToken)
+	  ;listlines on
+   If RETSearch < 0
+   {
+	  if RETSearch = -1001
+	  RETSearch = invalid haystack or needle bitmap pointer
+	  if RETSearch = -1002
+	  RETSearch = invalid variation value
+	  if RETSearch = -1003
+	  RETSearch = Unable to lock haystack bitmap bits
+	  if RETSearch = -1004
+	  RETSearch = Unable to lock needle bitmap bits
+	  if RETSearch = -1005
+	  RETSearch = Cannot find monitor for screen capture
+  Move_Message_Box("262144", Effectivity_Macro, "Error Searchend (bmpNeedle1)" RETSearch)
+	  Exit
+   }
+
+   If RETSearch > 0
+   {
+	  ;Msgbox, found
+	  ;~ MsgBox, %foundlist%
+	  Return "Found"
+	}
+
+   Return "Not_Found"
+}
 
 
 /*
@@ -2612,6 +2967,26 @@ sleep()
    return
 }
 
+Get_Effectivity_Tab_Location(ByRef X_Location, ByRef Y_Location )
+	{
+		
+   SetTimer, ToolTipTimerEffectivity, 10  ;timer routine will occur every 10ms..
+
+Wait_For_Shift_Mouse_Click()
+
+   MouseGetPos, X_Location, Y_Location
+sleep()
+   SetTimer, ToolTipTimerEffectivity,Off
+   Textapplybutton =
+   Tooltip,
+   return
+	}
+
+ToolTipTimerEffectivity:
+{
+ToolTip, Please Shift + mouse button click on the "Effectivity" tab of the ACM effectivity screen to get it's location.
+   Return
+}
 
 ToolTipTimerapply:
 {
@@ -2671,6 +3046,7 @@ ToolTip, Please Shift + mouse button click on the "Apply button" in the ACM effe
 
 	Exit_Program(Unit_Test := 0) ; unit
 	{
+		global pToken
 		GuiControlGet, serialsentered
 		Result := Move_Message_Box("262148",Effectivity_Macro, " The number of successful Serial additions to ACM is "  serialsentered "`n`n Are you sure you want to Quit the macro?.`n`n Press YES to Quit the Macro.`n`n No to keep going.")
 		If Result = Yes
@@ -2683,6 +3059,8 @@ ToolTip, Please Shift + mouse button click on the "Apply button" in the ACM effe
 			If (!Unit_Test)
 			ExitApp
 		}
+		
+		Gdip_Shutdown(pToken)
 		return Result
 	}
 
@@ -2745,6 +3123,59 @@ return
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	*/
 
+	;~ Serials_GUI_Screen(editfieldamount, editfield2amount, TotalPrefixestemp, Serialcount) ; no unit test needed
+	;~ {
+		;~ Global
+
+		;~ activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+
+		;~ If TotalPrefixestemp < 1
+		;~ {
+			;~ TotalPrefixestemp = 0
+		;~ }
+		;~ gui 1:add, Edit, x10 y50 w130 h240  vEditField,%editfieldamount1%
+		;~ gui 1:add, Edit, x145 y50 w130 h240  veditfield7,%editfieldamount7%		
+		;~ gui 1:add, Edit, x10 yp w265 h240 vEditField2,%editfieldamount2%	
+
+		;~ Gui 1:Add, Picture, x315 y310 w50 h50 +0x4000000  BackGroundTrans vStarting gstart_macro , C:\SerialMacro\images\Start.png
+		;~ Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vRunning, C:\SerialMacro\images\Running.png
+		;~ Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vpaused  gpausesub, C:\SerialMacro\images\Paused.png
+		;~ Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vStopped grestart_macro, C:\SerialMacro\images\Stopped.png
+		;~ Gui, 1:Add, Picture, x0 y0 w425 h400 +0x4000000 , C:\SerialMacro\images\background.png
+
+		;~ Gui 1:Add, Edit, xp+165 yp+347 w110 h20  vnextserialtoadd, %nextserialtoaddv%
+
+		;~ Gui 1:Add, Text, x5 y5   BackgroundTrans +Center , There are a total of
+		;~ Gui 1:Add, Text, xp+65 w75  BackgroundTrans +Center vreloadprefixtext, %TotalPrefixestemp%
+		;~ Gui 1:Add, Text, xp+55  BackgroundTrans +Center , Effectivity to add to ACM
+
+		;~ Gui 1:add, Radio, xp+210 yp+50 w25 BackGroundTrans Checked vradio1 gradio_button,
+		;~ Gui 1:add, Radio, xp yp+125  w25 BackGroundTrans  vradio2 gradio_button, 
+		;~ Gui 1:Add, Text, xp-45 yp-100 ,Effectivity to be added		
+			;~ Gui 1:Add, Text, xp yp+125,Effectivity already added
+
+		;~ Gui 1:Add, Text, xp-275 Yp+95 W250 h13 BackGroundTrans, Number of Effectivity successfully added to ACM =
+		;~ Gui 1:Add, Text, xp+245  h13  W45 BackGroundTrans vserialsentered, %Serialcount%
+
+		;~ Gui 1:Add, Text, Xp-245 Yp+15 w250 h13  BackGroundTrans , If macro is operating incorrectly, press Esc to reload
+		;~ Gui 1:Add, Text, xp yp+15 w250 h13  BackGroundTrans , Or press Pause Button on keyboard to Pause macro, Press Pause again to resume macro.
+		;~ Gui 1:Add, Text, xp yp+20 w145 h20  BackgroundTrans , Next Effectivity to add to ACM:
+		;~ Gui 1:Menu, MyMenuBar
+		;~ Gui 1:Show,  x%amonx% y%amony% , %Effectivity_Macro%
+		;~ gui 1: +alwaysontop
+		;~ Editfield_Control("Editfield")
+		;~ Guicontrol,,Radio1,1
+
+		;~ ; IfExist  C:\SerialMacro\Tempcount.txt
+		;~ ; {
+		;~ ; FileRead, Serialcount,C:\SerialMacro\Tempcount.txt
+		;~ ; GuiControl,1:,serialsentered, Number of Serials successfully added to ACM = %Serialcount%
+		;~ ; FileDelete, C:\SerialMacro\Tempcount.txt
+		;~ ; }
+		;~ Gui 1:Submit, NoHide
+		;~ Return
+	;~ }
+	
 	Serials_GUI_Screen(editfieldamount, editfield2amount, TotalPrefixestemp, Serialcount) ; no unit test needed
 	{
 		Global
@@ -2794,6 +3225,8 @@ return
 		Gui 1:Submit, NoHide
 		Return
 	}
+
+
 
 	radio_button:
 	{
@@ -3279,8 +3712,8 @@ Gui 35:Destroy
 return
 }	
 
-				OptionsGui:
-				{
+OptionsGui:
+	{
 					activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
 					Load_ini_file(Configuration_File_Location)
 					;~ IniRead, Refreshrate, %Configuration_File_Location%, Refreshrate,Refreshrate
@@ -3291,7 +3724,8 @@ return
 					gui 10:add, edit, xp+275 yp-3 w30 veditfield5 , %refreshrate%
 					gui 10:add, Text, xp-275 yp+30, ACM speed Compensation (10 = 1 second delay)
 					gui 10:add, edit, xp+275 yp-3 w30 veditfield10 , %Sleep_Delay%
-					gui 10:add, button, xp-251 yp+26 h20 w75 Default gsavesets, Save Settings
+					Gui 10:add, Checkbox, Checked%Enable_Two_Tabs% xp-275 yp+25 vEnable_Two_Tabs , Enable Two Tabs
+					gui 10:add, button, xp yp+26 h20 w75 Default gsavesets, Save Settings
 					Gui, 10:Add, Picture, x0 y0 w325 h100 +0x4000000 , %File_Install_Work_Folder%\images\background.png
 					gui 10:show, x%amonx% y%amony% w325 h100, Options
 					Guicontrol,10:, editfield5, %refreshrate%
@@ -3324,8 +3758,11 @@ return
 					gui 10:submit, nohide
 					GuiControlGet,Refreshrate,,editfield5
 					GuiControlGet,sleep_delay,,editfield10
+					GuiControlGet, Enable_Two_Tabs
 				IniWrite, %Sleep_Delay%, %Configuration_File_Location%,Sleep_Delay,Sleep_Delay
 				IniWrite, %Refreshrate%, %Configuration_File_Location%,Refreshrate,Refreshrate
+				IniWrite, %Enable_Two_Tabs%, %Configuration_File_Location%,Enable_Two_Tabs,Enable_Two_Tabs
+				
 					gui 10:destroy
 					return
 				}
@@ -3343,12 +3780,13 @@ return
 
 
 
+
 /*
 \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 \./.\./.\.\./.\./.\.\./.\./.\. Section of lib files that I got from forums and searching.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 */
-
+     
 ;**********************************************************************************
 ;
 ; Gdip_ImageSearch()
@@ -3424,78 +3862,78 @@ Gdip_ImageSearch(pBitmapHaystack,pBitmapNeedle,ByRef OutputList=""
 ,OuterX1=0,OuterY1=0,OuterX2=0,OuterY2=0,Variation=0,Trans=""
 ,SearchDirection=1,Instances=1,LineDelim="`n",CoordDelim=",") {
 
-	; Some validations that can be done before proceeding any further
-	If !( pBitmapHaystack && pBitmapNeedle )
-		Return -1001
-	If Variation not between 0 and 255
-		return -1002
-	If ( ( OuterX1 < 0 ) || ( OuterY1 < 0 ) )
-		return -1003
-	If SearchDirection not between 1 and 8
-		SearchDirection := 1
-	If ( Instances < 0 )
-		Instances := 0
+    ; Some validations that can be done before proceeding any further
+    If !( pBitmapHaystack && pBitmapNeedle )
+        Return -1001
+    If Variation not between 0 and 255
+        return -1002
+    If ( ( OuterX1 < 0 ) || ( OuterY1 < 0 ) )
+        return -1003
+    If SearchDirection not between 1 and 8
+        SearchDirection := 1
+    If ( Instances < 0 )
+        Instances := 0
 
-	; Getting the dimensions and locking the bits [haystack]
-	Gdip_GetImageDimensions(pBitmapHaystack,hWidth,hHeight)
-	; Last parameter being 1 says the LockMode flag is "READ only"
-	If Gdip_LockBits(pBitmapHaystack,0,0,hWidth,hHeight,hStride,hScan,hBitmapData,1)
-	OR !(hWidth := NumGet(hBitmapData,0))
-	OR !(hHeight := NumGet(hBitmapData,4))
-		Return -1004
+    ; Getting the dimensions and locking the bits [haystack]
+    Gdip_GetImageDimensions(pBitmapHaystack,hWidth,hHeight)
+    ; Last parameter being 1 says the LockMode flag is "READ only"
+    If Gdip_LockBits(pBitmapHaystack,0,0,hWidth,hHeight,hStride,hScan,hBitmapData,1)
+    OR !(hWidth := NumGet(hBitmapData,0))
+    OR !(hHeight := NumGet(hBitmapData,4))
+        Return -1004
 
-	; Careful! From this point on, we must do the following before returning:
-	; - unlock haystack bits
+    ; Careful! From this point on, we must do the following before returning:
+    ; - unlock haystack bits
 
-	; Getting the dimensions and locking the bits [needle]
-	Gdip_GetImageDimensions(pBitmapNeedle,nWidth,nHeight)
-	; If Trans is correctly specified, create a backup of the original needle bitmap
-	; and modify the current one, setting the desired color as transparent.
-	; Also, since a copy is created, we must remember to dispose the new bitmap later.
-	; This whole thing has to be done before locking the bits.
-	If Trans between 0 and 0xFFFFFF
-	{
-		pOriginalBmpNeedle := pBitmapNeedle
-		pBitmapNeedle := Gdip_CloneBitmapArea(pOriginalBmpNeedle,0,0,nWidth,nHeight)
-		Gdip_SetBitmapTransColor(pBitmapNeedle,Trans)
-		DumpCurrentNeedle := true
-	}
+    ; Getting the dimensions and locking the bits [needle]
+    Gdip_GetImageDimensions(pBitmapNeedle,nWidth,nHeight)
+    ; If Trans is correctly specified, create a backup of the original needle bitmap
+    ; and modify the current one, setting the desired color as transparent.
+    ; Also, since a copy is created, we must remember to dispose the new bitmap later.
+    ; This whole thing has to be done before locking the bits.
+    If Trans between 0 and 0xFFFFFF
+    {
+        pOriginalBmpNeedle := pBitmapNeedle
+        pBitmapNeedle := Gdip_CloneBitmapArea(pOriginalBmpNeedle,0,0,nWidth,nHeight)
+        Gdip_SetBitmapTransColor(pBitmapNeedle,Trans)
+        DumpCurrentNeedle := true
+    }
 
-	; Careful! From this point on, we must do the following before returning:
-	; - unlock haystack bits
-	; - dispose current needle bitmap (if necessary)
+    ; Careful! From this point on, we must do the following before returning:
+    ; - unlock haystack bits
+    ; - dispose current needle bitmap (if necessary)
 
-	If Gdip_LockBits(pBitmapNeedle,0,0,nWidth,nHeight,nStride,nScan,nBitmapData)
-	OR !(nWidth := NumGet(nBitmapData,0))
-	OR !(nHeight := NumGet(nBitmapData,4))
-	{
-		If ( DumpCurrentNeedle )
-			Gdip_DisposeImage(pBitmapNeedle)
-		Gdip_UnlockBits(pBitmapHaystack,hBitmapData)
-		Return -1005
-	}
+    If Gdip_LockBits(pBitmapNeedle,0,0,nWidth,nHeight,nStride,nScan,nBitmapData)
+    OR !(nWidth := NumGet(nBitmapData,0))
+    OR !(nHeight := NumGet(nBitmapData,4))
+    {
+        If ( DumpCurrentNeedle )
+            Gdip_DisposeImage(pBitmapNeedle)
+        Gdip_UnlockBits(pBitmapHaystack,hBitmapData)
+        Return -1005
+    }
+    
+    ; Careful! From this point on, we must do the following before returning:
+    ; - unlock haystack bits
+    ; - unlock needle bits
+    ; - dispose current needle bitmap (if necessary)
 
-	; Careful! From this point on, we must do the following before returning:
-	; - unlock haystack bits
-	; - unlock needle bits
-	; - dispose current needle bitmap (if necessary)
+    ; Adjust the search box. "OuterX2,OuterY2" will be the last pixel evaluated
+    ; as possibly matching with the needle's first pixel. So, we must avoid going
+    ; beyond this maximum final coordinate.
+    OuterX2 := ( !OuterX2 ? hWidth-nWidth+1 : OuterX2-nWidth+1 )
+    OuterY2 := ( !OuterY2 ? hHeight-nHeight+1 : OuterY2-nHeight+1 )
 
-	; Adjust the search box. "OuterX2,OuterY2" will be the last pixel evaluated
-	; as possibly matching with the needle's first pixel. So, we must avoid going
-	; beyond this maximum final coordinate.
-	OuterX2 := ( !OuterX2 ? hWidth-nWidth+1 : OuterX2-nWidth+1 )
-	OuterY2 := ( !OuterY2 ? hHeight-nHeight+1 : OuterY2-nHeight+1 )
+    OutputCount := Gdip_MultiLockedBitsSearch(hStride,hScan,hWidth,hHeight
+    ,nStride,nScan,nWidth,nHeight,OutputList,OuterX1,OuterY1,OuterX2,OuterY2
+    ,Variation,SearchDirection,Instances,LineDelim,CoordDelim)
 
-	OutputCount := Gdip_MultiLockedBitsSearch(hStride,hScan,hWidth,hHeight
-	,nStride,nScan,nWidth,nHeight,OutputList,OuterX1,OuterY1,OuterX2,OuterY2
-	,Variation,SearchDirection,Instances,LineDelim,CoordDelim)
+    Gdip_UnlockBits(pBitmapHaystack,hBitmapData)
+    Gdip_UnlockBits(pBitmapNeedle,nBitmapData)
+    If ( DumpCurrentNeedle )
+        Gdip_DisposeImage(pBitmapNeedle)
 
-	Gdip_UnlockBits(pBitmapHaystack,hBitmapData)
-	Gdip_UnlockBits(pBitmapNeedle,nBitmapData)
-	If ( DumpCurrentNeedle )
-		Gdip_DisposeImage(pBitmapNeedle)
-
-	Return OutputCount
+    Return OutputCount
 }
 
 ;///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3541,63 +3979,63 @@ Gdip_ImageSearch(pBitmapHaystack,pBitmapNeedle,ByRef OutputList=""
 ;==================================================================================
 
 Gdip_SetBitmapTransColor(pBitmap,TransColor) {
-	static _SetBmpTrans, Ptr, PtrA
-	if !( _SetBmpTrans ) {
-		Ptr := A_PtrSize ? "UPtr" : "UInt"
-		PtrA := Ptr . "*"
-		MCode_SetBmpTrans := "
-			(LTrim Join
-			8b44240c558b6c241cc745000000000085c07e77538b5c2410568b74242033c9578b7c2414894c24288da424000000
-			0085db7e458bc18d1439b9020000008bff8a0c113a4e0275178a4c38013a4e01750e8a0a3a0e7508c644380300ff450083c0
-			0483c204b9020000004b75d38b4c24288b44241c8b5c2418034c242048894c24288944241c75a85f5e5b33c05dc3,405
-			34c8b5424388bda41c702000000004585c07e6448897c2410458bd84c8b4424304963f94c8d49010f1f800000000085db7e3
-			8498bc1488bd3660f1f440000410fb648023848017519410fb6480138087510410fb6083848ff7507c640020041ff024883c
-			00448ffca75d44c03cf49ffcb75bc488b7c241033c05bc3
-			)"
-		if ( A_PtrSize == 8 ) ; x64, after comma
-			MCode_SetBmpTrans := SubStr(MCode_SetBmpTrans,InStr(MCode_SetBmpTrans,",")+1)
-		else ; x86, before comma
-			MCode_SetBmpTrans := SubStr(MCode_SetBmpTrans,1,InStr(MCode_SetBmpTrans,",")-1)
-		VarSetCapacity(_SetBmpTrans, LEN := StrLen(MCode_SetBmpTrans)//2, 0)
-		Loop, %LEN%
-			NumPut("0x" . SubStr(MCode_SetBmpTrans,(2*A_Index)-1,2), _SetBmpTrans, A_Index-1, "uchar")
-		MCode_SetBmpTrans := ""
-		DllCall("VirtualProtect", Ptr,&_SetBmpTrans, Ptr,VarSetCapacity(_SetBmpTrans), "uint",0x40, PtrA,0)
-	}
-	If !pBitmap
-		Return -2001
-	If TransColor not between 0 and 0xFFFFFF
-		Return -2002
-	Gdip_GetImageDimensions(pBitmap,W,H)
-	If !(W && H)
-		Return -2003
-	If Gdip_LockBits(pBitmap,0,0,W,H,Stride,Scan,BitmapData)
-		Return -2004
-	; The following code should be slower than using the MCode approach,
-	; but will the kept here for now, just for reference.
-	/*
-	Count := 0
-	Loop, %H% {
-		Y := A_Index-1
-		Loop, %W% {
-			X := A_Index-1
-			CurrentColor := Gdip_GetLockBitPixel(Scan,X,Y,Stride)
-			If ( (CurrentColor & 0xFFFFFF) == TransColor )
-				Gdip_SetLockBitPixel(TransColor,Scan,X,Y,Stride), Count++
-		}
-	}
-	*/
-	; Thanks guest3456 for helping with the initial solution involving NumPut
-	Gdip_FromARGB(TransColor,A,R,G,B), VarSetCapacity(TransColor,0), VarSetCapacity(TransColor,3,255)
-	NumPut(B,TransColor,0,"UChar"), NumPut(G,TransColor,1,"UChar"), NumPut(R,TransColor,2,"UChar")
-	MCount := 0
-	E := DllCall(&_SetBmpTrans, Ptr,Scan, "int",W, "int",H, "int",Stride, Ptr,&TransColor, "int*",MCount, "cdecl int")
-	Gdip_UnlockBits(pBitmap,BitmapData)
-	If ( E != 0 ) {
-		ErrorLevel := E
-		Return -2005
-	}
-	Return MCount
+    static _SetBmpTrans, Ptr, PtrA
+    if !( _SetBmpTrans ) {
+        Ptr := A_PtrSize ? "UPtr" : "UInt"
+        PtrA := Ptr . "*"
+        MCode_SetBmpTrans := "
+            (LTrim Join
+            8b44240c558b6c241cc745000000000085c07e77538b5c2410568b74242033c9578b7c2414894c24288da424000000
+            0085db7e458bc18d1439b9020000008bff8a0c113a4e0275178a4c38013a4e01750e8a0a3a0e7508c644380300ff450083c0
+            0483c204b9020000004b75d38b4c24288b44241c8b5c2418034c242048894c24288944241c75a85f5e5b33c05dc3,405
+            34c8b5424388bda41c702000000004585c07e6448897c2410458bd84c8b4424304963f94c8d49010f1f800000000085db7e3
+            8498bc1488bd3660f1f440000410fb648023848017519410fb6480138087510410fb6083848ff7507c640020041ff024883c
+            00448ffca75d44c03cf49ffcb75bc488b7c241033c05bc3
+            )"
+        if ( A_PtrSize == 8 ) ; x64, after comma
+            MCode_SetBmpTrans := SubStr(MCode_SetBmpTrans,InStr(MCode_SetBmpTrans,",")+1)
+        else ; x86, before comma
+            MCode_SetBmpTrans := SubStr(MCode_SetBmpTrans,1,InStr(MCode_SetBmpTrans,",")-1)
+        VarSetCapacity(_SetBmpTrans, LEN := StrLen(MCode_SetBmpTrans)//2, 0)
+        Loop, %LEN%
+            NumPut("0x" . SubStr(MCode_SetBmpTrans,(2*A_Index)-1,2), _SetBmpTrans, A_Index-1, "uchar")
+        MCode_SetBmpTrans := ""
+        DllCall("VirtualProtect", Ptr,&_SetBmpTrans, Ptr,VarSetCapacity(_SetBmpTrans), "uint",0x40, PtrA,0)
+    }
+    If !pBitmap
+        Return -2001
+    If TransColor not between 0 and 0xFFFFFF
+        Return -2002
+    Gdip_GetImageDimensions(pBitmap,W,H)
+    If !(W && H)
+        Return -2003
+    If Gdip_LockBits(pBitmap,0,0,W,H,Stride,Scan,BitmapData)
+        Return -2004
+    ; The following code should be slower than using the MCode approach,
+    ; but will the kept here for now, just for reference.
+    /*
+    Count := 0
+    Loop, %H% {
+        Y := A_Index-1
+        Loop, %W% {
+            X := A_Index-1
+            CurrentColor := Gdip_GetLockBitPixel(Scan,X,Y,Stride)
+            If ( (CurrentColor & 0xFFFFFF) == TransColor )
+                Gdip_SetLockBitPixel(TransColor,Scan,X,Y,Stride), Count++
+        }
+    }
+    */
+    ; Thanks guest3456 for helping with the initial solution involving NumPut
+    Gdip_FromARGB(TransColor,A,R,G,B), VarSetCapacity(TransColor,0), VarSetCapacity(TransColor,3,255)
+    NumPut(B,TransColor,0,"UChar"), NumPut(G,TransColor,1,"UChar"), NumPut(R,TransColor,2,"UChar")
+    MCount := 0
+    E := DllCall(&_SetBmpTrans, Ptr,Scan, "int",W, "int",H, "int",Stride, Ptr,&TransColor, "int*",MCount, "cdecl int")
+    Gdip_UnlockBits(pBitmap,BitmapData)
+    If ( E != 0 ) {
+        ErrorLevel := E
+        Return -2005
+    }
+    Return MCount
 }
 
 ;///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3630,59 +4068,59 @@ Gdip_MultiLockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride,nScan,nWidth,nHe
 ,ByRef OutputList="",OuterX1=0,OuterY1=0,OuterX2=0,OuterY2=0,Variation=0
 ,SearchDirection=1,Instances=0,LineDelim="`n",CoordDelim=",")
 {
-	OutputList := ""
-	OutputCount := !Instances
-	InnerX1 := OuterX1 , InnerY1 := OuterY1
-	InnerX2 := OuterX2 , InnerY2 := OuterY2
+    OutputList := ""
+    OutputCount := !Instances
+    InnerX1 := OuterX1 , InnerY1 := OuterY1
+    InnerX2 := OuterX2 , InnerY2 := OuterY2
 
-	; The following part is a rather ugly but working hack that I
-	; came up with to adjust the variables and their increments
-	; according to the specified Haystack Search Direction
-	/*
-	Mod(SD,4) = 0 --> iX = 2 , stepX = +0 , iY = 1 , stepY = +1
-	Mod(SD,4) = 1 --> iX = 1 , stepX = +1 , iY = 1 , stepY = +1
-	Mod(SD,4) = 2 --> iX = 1 , stepX = +1 , iY = 2 , stepY = +0
-	Mod(SD,4) = 3 --> iX = 2 , stepX = +0 , iY = 2 , stepY = +0
-	SD <= 4   ------> Vertical preference
-	SD > 4    ------> Horizontal preference
-	*/
-	; Set the index and the step (for both X and Y) to +1
-	iX := 1, stepX := 1, iY := 1, stepY := 1
-	; Adjust Y variables if SD is 2, 3, 6 or 7
-	Modulo := Mod(SearchDirection,4)
-	If ( Modulo > 1 )
-		iY := 2, stepY := 0
-	; adjust X variables if SD is 3, 4, 7 or 8
-	If !Mod(Modulo,3)
-		iX := 2, stepX := 0
-	; Set default Preference to vertical and Nonpreference to horizontal
-	P := "Y", N := "X"
-	; adjust Preference and Nonpreference if SD is 5, 6, 7 or 8
-	If ( SearchDirection > 4 )
-		P := "X", N := "Y"
-	; Set the Preference Index and the Nonpreference Index
-	iP := i%P%, iN := i%N%
+    ; The following part is a rather ugly but working hack that I
+    ; came up with to adjust the variables and their increments
+    ; according to the specified Haystack Search Direction
+    /*
+    Mod(SD,4) = 0 --> iX = 2 , stepX = +0 , iY = 1 , stepY = +1
+    Mod(SD,4) = 1 --> iX = 1 , stepX = +1 , iY = 1 , stepY = +1
+    Mod(SD,4) = 2 --> iX = 1 , stepX = +1 , iY = 2 , stepY = +0
+    Mod(SD,4) = 3 --> iX = 2 , stepX = +0 , iY = 2 , stepY = +0
+    SD <= 4   ------> Vertical preference
+    SD > 4    ------> Horizontal preference
+    */
+    ; Set the index and the step (for both X and Y) to +1
+    iX := 1, stepX := 1, iY := 1, stepY := 1
+    ; Adjust Y variables if SD is 2, 3, 6 or 7
+    Modulo := Mod(SearchDirection,4)
+    If ( Modulo > 1 )
+        iY := 2, stepY := 0
+    ; adjust X variables if SD is 3, 4, 7 or 8
+    If !Mod(Modulo,3)
+        iX := 2, stepX := 0
+    ; Set default Preference to vertical and Nonpreference to horizontal
+    P := "Y", N := "X"
+    ; adjust Preference and Nonpreference if SD is 5, 6, 7 or 8
+    If ( SearchDirection > 4 )
+        P := "X", N := "Y"
+    ; Set the Preference Index and the Nonpreference Index
+    iP := i%P%, iN := i%N%
 
-	While (!(OutputCount == Instances) && (0 == Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride
-	,nScan,nWidth,nHeight,FoundX,FoundY,OuterX1,OuterY1,OuterX2,OuterY2,Variation,SearchDirection)))
-	{
-		OutputCount++
-		OutputList .= LineDelim FoundX CoordDelim FoundY
-		Outer%P%%iP% := Found%P%+step%P%
-		Inner%N%%iN% := Found%N%+step%N%
-		Inner%P%1 := Found%P%
-		Inner%P%2 := Found%P%+1
-		While (!(OutputCount == Instances) && (0 == Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride
-		,nScan,nWidth,nHeight,FoundX,FoundY,InnerX1,InnerY1,InnerX2,InnerY2,Variation,SearchDirection)))
-		{
-			OutputCount++
-			OutputList .= LineDelim FoundX CoordDelim FoundY
-			Inner%N%%iN% := Found%N%+step%N%
-		}
-	}
-	OutputList := SubStr(OutputList,1+StrLen(LineDelim))
-	OutputCount -= !Instances
-	Return OutputCount
+    While (!(OutputCount == Instances) && (0 == Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride
+    ,nScan,nWidth,nHeight,FoundX,FoundY,OuterX1,OuterY1,OuterX2,OuterY2,Variation,SearchDirection)))
+    {
+        OutputCount++
+        OutputList .= LineDelim FoundX CoordDelim FoundY
+        Outer%P%%iP% := Found%P%+step%P%
+        Inner%N%%iN% := Found%N%+step%N%
+        Inner%P%1 := Found%P%
+        Inner%P%2 := Found%P%+1
+        While (!(OutputCount == Instances) && (0 == Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride
+        ,nScan,nWidth,nHeight,FoundX,FoundY,InnerX1,InnerY1,InnerX2,InnerY2,Variation,SearchDirection)))
+        {
+            OutputCount++
+            OutputList .= LineDelim FoundX CoordDelim FoundY
+            Inner%N%%iN% := Found%N%+step%N%
+        }
+    }
+    OutputList := SubStr(OutputList,1+StrLen(LineDelim))
+    OutputCount -= !Instances
+    Return OutputCount
 }
 
 ;///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3755,185 +4193,185 @@ Gdip_MultiLockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride,nScan,nWidth,nHe
 Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride,nScan,nWidth,nHeight
 ,ByRef x="",ByRef y="",sx1=0,sy1=0,sx2=0,sy2=0,Variation=0,sd=1)
 {
-	static _ImageSearch, Ptr, PtrA
+    static _ImageSearch, Ptr, PtrA
 
-	; Initialize all MCode stuff, if necessary
-	if !( _ImageSearch ) {
-		Ptr := A_PtrSize ? "UPtr" : "UInt"
-		PtrA := Ptr . "*"
+    ; Initialize all MCode stuff, if necessary
+    if !( _ImageSearch ) {
+        Ptr := A_PtrSize ? "UPtr" : "UInt"
+        PtrA := Ptr . "*"
 
-		MCode_ImageSearch := "
-			(LTrim Join
-			8b44243883ec205355565783f8010f857a0100008b7c2458897c24143b7c24600f8db50b00008b44244c8b5c245c8b
-			4c24448b7424548be80fafef896c242490897424683bf30f8d0a0100008d64240033c033db8bf5896c241c895c2420894424
-			183b4424480f8d0401000033c08944241085c90f8e9d0000008b5424688b7c24408beb8d34968b54246403df8d4900b80300
-			0000803c18008b442410745e8b44243c0fb67c2f020fb64c06028d04113bf87f792bca3bf97c738b44243c0fb64c06018b44
-			24400fb67c28018d04113bf87f5a2bca3bf97c548b44243c0fb63b0fb60c068d04113bf87f422bca3bf97c3c8b4424108b7c
-			24408b4c24444083c50483c30483c604894424103bc17c818b5c24208b74241c0374244c8b44241840035c24508974241ce9
-			2dffffff8b6c24688b5c245c8b4c244445896c24683beb8b6c24240f8c06ffffff8b44244c8b7c24148b7424544703e8897c
-			2414896c24243b7c24600f8cd5feffffe96b0a00008b4424348b4c246889088b4424388b4c24145f5e5d890833c05b83c420
-			c383f8020f85870100008b7c24604f897c24103b7c24580f8c310a00008b44244c8b5c245c8b4c24448bef0fafe8f7d88944
-			24188b4424548b742418896c24288d4900894424683bc30f8d0a0100008d64240033c033db8bf5896c2420895c241c894424
-			243b4424480f8d0401000033c08944241485c90f8e9d0000008b5424688b7c24408beb8d34968b54246403df8d4900b80300
-			0000803c03008b442414745e8b44243c0fb67c2f020fb64c06028d04113bf87f792bca3bf97c738b44243c0fb64c06018b44
-			24400fb67c28018d04113bf87f5a2bca3bf97c548b44243c0fb63b0fb60c068d04113bf87f422bca3bf97c3c8b4424148b7c
-			24408b4c24444083c50483c30483c604894424143bc17c818b5c241c8b7424200374244c8b44242440035c245089742420e9
-			2dffffff8b6c24688b5c245c8b4c244445896c24683beb8b6c24280f8c06ffffff8b7c24108b4424548b7424184f03ee897c
-			2410896c24283b7c24580f8dd5feffffe9db0800008b4424348b4c246889088b4424388b4c24105f5e5d890833c05b83c420
-			c383f8030f85650100008b7c24604f897c24103b7c24580f8ca10800008b44244c8b6c245c8b5c24548b4c24448bf70faff0
-			4df7d8896c242c897424188944241c8bff896c24683beb0f8c020100008d64240033c033db89742424895c2420894424283b
-			4424480f8d76ffffff33c08944241485c90f8e9f0000008b5424688b7c24408beb8d34968b54246403dfeb038d4900b80300
-			0000803c03008b442414745e8b44243c0fb67c2f020fb64c06028d04113bf87f752bca3bf97c6f8b44243c0fb64c06018b44
-			24400fb67c28018d04113bf87f562bca3bf97c508b44243c0fb63b0fb60c068d04113bf87f3e2bca3bf97c388b4424148b7c
-			24408b4c24444083c50483c30483c604894424143bc17c818b5c24208b7424248b4424280374244c40035c2450e92bffffff
-			8b6c24688b5c24548b4c24448b7424184d896c24683beb0f8d0affffff8b7c24108b44241c4f03f0897c2410897424183b7c
-			24580f8c580700008b6c242ce9d4feffff83f8040f85670100008b7c2458897c24103b7c24600f8d340700008b44244c8b6c
-			245c8b5c24548b4c24444d8bf00faff7896c242c8974241ceb098da424000000008bff896c24683beb0f8c020100008d6424
-			0033c033db89742424895c2420894424283b4424480f8d06feffff33c08944241485c90f8e9f0000008b5424688b7c24408b
-			eb8d34968b54246403dfeb038d4900b803000000803c03008b442414745e8b44243c0fb67c2f020fb64c06028d04113bf87f
-			752bca3bf97c6f8b44243c0fb64c06018b4424400fb67c28018d04113bf87f562bca3bf97c508b44243c0fb63b0fb60c068d
-			04113bf87f3e2bca3bf97c388b4424148b7c24408b4c24444083c50483c30483c604894424143bc17c818b5c24208b742424
-			8b4424280374244c40035c2450e92bffffff8b6c24688b5c24548b4c24448b74241c4d896c24683beb0f8d0affffff8b4424
-			4c8b7c24104703f0897c24108974241c3b7c24600f8de80500008b6c242ce9d4feffff83f8050f85890100008b7c2454897c
-			24683b7c245c0f8dc40500008b5c24608b6c24588b44244c8b4c2444eb078da42400000000896c24103beb0f8d200100008b
-			e80faf6c2458896c241c33c033db8bf5896c2424895c2420894424283b4424480f8d0d01000033c08944241485c90f8ea600
-			00008b5424688b7c24408beb8d34968b54246403dfeb0a8da424000000008d4900b803000000803c03008b442414745e8b44
-			243c0fb67c2f020fb64c06028d04113bf87f792bca3bf97c738b44243c0fb64c06018b4424400fb67c28018d04113bf87f5a
-			2bca3bf97c548b44243c0fb63b0fb60c068d04113bf87f422bca3bf97c3c8b4424148b7c24408b4c24444083c50483c30483
-			c604894424143bc17c818b5c24208b7424240374244c8b44242840035c245089742424e924ffffff8b7c24108b6c241c8b44
-			244c8b5c24608b4c24444703e8897c2410896c241c3bfb0f8cf3feffff8b7c24688b6c245847897c24683b7c245c0f8cc5fe
-			ffffe96b0400008b4424348b4c24688b74241089088b4424385f89305e5d33c05b83c420c383f8060f85670100008b7c2454
-			897c24683b7c245c0f8d320400008b6c24608b5c24588b44244c8b4c24444d896c24188bff896c24103beb0f8c1a0100008b
-			f50faff0f7d88974241c8944242ceb038d490033c033db89742424895c2420894424283b4424480f8d06fbffff33c0894424
-			1485c90f8e9f0000008b5424688b7c24408beb8d34968b54246403dfeb038d4900b803000000803c03008b442414745e8b44
-			243c0fb67c2f020fb64c06028d04113bf87f752bca3bf97c6f8b44243c0fb64c06018b4424400fb67c28018d04113bf87f56
-			2bca3bf97c508b44243c0fb63b0fb60c068d04113bf87f3e2bca3bf97c388b4424148b7c24408b4c24444083c50483c30483
-			c604894424143bc17c818b5c24208b7424248b4424280374244c40035c2450e92bffffff8b6c24108b74241c0374242c8b5c
-			24588b4c24444d896c24108974241c3beb0f8d02ffffff8b44244c8b7c246847897c24683b7c245c0f8de60200008b6c2418
-			e9c2feffff83f8070f85670100008b7c245c4f897c24683b7c24540f8cc10200008b6c24608b5c24588b44244c8b4c24444d
-			896c241890896c24103beb0f8c1a0100008bf50faff0f7d88974241c8944242ceb038d490033c033db89742424895c242089
-			4424283b4424480f8d96f9ffff33c08944241485c90f8e9f0000008b5424688b7c24408beb8d34968b54246403dfeb038d49
-			00b803000000803c18008b442414745e8b44243c0fb67c2f020fb64c06028d04113bf87f752bca3bf97c6f8b44243c0fb64c
-			06018b4424400fb67c28018d04113bf87f562bca3bf97c508b44243c0fb63b0fb60c068d04113bf87f3e2bca3bf97c388b44
-			24148b7c24408b4c24444083c50483c30483c604894424143bc17c818b5c24208b7424248b4424280374244c40035c2450e9
-			2bffffff8b6c24108b74241c0374242c8b5c24588b4c24444d896c24108974241c3beb0f8d02ffffff8b44244c8b7c24684f
-			897c24683b7c24540f8c760100008b6c2418e9c2feffff83f8080f85640100008b7c245c4f897c24683b7c24540f8c510100
-			008b5c24608b6c24588b44244c8b4c24448d9b00000000896c24103beb0f8d200100008be80faf6c2458896c241c33c033db
-			8bf5896c2424895c2420894424283b4424480f8d9dfcffff33c08944241485c90f8ea60000008b5424688b7c24408beb8d34
-			968b54246403dfeb0a8da424000000008d4900b803000000803c03008b442414745e8b44243c0fb67c2f020fb64c06028d04
-			113bf87f792bca3bf97c738b44243c0fb64c06018b4424400fb67c28018d04113bf87f5a2bca3bf97c548b44243c0fb63b0f
-			b604068d0c103bf97f422bc23bf87c3c8b4424148b7c24408b4c24444083c50483c30483c604894424143bc17c818b5c2420
-			8b7424240374244c8b44242840035c245089742424e924ffffff8b7c24108b6c241c8b44244c8b5c24608b4c24444703e889
-			7c2410896c241c3bfb0f8cf3feffff8b7c24688b6c24584f897c24683b7c24540f8dc5feffff8b4424345fc700ffffffff8b
-			4424345e5dc700ffffffffb85ff0ffff5b83c420c3,4c894c24204c89442418488954241048894c24085355565741544
-			155415641574883ec188b8424c80000004d8bd94d8bd0488bda83f8010f85b3010000448b8c24a800000044890c24443b8c2
-			4b80000000f8d66010000448bac24900000008b9424c0000000448b8424b00000008bbc2480000000448b9424a0000000418
-			bcd410fafc9894c24040f1f84000000000044899424c8000000453bd00f8dfb000000468d2495000000000f1f80000000003
-			3ed448bf933f6660f1f8400000000003bac24880000000f8d1701000033db85ff7e7e458bf4448bce442bf64503f7904d63c
-			14d03c34180780300745a450fb65002438d040e4c63d84c035c2470410fb64b028d0411443bd07f572bca443bd17c50410fb
-			64b01450fb650018d0411443bd07f3e2bca443bd17c37410fb60b450fb6108d0411443bd07f272bca443bd17c204c8b5c247
-			8ffc34183c1043bdf7c8fffc54503fd03b42498000000e95effffff8b8424c8000000448b8424b00000008b4c24044c8b5c2
-			478ffc04183c404898424c8000000413bc00f8c20ffffff448b0c24448b9424a000000041ffc14103cd44890c24894c24044
-			43b8c24b80000000f8cd8feffff488b5c2468488b4c2460b85ff0ffffc701ffffffffc703ffffffff4883c418415f415e415
-			d415c5f5e5d5bc38b8424c8000000e9860b000083f8020f858c010000448b8c24b800000041ffc944890c24443b8c24a8000
-			0007cab448bac2490000000448b8424c00000008b9424b00000008bbc2480000000448b9424a0000000418bc9410fafcd418
-			bc5894c2404f7d8894424080f1f400044899424c8000000443bd20f8d02010000468d2495000000000f1f80000000004533f
-			6448bf933f60f1f840000000000443bb424880000000f8d56ffffff33db85ff0f8e81000000418bec448bd62bee4103ef496
-			3d24903d3807a03007460440fb64a02418d042a4c63d84c035c2470410fb64b02428d0401443bc87f5d412bc8443bc97c554
-			10fb64b01440fb64a01428d0401443bc87f42412bc8443bc97c3a410fb60b440fb60a428d0401443bc87f29412bc8443bc97
-			c214c8b5c2478ffc34183c2043bdf7c8a41ffc64503fd03b42498000000e955ffffff8b8424c80000008b9424b00000008b4
-			c24044c8b5c2478ffc04183c404898424c80000003bc20f8c19ffffff448b0c24448b9424a0000000034c240841ffc9894c2
-			40444890c24443b8c24a80000000f8dd0feffffe933feffff83f8030f85c4010000448b8c24b800000041ffc944898c24c80
-			00000443b8c24a80000000f8c0efeffff8b842490000000448b9c24b0000000448b8424c00000008bbc248000000041ffcb4
-			18bc98bd044895c24080fafc8f7da890c24895424048b9424a0000000448b542404458beb443bda0f8c13010000468d249d0
-			000000066660f1f84000000000033ed448bf933f6660f1f8400000000003bac24880000000f8d0801000033db85ff0f8e960
-			00000488b4c2478458bf4448bd6442bf64503f70f1f8400000000004963d24803d1807a03007460440fb64a02438d04164c6
-			3d84c035c2470410fb64b02428d0401443bc87f63412bc8443bc97c5b410fb64b01440fb64a01428d0401443bc87f48412bc
-			8443bc97c40410fb60b440fb60a428d0401443bc87f2f412bc8443bc97c27488b4c2478ffc34183c2043bdf7c8a8b8424900
-			00000ffc54403f803b42498000000e942ffffff8b9424a00000008b8424900000008b0c2441ffcd4183ec04443bea0f8d11f
-			fffff448b8c24c8000000448b542404448b5c240841ffc94103ca44898c24c8000000890c24443b8c24a80000000f8dc2fef
-			fffe983fcffff488b4c24608b8424c8000000448929488b4c2468890133c0e981fcffff83f8040f857f010000448b8c24a80
-			0000044890c24443b8c24b80000000f8d48fcffff448bac2490000000448b9424b00000008b9424c0000000448b8424a0000
-			0008bbc248000000041ffca418bcd4489542408410fafc9894c2404669044899424c8000000453bd00f8cf8000000468d249
-			5000000000f1f800000000033ed448bf933f6660f1f8400000000003bac24880000000f8df7fbffff33db85ff7e7e458bf44
-			48bce442bf64503f7904d63c14d03c34180780300745a450fb65002438d040e4c63d84c035c2470410fb64b028d0411443bd
-			07f572bca443bd17c50410fb64b01450fb650018d0411443bd07f3e2bca443bd17c37410fb60b450fb6108d0411443bd07f2
-			72bca443bd17c204c8b5c2478ffc34183c1043bdf7c8fffc54503fd03b42498000000e95effffff8b8424c8000000448b842
-			4a00000008b4c24044c8b5c2478ffc84183ec04898424c8000000413bc00f8d20ffffff448b0c24448b54240841ffc14103c
-			d44890c24894c2404443b8c24b80000000f8cdbfeffffe9defaffff83f8050f85ab010000448b8424a000000044890424443
-			b8424b00000000f8dc0faffff8b9424c0000000448bac2498000000448ba424900000008bbc2480000000448b8c24a800000
-			0428d0c8500000000898c24c800000044894c2404443b8c24b80000000f8d09010000418bc4410fafc18944240833ed448bf
-			833f6660f1f8400000000003bac24880000000f8d0501000033db85ff0f8e87000000448bf1448bce442bf64503f74d63c14
-			d03c34180780300745d438d040e4c63d84d03da450fb65002410fb64b028d0411443bd07f5f2bca443bd17c58410fb64b014
-			50fb650018d0411443bd07f462bca443bd17c3f410fb60b450fb6108d0411443bd07f2f2bca443bd17c284c8b5c24784c8b5
-			42470ffc34183c1043bdf7c8c8b8c24c8000000ffc54503fc4103f5e955ffffff448b4424048b4424088b8c24c80000004c8
-			b5c24784c8b54247041ffc04103c4448944240489442408443b8424b80000000f8c0effffff448b0424448b8c24a80000004
-			1ffc083c10444890424898c24c8000000443b8424b00000000f8cc5feffffe946f9ffff488b4c24608b042489018b4424044
-			88b4c2468890133c0e945f9ffff83f8060f85aa010000448b8c24a000000044894c2404443b8c24b00000000f8d0bf9ffff8
-			b8424b8000000448b8424c0000000448ba424900000008bbc2480000000428d0c8d00000000ffc88944240c898c24c800000
-			06666660f1f840000000000448be83b8424a80000000f8c02010000410fafc4418bd4f7da891424894424084533f6448bf83
-			3f60f1f840000000000443bb424880000000f8df900000033db85ff0f8e870000008be9448bd62bee4103ef4963d24903d38
-			07a03007460440fb64a02418d042a4c63d84c035c2470410fb64b02428d0401443bc87f64412bc8443bc97c5c410fb64b014
-			40fb64a01428d0401443bc87f49412bc8443bc97c41410fb60b440fb60a428d0401443bc87f30412bc8443bc97c284c8b5c2
-			478ffc34183c2043bdf7c8a8b8c24c800000041ffc64503fc03b42498000000e94fffffff8b4424088b8c24c80000004c8b5
-			c247803042441ffcd89442408443bac24a80000000f8d17ffffff448b4c24048b44240c41ffc183c10444894c2404898c24c
-			8000000443b8c24b00000000f8ccefeffffe991f7ffff488b4c24608b4424048901488b4c246833c0448929e992f7ffff83f
-			8070f858d010000448b8c24b000000041ffc944894c2404443b8c24a00000000f8c55f7ffff8b8424b8000000448b8424c00
-			00000448ba424900000008bbc2480000000428d0c8d00000000ffc8890424898c24c8000000660f1f440000448be83b8424a
-			80000000f8c02010000410fafc4418bd4f7da8954240c8944240833ed448bf833f60f1f8400000000003bac24880000000f8
-			d4affffff33db85ff0f8e89000000448bf1448bd6442bf64503f74963d24903d3807a03007460440fb64a02438d04164c63d
-			84c035c2470410fb64b02428d0401443bc87f63412bc8443bc97c5b410fb64b01440fb64a01428d0401443bc87f48412bc84
-			43bc97c40410fb60b440fb60a428d0401443bc87f2f412bc8443bc97c274c8b5c2478ffc34183c2043bdf7c8a8b8c24c8000
-			000ffc54503fc03b42498000000e94fffffff8b4424088b8c24c80000004c8b5c24780344240c41ffcd89442408443bac24a
-			80000000f8d17ffffff448b4c24048b042441ffc983e90444894c2404898c24c8000000443b8c24a00000000f8dcefeffffe
-			9e1f5ffff83f8080f85ddf5ffff448b8424b000000041ffc84489442404443b8424a00000000f8cbff5ffff8b9424c000000
-			0448bac2498000000448ba424900000008bbc2480000000448b8c24a8000000428d0c8500000000898c24c800000044890c2
-			4443b8c24b80000000f8d08010000418bc4410fafc18944240833ed448bf833f6660f1f8400000000003bac24880000000f8
-			d0501000033db85ff0f8e87000000448bf1448bce442bf64503f74d63c14d03c34180780300745d438d040e4c63d84d03da4
-			50fb65002410fb64b028d0411443bd07f5f2bca443bd17c58410fb64b01450fb650018d0411443bd07f462bca443bd17c3f4
-			10fb603450fb6108d0c10443bd17f2f2bc2443bd07c284c8b5c24784c8b542470ffc34183c1043bdf7c8c8b8c24c8000000f
-			fc54503fc4103f5e955ffffff448b04248b4424088b8c24c80000004c8b5c24784c8b54247041ffc04103c44489042489442
-			408443b8424b80000000f8c10ffffff448b442404448b8c24a800000041ffc883e9044489442404898c24c8000000443b842
-			4a00000000f8dc6feffffe946f4ffff8b442404488b4c246089018b0424488b4c2468890133c0e945f4ffff
-			)"
-		if ( A_PtrSize == 8 ) ; x64, after comma
-			MCode_ImageSearch := SubStr(MCode_ImageSearch,InStr(MCode_ImageSearch,",")+1)
-		else ; x86, before comma
-			MCode_ImageSearch := SubStr(MCode_ImageSearch,1,InStr(MCode_ImageSearch,",")-1)
-		VarSetCapacity(_ImageSearch, LEN := StrLen(MCode_ImageSearch)//2, 0)
-		Loop, %LEN%
-			NumPut("0x" . SubStr(MCode_ImageSearch,(2*A_Index)-1,2), _ImageSearch, A_Index-1, "uchar")
-		MCode_ImageSearch := ""
-		DllCall("VirtualProtect", Ptr,&_ImageSearch, Ptr,VarSetCapacity(_ImageSearch), "uint",0x40, PtrA,0)
-	}
+        MCode_ImageSearch := "
+            (LTrim Join
+            8b44243883ec205355565783f8010f857a0100008b7c2458897c24143b7c24600f8db50b00008b44244c8b5c245c8b
+            4c24448b7424548be80fafef896c242490897424683bf30f8d0a0100008d64240033c033db8bf5896c241c895c2420894424
+            183b4424480f8d0401000033c08944241085c90f8e9d0000008b5424688b7c24408beb8d34968b54246403df8d4900b80300
+            0000803c18008b442410745e8b44243c0fb67c2f020fb64c06028d04113bf87f792bca3bf97c738b44243c0fb64c06018b44
+            24400fb67c28018d04113bf87f5a2bca3bf97c548b44243c0fb63b0fb60c068d04113bf87f422bca3bf97c3c8b4424108b7c
+            24408b4c24444083c50483c30483c604894424103bc17c818b5c24208b74241c0374244c8b44241840035c24508974241ce9
+            2dffffff8b6c24688b5c245c8b4c244445896c24683beb8b6c24240f8c06ffffff8b44244c8b7c24148b7424544703e8897c
+            2414896c24243b7c24600f8cd5feffffe96b0a00008b4424348b4c246889088b4424388b4c24145f5e5d890833c05b83c420
+            c383f8020f85870100008b7c24604f897c24103b7c24580f8c310a00008b44244c8b5c245c8b4c24448bef0fafe8f7d88944
+            24188b4424548b742418896c24288d4900894424683bc30f8d0a0100008d64240033c033db8bf5896c2420895c241c894424
+            243b4424480f8d0401000033c08944241485c90f8e9d0000008b5424688b7c24408beb8d34968b54246403df8d4900b80300
+            0000803c03008b442414745e8b44243c0fb67c2f020fb64c06028d04113bf87f792bca3bf97c738b44243c0fb64c06018b44
+            24400fb67c28018d04113bf87f5a2bca3bf97c548b44243c0fb63b0fb60c068d04113bf87f422bca3bf97c3c8b4424148b7c
+            24408b4c24444083c50483c30483c604894424143bc17c818b5c241c8b7424200374244c8b44242440035c245089742420e9
+            2dffffff8b6c24688b5c245c8b4c244445896c24683beb8b6c24280f8c06ffffff8b7c24108b4424548b7424184f03ee897c
+            2410896c24283b7c24580f8dd5feffffe9db0800008b4424348b4c246889088b4424388b4c24105f5e5d890833c05b83c420
+            c383f8030f85650100008b7c24604f897c24103b7c24580f8ca10800008b44244c8b6c245c8b5c24548b4c24448bf70faff0
+            4df7d8896c242c897424188944241c8bff896c24683beb0f8c020100008d64240033c033db89742424895c2420894424283b
+            4424480f8d76ffffff33c08944241485c90f8e9f0000008b5424688b7c24408beb8d34968b54246403dfeb038d4900b80300
+            0000803c03008b442414745e8b44243c0fb67c2f020fb64c06028d04113bf87f752bca3bf97c6f8b44243c0fb64c06018b44
+            24400fb67c28018d04113bf87f562bca3bf97c508b44243c0fb63b0fb60c068d04113bf87f3e2bca3bf97c388b4424148b7c
+            24408b4c24444083c50483c30483c604894424143bc17c818b5c24208b7424248b4424280374244c40035c2450e92bffffff
+            8b6c24688b5c24548b4c24448b7424184d896c24683beb0f8d0affffff8b7c24108b44241c4f03f0897c2410897424183b7c
+            24580f8c580700008b6c242ce9d4feffff83f8040f85670100008b7c2458897c24103b7c24600f8d340700008b44244c8b6c
+            245c8b5c24548b4c24444d8bf00faff7896c242c8974241ceb098da424000000008bff896c24683beb0f8c020100008d6424
+            0033c033db89742424895c2420894424283b4424480f8d06feffff33c08944241485c90f8e9f0000008b5424688b7c24408b
+            eb8d34968b54246403dfeb038d4900b803000000803c03008b442414745e8b44243c0fb67c2f020fb64c06028d04113bf87f
+            752bca3bf97c6f8b44243c0fb64c06018b4424400fb67c28018d04113bf87f562bca3bf97c508b44243c0fb63b0fb60c068d
+            04113bf87f3e2bca3bf97c388b4424148b7c24408b4c24444083c50483c30483c604894424143bc17c818b5c24208b742424
+            8b4424280374244c40035c2450e92bffffff8b6c24688b5c24548b4c24448b74241c4d896c24683beb0f8d0affffff8b4424
+            4c8b7c24104703f0897c24108974241c3b7c24600f8de80500008b6c242ce9d4feffff83f8050f85890100008b7c2454897c
+            24683b7c245c0f8dc40500008b5c24608b6c24588b44244c8b4c2444eb078da42400000000896c24103beb0f8d200100008b
+            e80faf6c2458896c241c33c033db8bf5896c2424895c2420894424283b4424480f8d0d01000033c08944241485c90f8ea600
+            00008b5424688b7c24408beb8d34968b54246403dfeb0a8da424000000008d4900b803000000803c03008b442414745e8b44
+            243c0fb67c2f020fb64c06028d04113bf87f792bca3bf97c738b44243c0fb64c06018b4424400fb67c28018d04113bf87f5a
+            2bca3bf97c548b44243c0fb63b0fb60c068d04113bf87f422bca3bf97c3c8b4424148b7c24408b4c24444083c50483c30483
+            c604894424143bc17c818b5c24208b7424240374244c8b44242840035c245089742424e924ffffff8b7c24108b6c241c8b44
+            244c8b5c24608b4c24444703e8897c2410896c241c3bfb0f8cf3feffff8b7c24688b6c245847897c24683b7c245c0f8cc5fe
+            ffffe96b0400008b4424348b4c24688b74241089088b4424385f89305e5d33c05b83c420c383f8060f85670100008b7c2454
+            897c24683b7c245c0f8d320400008b6c24608b5c24588b44244c8b4c24444d896c24188bff896c24103beb0f8c1a0100008b
+            f50faff0f7d88974241c8944242ceb038d490033c033db89742424895c2420894424283b4424480f8d06fbffff33c0894424
+            1485c90f8e9f0000008b5424688b7c24408beb8d34968b54246403dfeb038d4900b803000000803c03008b442414745e8b44
+            243c0fb67c2f020fb64c06028d04113bf87f752bca3bf97c6f8b44243c0fb64c06018b4424400fb67c28018d04113bf87f56
+            2bca3bf97c508b44243c0fb63b0fb60c068d04113bf87f3e2bca3bf97c388b4424148b7c24408b4c24444083c50483c30483
+            c604894424143bc17c818b5c24208b7424248b4424280374244c40035c2450e92bffffff8b6c24108b74241c0374242c8b5c
+            24588b4c24444d896c24108974241c3beb0f8d02ffffff8b44244c8b7c246847897c24683b7c245c0f8de60200008b6c2418
+            e9c2feffff83f8070f85670100008b7c245c4f897c24683b7c24540f8cc10200008b6c24608b5c24588b44244c8b4c24444d
+            896c241890896c24103beb0f8c1a0100008bf50faff0f7d88974241c8944242ceb038d490033c033db89742424895c242089
+            4424283b4424480f8d96f9ffff33c08944241485c90f8e9f0000008b5424688b7c24408beb8d34968b54246403dfeb038d49
+            00b803000000803c18008b442414745e8b44243c0fb67c2f020fb64c06028d04113bf87f752bca3bf97c6f8b44243c0fb64c
+            06018b4424400fb67c28018d04113bf87f562bca3bf97c508b44243c0fb63b0fb60c068d04113bf87f3e2bca3bf97c388b44
+            24148b7c24408b4c24444083c50483c30483c604894424143bc17c818b5c24208b7424248b4424280374244c40035c2450e9
+            2bffffff8b6c24108b74241c0374242c8b5c24588b4c24444d896c24108974241c3beb0f8d02ffffff8b44244c8b7c24684f
+            897c24683b7c24540f8c760100008b6c2418e9c2feffff83f8080f85640100008b7c245c4f897c24683b7c24540f8c510100
+            008b5c24608b6c24588b44244c8b4c24448d9b00000000896c24103beb0f8d200100008be80faf6c2458896c241c33c033db
+            8bf5896c2424895c2420894424283b4424480f8d9dfcffff33c08944241485c90f8ea60000008b5424688b7c24408beb8d34
+            968b54246403dfeb0a8da424000000008d4900b803000000803c03008b442414745e8b44243c0fb67c2f020fb64c06028d04
+            113bf87f792bca3bf97c738b44243c0fb64c06018b4424400fb67c28018d04113bf87f5a2bca3bf97c548b44243c0fb63b0f
+            b604068d0c103bf97f422bc23bf87c3c8b4424148b7c24408b4c24444083c50483c30483c604894424143bc17c818b5c2420
+            8b7424240374244c8b44242840035c245089742424e924ffffff8b7c24108b6c241c8b44244c8b5c24608b4c24444703e889
+            7c2410896c241c3bfb0f8cf3feffff8b7c24688b6c24584f897c24683b7c24540f8dc5feffff8b4424345fc700ffffffff8b
+            4424345e5dc700ffffffffb85ff0ffff5b83c420c3,4c894c24204c89442418488954241048894c24085355565741544
+            155415641574883ec188b8424c80000004d8bd94d8bd0488bda83f8010f85b3010000448b8c24a800000044890c24443b8c2
+            4b80000000f8d66010000448bac24900000008b9424c0000000448b8424b00000008bbc2480000000448b9424a0000000418
+            bcd410fafc9894c24040f1f84000000000044899424c8000000453bd00f8dfb000000468d2495000000000f1f80000000003
+            3ed448bf933f6660f1f8400000000003bac24880000000f8d1701000033db85ff7e7e458bf4448bce442bf64503f7904d63c
+            14d03c34180780300745a450fb65002438d040e4c63d84c035c2470410fb64b028d0411443bd07f572bca443bd17c50410fb
+            64b01450fb650018d0411443bd07f3e2bca443bd17c37410fb60b450fb6108d0411443bd07f272bca443bd17c204c8b5c247
+            8ffc34183c1043bdf7c8fffc54503fd03b42498000000e95effffff8b8424c8000000448b8424b00000008b4c24044c8b5c2
+            478ffc04183c404898424c8000000413bc00f8c20ffffff448b0c24448b9424a000000041ffc14103cd44890c24894c24044
+            43b8c24b80000000f8cd8feffff488b5c2468488b4c2460b85ff0ffffc701ffffffffc703ffffffff4883c418415f415e415
+            d415c5f5e5d5bc38b8424c8000000e9860b000083f8020f858c010000448b8c24b800000041ffc944890c24443b8c24a8000
+            0007cab448bac2490000000448b8424c00000008b9424b00000008bbc2480000000448b9424a0000000418bc9410fafcd418
+            bc5894c2404f7d8894424080f1f400044899424c8000000443bd20f8d02010000468d2495000000000f1f80000000004533f
+            6448bf933f60f1f840000000000443bb424880000000f8d56ffffff33db85ff0f8e81000000418bec448bd62bee4103ef496
+            3d24903d3807a03007460440fb64a02418d042a4c63d84c035c2470410fb64b02428d0401443bc87f5d412bc8443bc97c554
+            10fb64b01440fb64a01428d0401443bc87f42412bc8443bc97c3a410fb60b440fb60a428d0401443bc87f29412bc8443bc97
+            c214c8b5c2478ffc34183c2043bdf7c8a41ffc64503fd03b42498000000e955ffffff8b8424c80000008b9424b00000008b4
+            c24044c8b5c2478ffc04183c404898424c80000003bc20f8c19ffffff448b0c24448b9424a0000000034c240841ffc9894c2
+            40444890c24443b8c24a80000000f8dd0feffffe933feffff83f8030f85c4010000448b8c24b800000041ffc944898c24c80
+            00000443b8c24a80000000f8c0efeffff8b842490000000448b9c24b0000000448b8424c00000008bbc248000000041ffcb4
+            18bc98bd044895c24080fafc8f7da890c24895424048b9424a0000000448b542404458beb443bda0f8c13010000468d249d0
+            000000066660f1f84000000000033ed448bf933f6660f1f8400000000003bac24880000000f8d0801000033db85ff0f8e960
+            00000488b4c2478458bf4448bd6442bf64503f70f1f8400000000004963d24803d1807a03007460440fb64a02438d04164c6
+            3d84c035c2470410fb64b02428d0401443bc87f63412bc8443bc97c5b410fb64b01440fb64a01428d0401443bc87f48412bc
+            8443bc97c40410fb60b440fb60a428d0401443bc87f2f412bc8443bc97c27488b4c2478ffc34183c2043bdf7c8a8b8424900
+            00000ffc54403f803b42498000000e942ffffff8b9424a00000008b8424900000008b0c2441ffcd4183ec04443bea0f8d11f
+            fffff448b8c24c8000000448b542404448b5c240841ffc94103ca44898c24c8000000890c24443b8c24a80000000f8dc2fef
+            fffe983fcffff488b4c24608b8424c8000000448929488b4c2468890133c0e981fcffff83f8040f857f010000448b8c24a80
+            0000044890c24443b8c24b80000000f8d48fcffff448bac2490000000448b9424b00000008b9424c0000000448b8424a0000
+            0008bbc248000000041ffca418bcd4489542408410fafc9894c2404669044899424c8000000453bd00f8cf8000000468d249
+            5000000000f1f800000000033ed448bf933f6660f1f8400000000003bac24880000000f8df7fbffff33db85ff7e7e458bf44
+            48bce442bf64503f7904d63c14d03c34180780300745a450fb65002438d040e4c63d84c035c2470410fb64b028d0411443bd
+            07f572bca443bd17c50410fb64b01450fb650018d0411443bd07f3e2bca443bd17c37410fb60b450fb6108d0411443bd07f2
+            72bca443bd17c204c8b5c2478ffc34183c1043bdf7c8fffc54503fd03b42498000000e95effffff8b8424c8000000448b842
+            4a00000008b4c24044c8b5c2478ffc84183ec04898424c8000000413bc00f8d20ffffff448b0c24448b54240841ffc14103c
+            d44890c24894c2404443b8c24b80000000f8cdbfeffffe9defaffff83f8050f85ab010000448b8424a000000044890424443
+            b8424b00000000f8dc0faffff8b9424c0000000448bac2498000000448ba424900000008bbc2480000000448b8c24a800000
+            0428d0c8500000000898c24c800000044894c2404443b8c24b80000000f8d09010000418bc4410fafc18944240833ed448bf
+            833f6660f1f8400000000003bac24880000000f8d0501000033db85ff0f8e87000000448bf1448bce442bf64503f74d63c14
+            d03c34180780300745d438d040e4c63d84d03da450fb65002410fb64b028d0411443bd07f5f2bca443bd17c58410fb64b014
+            50fb650018d0411443bd07f462bca443bd17c3f410fb60b450fb6108d0411443bd07f2f2bca443bd17c284c8b5c24784c8b5
+            42470ffc34183c1043bdf7c8c8b8c24c8000000ffc54503fc4103f5e955ffffff448b4424048b4424088b8c24c80000004c8
+            b5c24784c8b54247041ffc04103c4448944240489442408443b8424b80000000f8c0effffff448b0424448b8c24a80000004
+            1ffc083c10444890424898c24c8000000443b8424b00000000f8cc5feffffe946f9ffff488b4c24608b042489018b4424044
+            88b4c2468890133c0e945f9ffff83f8060f85aa010000448b8c24a000000044894c2404443b8c24b00000000f8d0bf9ffff8
+            b8424b8000000448b8424c0000000448ba424900000008bbc2480000000428d0c8d00000000ffc88944240c898c24c800000
+            06666660f1f840000000000448be83b8424a80000000f8c02010000410fafc4418bd4f7da891424894424084533f6448bf83
+            3f60f1f840000000000443bb424880000000f8df900000033db85ff0f8e870000008be9448bd62bee4103ef4963d24903d38
+            07a03007460440fb64a02418d042a4c63d84c035c2470410fb64b02428d0401443bc87f64412bc8443bc97c5c410fb64b014
+            40fb64a01428d0401443bc87f49412bc8443bc97c41410fb60b440fb60a428d0401443bc87f30412bc8443bc97c284c8b5c2
+            478ffc34183c2043bdf7c8a8b8c24c800000041ffc64503fc03b42498000000e94fffffff8b4424088b8c24c80000004c8b5
+            c247803042441ffcd89442408443bac24a80000000f8d17ffffff448b4c24048b44240c41ffc183c10444894c2404898c24c
+            8000000443b8c24b00000000f8ccefeffffe991f7ffff488b4c24608b4424048901488b4c246833c0448929e992f7ffff83f
+            8070f858d010000448b8c24b000000041ffc944894c2404443b8c24a00000000f8c55f7ffff8b8424b8000000448b8424c00
+            00000448ba424900000008bbc2480000000428d0c8d00000000ffc8890424898c24c8000000660f1f440000448be83b8424a
+            80000000f8c02010000410fafc4418bd4f7da8954240c8944240833ed448bf833f60f1f8400000000003bac24880000000f8
+            d4affffff33db85ff0f8e89000000448bf1448bd6442bf64503f74963d24903d3807a03007460440fb64a02438d04164c63d
+            84c035c2470410fb64b02428d0401443bc87f63412bc8443bc97c5b410fb64b01440fb64a01428d0401443bc87f48412bc84
+            43bc97c40410fb60b440fb60a428d0401443bc87f2f412bc8443bc97c274c8b5c2478ffc34183c2043bdf7c8a8b8c24c8000
+            000ffc54503fc03b42498000000e94fffffff8b4424088b8c24c80000004c8b5c24780344240c41ffcd89442408443bac24a
+            80000000f8d17ffffff448b4c24048b042441ffc983e90444894c2404898c24c8000000443b8c24a00000000f8dcefeffffe
+            9e1f5ffff83f8080f85ddf5ffff448b8424b000000041ffc84489442404443b8424a00000000f8cbff5ffff8b9424c000000
+            0448bac2498000000448ba424900000008bbc2480000000448b8c24a8000000428d0c8500000000898c24c800000044890c2
+            4443b8c24b80000000f8d08010000418bc4410fafc18944240833ed448bf833f6660f1f8400000000003bac24880000000f8
+            d0501000033db85ff0f8e87000000448bf1448bce442bf64503f74d63c14d03c34180780300745d438d040e4c63d84d03da4
+            50fb65002410fb64b028d0411443bd07f5f2bca443bd17c58410fb64b01450fb650018d0411443bd07f462bca443bd17c3f4
+            10fb603450fb6108d0c10443bd17f2f2bc2443bd07c284c8b5c24784c8b542470ffc34183c1043bdf7c8c8b8c24c8000000f
+            fc54503fc4103f5e955ffffff448b04248b4424088b8c24c80000004c8b5c24784c8b54247041ffc04103c44489042489442
+            408443b8424b80000000f8c10ffffff448b442404448b8c24a800000041ffc883e9044489442404898c24c8000000443b842
+            4a00000000f8dc6feffffe946f4ffff8b442404488b4c246089018b0424488b4c2468890133c0e945f4ffff
+            )"
+        if ( A_PtrSize == 8 ) ; x64, after comma
+            MCode_ImageSearch := SubStr(MCode_ImageSearch,InStr(MCode_ImageSearch,",")+1)
+        else ; x86, before comma
+            MCode_ImageSearch := SubStr(MCode_ImageSearch,1,InStr(MCode_ImageSearch,",")-1)
+        VarSetCapacity(_ImageSearch, LEN := StrLen(MCode_ImageSearch)//2, 0)
+        Loop, %LEN%
+            NumPut("0x" . SubStr(MCode_ImageSearch,(2*A_Index)-1,2), _ImageSearch, A_Index-1, "uchar")
+        MCode_ImageSearch := ""
+        DllCall("VirtualProtect", Ptr,&_ImageSearch, Ptr,VarSetCapacity(_ImageSearch), "uint",0x40, PtrA,0)
+    }
 
-	; Abort if an initial coordinates is located before a final coordinate
-	If ( sx2 < sx1 )
-		return -3001
-	If ( sy2 < sy1 )
-		return -3002
+    ; Abort if an initial coordinates is located before a final coordinate
+    If ( sx2 < sx1 )
+        return -3001
+    If ( sy2 < sy1 )
+        return -3002
 
-	; Check the search box. "sx2,sy2" will be the last pixel evaluated
-	; as possibly matching with the needle's first pixel. So, we must
-	; avoid going beyond this maximum final coordinate.
-	If ( sx2 > (hWidth-nWidth+1) )
-		return -3003
-	If ( sy2 > (hHeight-nHeight+1) )
-		return -3004
+    ; Check the search box. "sx2,sy2" will be the last pixel evaluated
+    ; as possibly matching with the needle's first pixel. So, we must
+    ; avoid going beyond this maximum final coordinate.
+    If ( sx2 > (hWidth-nWidth+1) )
+        return -3003
+    If ( sy2 > (hHeight-nHeight+1) )
+        return -3004
 
-	; Abort if the width or height of the search box is 0
-	If ( sx2-sx1 == 0 )
-		return -3005
-	If ( sy2-sy1 == 0 )
-		return -3006
+    ; Abort if the width or height of the search box is 0
+    If ( sx2-sx1 == 0 )
+        return -3005
+    If ( sy2-sy1 == 0 )
+        return -3006
 
-	; The DllCall parameters are the same for easier C code modification,
-	; even though they aren't all used on the _ImageSearch version
-	x := 0, y := 0
-	, E := DllCall( &_ImageSearch, "int*",x, "int*",y, Ptr,hScan, Ptr,nScan, "int",nWidth, "int",nHeight
-	, "int",hStride, "int",nStride, "int",sx1, "int",sy1, "int",sx2, "int",sy2, "int",Variation
-	, "int",sd, "cdecl int")
-	Return ( E == "" ? -3007 : E )
+    ; The DllCall parameters are the same for easier C code modification,
+    ; even though they aren't all used on the _ImageSearch version
+    x := 0, y := 0
+    , E := DllCall( &_ImageSearch, "int*",x, "int*",y, Ptr,hScan, Ptr,nScan, "int",nWidth, "int",nHeight
+    , "int",hStride, "int",nStride, "int",sx1, "int",sy1, "int",sx2, "int",sy2, "int",Variation
+    , "int",sd, "cdecl int")
+    Return ( E == "" ? -3007 : E )
 }
 
 ; Gdip standard library v1.45 by tic (Tariq Porter) 07/09/11
@@ -3990,7 +4428,7 @@ Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride,nScan,nWidth,nHeight
 
 ; Function:     			UpdateLayeredWindow
 ; Description:  			Updates a layered window with the handle to the DC of a gdi bitmap
-;
+; 
 ; hwnd        				Handle of the layered window to update
 ; hdc           			Handle to the DC of the GDI bitmap to update the window with
 ; Layeredx      			x position to place the window
@@ -4007,13 +4445,13 @@ Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride,nScan,nWidth,nHeight
 UpdateLayeredWindow(hwnd, hdc, x="", y="", w="", h="", Alpha=255)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	if ((x != "") && (y != ""))
 		VarSetCapacity(pt, 8), NumPut(x, pt, 0, "UInt"), NumPut(y, pt, 4, "UInt")
 
 	if (w = "") ||(h = "")
 		WinGetPos,,, w, h, ahk_id %hwnd%
-
+   
 	return DllCall("UpdateLayeredWindow"
 					, Ptr, hwnd
 					, Ptr, 0
@@ -4029,7 +4467,7 @@ UpdateLayeredWindow(hwnd, hdc, x="", y="", w="", h="", Alpha=255)
 ;#####################################################################################
 
 ; Function				BitBlt
-; Description			The BitBlt function performs a bit-block transfer of the color data corresponding to a rectangle
+; Description			The BitBlt function performs a bit-block transfer of the color data corresponding to a rectangle 
 ;						of pixels from the specified source device context into a destination device context.
 ;
 ; dDC					handle to destination DC
@@ -4067,7 +4505,7 @@ UpdateLayeredWindow(hwnd, hdc, x="", y="", w="", h="", Alpha=255)
 BitBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, Raster="")
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	return DllCall("gdi32\BitBlt"
 					, Ptr, dDC
 					, "int", dx
@@ -4083,7 +4521,7 @@ BitBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, Raster="")
 ;#####################################################################################
 
 ; Function				StretchBlt
-; Description			The StretchBlt function copies a bitmap from a source rectangle into a destination rectangle,
+; Description			The StretchBlt function copies a bitmap from a source rectangle into a destination rectangle, 
 ;						stretching or compressing the bitmap to fit the dimensions of the destination rectangle, if necessary.
 ;						The system stretches or compresses the bitmap according to the stretching mode currently set in the destination device context.
 ;
@@ -4101,12 +4539,12 @@ BitBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, Raster="")
 ;
 ; return				If the function succeeds, the return value is nonzero
 ;
-; notes					If no raster operation is specified, then SRCCOPY is used. It uses the same raster operations as BitBlt
+; notes					If no raster operation is specified, then SRCCOPY is used. It uses the same raster operations as BitBlt		
 
 StretchBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, sw, sh, Raster="")
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	return DllCall("gdi32\StretchBlt"
 					, Ptr, ddc
 					, "int", dx
@@ -4153,7 +4591,6 @@ SetStretchBltMode(hdc, iStretchMode=4)
 ;
 ; return				If the function succeeds, the return value is nonzero
 
-/*
 SetImage(hwnd, hBitmap)
 {
 	SendMessage, 0x172, 0x0, hBitmap,, ahk_id %hwnd%
@@ -4225,7 +4662,6 @@ SetSysColorToControl(hwnd, SysColor=15)
    Gdip_DeleteGraphics(G), Gdip_DisposeImage(pBitmap), DeleteObject(hBitmap)
    return 0
 }
-*/
 
 ;#####################################################################################
 
@@ -4247,7 +4683,7 @@ Gdip_BitmapFromScreen(Screen=0, Raster="")
 	if (Screen = 0)
 	{
 		Sysget, x, 76
-		Sysget, y, 77
+		Sysget, y, 77	
 		Sysget, w, 78
 		Sysget, h, 79
 	}
@@ -4277,7 +4713,7 @@ Gdip_BitmapFromScreen(Screen=0, Raster="")
 	chdc := CreateCompatibleDC(), hbm := CreateDIBSection(w, h, chdc), obm := SelectObject(chdc, hbm), hhdc := hhdc ? hhdc : GetDC()
 	BitBlt(chdc, 0, 0, w, h, hhdc, x, y, Raster)
 	ReleaseDC(hhdc)
-
+	
 	pBitmap := Gdip_CreateBitmapFromHBITMAP(hbm)
 	SelectObject(chdc, obm), DeleteObject(hbm), DeleteDC(hhdc), DeleteDC(chdc)
 	return pBitmap
@@ -4355,7 +4791,7 @@ CreateRect(ByRef Rect, x, y, w, h)
 CreateSizeF(ByRef SizeF, w, h)
 {
    VarSetCapacity(SizeF, 8)
-   NumPut(w, SizeF, 0, "float"), NumPut(h, SizeF, 4, "float")
+   NumPut(w, SizeF, 0, "float"), NumPut(h, SizeF, 4, "float")     
 }
 ;#####################################################################################
 
@@ -4371,7 +4807,7 @@ CreateSizeF(ByRef SizeF, w, h)
 CreatePointF(ByRef PointF, x, y)
 {
    VarSetCapacity(PointF, 8)
-   NumPut(x, PointF, 0, "float"), NumPut(y, PointF, 4, "float")
+   NumPut(x, PointF, 0, "float"), NumPut(y, PointF, 4, "float")     
 }
 ;#####################################################################################
 
@@ -4391,17 +4827,17 @@ CreatePointF(ByRef PointF, x, y)
 CreateDIBSection(w, h, hdc="", bpp=32, ByRef ppvBits=0)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	hdc2 := hdc ? hdc : GetDC()
 	VarSetCapacity(bi, 40, 0)
-
+	
 	NumPut(w, bi, 4, "uint")
 	, NumPut(h, bi, 8, "uint")
 	, NumPut(40, bi, 0, "uint")
 	, NumPut(1, bi, 12, "ushort")
 	, NumPut(0, bi, 16, "uInt")
 	, NumPut(bpp, bi, 14, "ushort")
-
+	
 	hbm := DllCall("CreateDIBSection"
 					, Ptr, hdc2
 					, Ptr, &bi
@@ -4431,7 +4867,7 @@ CreateDIBSection(w, h, hdc="", bpp=32, ByRef ppvBits=0)
 PrintWindow(hwnd, hdc, Flags=0)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	return DllCall("PrintWindow", Ptr, hwnd, Ptr, hdc, "uint", Flags)
 }
 
@@ -4468,7 +4904,7 @@ CreateCompatibleBitmap(hdc, w, h)
 ; Function				CreateCompatibleDC
 ; Description			This function creates a memory device context (DC) compatible with the specified device
 ;
-; hdc					Handle to an existing device context
+; hdc					Handle to an existing device context					
 ;
 ; return				returns the handle to a device context or 0 on failure
 ;
@@ -4505,7 +4941,7 @@ CreateCompatibleDC(hdc=0)
 SelectObject(hdc, hgdiobj)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	return DllCall("SelectObject", Ptr, hdc, Ptr, hgdiobj)
 }
 
@@ -4528,9 +4964,9 @@ DeleteObject(hObject)
 
 ; Function				GetDC
 ; Description			This function retrieves a handle to a display device context (DC) for the client area of the specified window.
-;						The display device context can be used in subsequent graphics display interface (GDI) functions to draw in the client area of the window.
+;						The display device context can be used in subsequent graphics display interface (GDI) functions to draw in the client area of the window. 
 ;
-; hwnd					Handle to the window whose device context is to be retrieved. If this value is NULL, GetDC retrieves the device context for the entire screen
+; hwnd					Handle to the window whose device context is to be retrieved. If this value is NULL, GetDC retrieves the device context for the entire screen					
 ;
 ; return				The handle the device context for the specified window's client area indicates success. NULL indicates failure
 
@@ -4558,8 +4994,8 @@ GetDC(hwnd=0)
 GetDCEx(hwnd, flags=0, hrgnClip=0)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
-	return DllCall("GetDCEx", Ptr, hwnd, Ptr, hrgnClip, "int", flags)
+	
+    return DllCall("GetDCEx", Ptr, hwnd, Ptr, hrgnClip, "int", flags)
 }
 
 ;#####################################################################################
@@ -4574,12 +5010,12 @@ GetDCEx(hwnd, flags=0, hrgnClip=0)
 ;						0 = not released
 ;
 ; notes					The application must call the ReleaseDC function for each call to the GetWindowDC function and for each call to the GetDC function that retrieves a common device context
-;						An application cannot use the ReleaseDC function to release a device context that was created by calling the CreateDC function; instead, it must use the DeleteDC function.
+;						An application cannot use the ReleaseDC function to release a device context that was created by calling the CreateDC function; instead, it must use the DeleteDC function. 
 
 ReleaseDC(hdc, hwnd=0)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	return DllCall("ReleaseDC", Ptr, hwnd, Ptr, hdc)
 }
 
@@ -4627,6 +5063,534 @@ Gdip_LibrarySubVersion()
 
 ;#####################################################################################
 
+; Function:    			Gdip_BitmapFromBRA
+; Description: 			Gets a pointer to a gdi+ bitmap from a BRA file
+;
+; BRAFromMemIn			The variable for a BRA file read to memory
+; File					The name of the file, or its number that you would like (This depends on alternate parameter)
+; Alternate				Changes whether the File parameter is the file name or its number
+;
+; return      			If the function succeeds, the return value is a pointer to a gdi+ bitmap
+;						-1 = The BRA variable is empty
+;						-2 = The BRA has an incorrect header
+;						-3 = The BRA has information missing
+;						-4 = Could not find file inside the BRA
+
+Gdip_BitmapFromBRA(ByRef BRAFromMemIn, File, Alternate=0)
+{
+	Static FName = "ObjRelease"
+	
+	if !BRAFromMemIn
+		return -1
+	Loop, Parse, BRAFromMemIn, `n
+	{
+		if (A_Index = 1)
+		{
+			StringSplit, Header, A_LoopField, |
+			if (Header0 != 4 || Header2 != "BRA!")
+				return -2
+		}
+		else if (A_Index = 2)
+		{
+			StringSplit, Info, A_LoopField, |
+			if (Info0 != 3)
+				return -3
+		}
+		else
+			break
+	}
+	if !Alternate
+		StringReplace, File, File, \, \\, All
+	RegExMatch(BRAFromMemIn, "mi`n)^" (Alternate ? File "\|.+?\|(\d+)\|(\d+)" : "\d+\|" File "\|(\d+)\|(\d+)") "$", FileInfo)
+	if !FileInfo
+		return -4
+	
+	hData := DllCall("GlobalAlloc", "uint", 2, Ptr, FileInfo2, Ptr)
+	pData := DllCall("GlobalLock", Ptr, hData, Ptr)
+	DllCall("RtlMoveMemory", Ptr, pData, Ptr, &BRAFromMemIn+Info2+FileInfo1, Ptr, FileInfo2)
+	DllCall("GlobalUnlock", Ptr, hData)
+	DllCall("ole32\CreateStreamOnHGlobal", Ptr, hData, "int", 1, A_PtrSize ? "UPtr*" : "UInt*", pStream)
+	DllCall("gdiplus\GdipCreateBitmapFromStream", Ptr, pStream, A_PtrSize ? "UPtr*" : "UInt*", pBitmap)
+	If (A_PtrSize)
+		%FName%(pStream)
+	Else
+		DllCall(NumGet(NumGet(1*pStream)+8), "uint", pStream)
+	return pBitmap
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawRectangle
+; Description			This function uses a pen to draw the outline of a rectangle into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x						x-coordinate of the top left of the rectangle
+; y						y-coordinate of the top left of the rectangle
+; w						width of the rectanlge
+; h						height of the rectangle
+;
+; return				status enumeration. 0 = success
+;
+; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
+
+Gdip_DrawRectangle(pGraphics, pPen, x, y, w, h)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipDrawRectangle", Ptr, pGraphics, Ptr, pPen, "float", x, "float", y, "float", w, "float", h)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawRoundedRectangle
+; Description			This function uses a pen to draw the outline of a rounded rectangle into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x						x-coordinate of the top left of the rounded rectangle
+; y						y-coordinate of the top left of the rounded rectangle
+; w						width of the rectanlge
+; h						height of the rectangle
+; r						radius of the rounded corners
+;
+; return				status enumeration. 0 = success
+;
+; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
+
+Gdip_DrawRoundedRectangle(pGraphics, pPen, x, y, w, h, r)
+{
+	Gdip_SetClipRect(pGraphics, x-r, y-r, 2*r, 2*r, 4)
+	Gdip_SetClipRect(pGraphics, x+w-r, y-r, 2*r, 2*r, 4)
+	Gdip_SetClipRect(pGraphics, x-r, y+h-r, 2*r, 2*r, 4)
+	Gdip_SetClipRect(pGraphics, x+w-r, y+h-r, 2*r, 2*r, 4)
+	E := Gdip_DrawRectangle(pGraphics, pPen, x, y, w, h)
+	Gdip_ResetClip(pGraphics)
+	Gdip_SetClipRect(pGraphics, x-(2*r), y+r, w+(4*r), h-(2*r), 4)
+	Gdip_SetClipRect(pGraphics, x+r, y-(2*r), w-(2*r), h+(4*r), 4)
+	Gdip_DrawEllipse(pGraphics, pPen, x, y, 2*r, 2*r)
+	Gdip_DrawEllipse(pGraphics, pPen, x+w-(2*r), y, 2*r, 2*r)
+	Gdip_DrawEllipse(pGraphics, pPen, x, y+h-(2*r), 2*r, 2*r)
+	Gdip_DrawEllipse(pGraphics, pPen, x+w-(2*r), y+h-(2*r), 2*r, 2*r)
+	Gdip_ResetClip(pGraphics)
+	return E
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawEllipse
+; Description			This function uses a pen to draw the outline of an ellipse into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x						x-coordinate of the top left of the rectangle the ellipse will be drawn into
+; y						y-coordinate of the top left of the rectangle the ellipse will be drawn into
+; w						width of the ellipse
+; h						height of the ellipse
+;
+; return				status enumeration. 0 = success
+;
+; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
+
+Gdip_DrawEllipse(pGraphics, pPen, x, y, w, h)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipDrawEllipse", Ptr, pGraphics, Ptr, pPen, "float", x, "float", y, "float", w, "float", h)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawBezier
+; Description			This function uses a pen to draw the outline of a bezier (a weighted curve) into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x1					x-coordinate of the start of the bezier
+; y1					y-coordinate of the start of the bezier
+; x2					x-coordinate of the first arc of the bezier
+; y2					y-coordinate of the first arc of the bezier
+; x3					x-coordinate of the second arc of the bezier
+; y3					y-coordinate of the second arc of the bezier
+; x4					x-coordinate of the end of the bezier
+; y4					y-coordinate of the end of the bezier
+;
+; return				status enumeration. 0 = success
+;
+; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
+
+Gdip_DrawBezier(pGraphics, pPen, x1, y1, x2, y2, x3, y3, x4, y4)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipDrawBezier"
+					, Ptr, pgraphics
+					, Ptr, pPen
+					, "float", x1
+					, "float", y1
+					, "float", x2
+					, "float", y2
+					, "float", x3
+					, "float", y3
+					, "float", x4
+					, "float", y4)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawArc
+; Description			This function uses a pen to draw the outline of an arc into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x						x-coordinate of the start of the arc
+; y						y-coordinate of the start of the arc
+; w						width of the arc
+; h						height of the arc
+; StartAngle			specifies the angle between the x-axis and the starting point of the arc
+; SweepAngle			specifies the angle between the starting and ending points of the arc
+;
+; return				status enumeration. 0 = success
+;
+; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
+
+Gdip_DrawArc(pGraphics, pPen, x, y, w, h, StartAngle, SweepAngle)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipDrawArc"
+					, Ptr, pGraphics
+					, Ptr, pPen
+					, "float", x
+					, "float", y
+					, "float", w
+					, "float", h
+					, "float", StartAngle
+					, "float", SweepAngle)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawPie
+; Description			This function uses a pen to draw the outline of a pie into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x						x-coordinate of the start of the pie
+; y						y-coordinate of the start of the pie
+; w						width of the pie
+; h						height of the pie
+; StartAngle			specifies the angle between the x-axis and the starting point of the pie
+; SweepAngle			specifies the angle between the starting and ending points of the pie
+;
+; return				status enumeration. 0 = success
+;
+; notes					as all coordinates are taken from the top left of each pixel, then the entire width/height should be specified as subtracting the pen width
+
+Gdip_DrawPie(pGraphics, pPen, x, y, w, h, StartAngle, SweepAngle)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipDrawPie", Ptr, pGraphics, Ptr, pPen, "float", x, "float", y, "float", w, "float", h, "float", StartAngle, "float", SweepAngle)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawLine
+; Description			This function uses a pen to draw a line into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; x1					x-coordinate of the start of the line
+; y1					y-coordinate of the start of the line
+; x2					x-coordinate of the end of the line
+; y2					y-coordinate of the end of the line
+;
+; return				status enumeration. 0 = success		
+
+Gdip_DrawLine(pGraphics, pPen, x1, y1, x2, y2)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipDrawLine"
+					, Ptr, pGraphics
+					, Ptr, pPen
+					, "float", x1
+					, "float", y1
+					, "float", x2
+					, "float", y2)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawLines
+; Description			This function uses a pen to draw a series of joined lines into the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pPen					Pointer to a pen
+; Points				the coordinates of all the points passed as x1,y1|x2,y2|x3,y3.....
+;
+; return				status enumeration. 0 = success				
+
+Gdip_DrawLines(pGraphics, pPen, Points)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	StringSplit, Points, Points, |
+	VarSetCapacity(PointF, 8*Points0)   
+	Loop, %Points0%
+	{
+		StringSplit, Coord, Points%A_Index%, `,
+		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
+	}
+	return DllCall("gdiplus\GdipDrawLines", Ptr, pGraphics, Ptr, pPen, Ptr, &PointF, "int", Points0)
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillRectangle
+; Description			This function uses a brush to fill a rectangle in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; x						x-coordinate of the top left of the rectangle
+; y						y-coordinate of the top left of the rectangle
+; w						width of the rectanlge
+; h						height of the rectangle
+;
+; return				status enumeration. 0 = success
+
+Gdip_FillRectangle(pGraphics, pBrush, x, y, w, h)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipFillRectangle"
+					, Ptr, pGraphics
+					, Ptr, pBrush
+					, "float", x
+					, "float", y
+					, "float", w
+					, "float", h)
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillRoundedRectangle
+; Description			This function uses a brush to fill a rounded rectangle in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; x						x-coordinate of the top left of the rounded rectangle
+; y						y-coordinate of the top left of the rounded rectangle
+; w						width of the rectanlge
+; h						height of the rectangle
+; r						radius of the rounded corners
+;
+; return				status enumeration. 0 = success
+
+Gdip_FillRoundedRectangle(pGraphics, pBrush, x, y, w, h, r)
+{
+	Region := Gdip_GetClipRegion(pGraphics)
+	Gdip_SetClipRect(pGraphics, x-r, y-r, 2*r, 2*r, 4)
+	Gdip_SetClipRect(pGraphics, x+w-r, y-r, 2*r, 2*r, 4)
+	Gdip_SetClipRect(pGraphics, x-r, y+h-r, 2*r, 2*r, 4)
+	Gdip_SetClipRect(pGraphics, x+w-r, y+h-r, 2*r, 2*r, 4)
+	E := Gdip_FillRectangle(pGraphics, pBrush, x, y, w, h)
+	Gdip_SetClipRegion(pGraphics, Region, 0)
+	Gdip_SetClipRect(pGraphics, x-(2*r), y+r, w+(4*r), h-(2*r), 4)
+	Gdip_SetClipRect(pGraphics, x+r, y-(2*r), w-(2*r), h+(4*r), 4)
+	Gdip_FillEllipse(pGraphics, pBrush, x, y, 2*r, 2*r)
+	Gdip_FillEllipse(pGraphics, pBrush, x+w-(2*r), y, 2*r, 2*r)
+	Gdip_FillEllipse(pGraphics, pBrush, x, y+h-(2*r), 2*r, 2*r)
+	Gdip_FillEllipse(pGraphics, pBrush, x+w-(2*r), y+h-(2*r), 2*r, 2*r)
+	Gdip_SetClipRegion(pGraphics, Region, 0)
+	Gdip_DeleteRegion(Region)
+	return E
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillPolygon
+; Description			This function uses a brush to fill a polygon in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; Points				the coordinates of all the points passed as x1,y1|x2,y2|x3,y3.....
+;
+; return				status enumeration. 0 = success
+;
+; notes					Alternate will fill the polygon as a whole, wheras winding will fill each new "segment"
+; Alternate 			= 0
+; Winding 				= 1
+
+Gdip_FillPolygon(pGraphics, pBrush, Points, FillMode=0)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	StringSplit, Points, Points, |
+	VarSetCapacity(PointF, 8*Points0)   
+	Loop, %Points0%
+	{
+		StringSplit, Coord, Points%A_Index%, `,
+		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
+	}   
+	return DllCall("gdiplus\GdipFillPolygon", Ptr, pGraphics, Ptr, pBrush, Ptr, &PointF, "int", Points0, "int", FillMode)
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillPie
+; Description			This function uses a brush to fill a pie in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; x						x-coordinate of the top left of the pie
+; y						y-coordinate of the top left of the pie
+; w						width of the pie
+; h						height of the pie
+; StartAngle			specifies the angle between the x-axis and the starting point of the pie
+; SweepAngle			specifies the angle between the starting and ending points of the pie
+;
+; return				status enumeration. 0 = success
+
+Gdip_FillPie(pGraphics, pBrush, x, y, w, h, StartAngle, SweepAngle)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipFillPie"
+					, Ptr, pGraphics
+					, Ptr, pBrush
+					, "float", x
+					, "float", y
+					, "float", w
+					, "float", h
+					, "float", StartAngle
+					, "float", SweepAngle)
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillEllipse
+; Description			This function uses a brush to fill an ellipse in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; x						x-coordinate of the top left of the ellipse
+; y						y-coordinate of the top left of the ellipse
+; w						width of the ellipse
+; h						height of the ellipse
+;
+; return				status enumeration. 0 = success
+
+Gdip_FillEllipse(pGraphics, pBrush, x, y, w, h)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipFillEllipse", Ptr, pGraphics, Ptr, pBrush, "float", x, "float", y, "float", w, "float", h)
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillRegion
+; Description			This function uses a brush to fill a region in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; Region				Pointer to a Region
+;
+; return				status enumeration. 0 = success
+;
+; notes					You can create a region Gdip_CreateRegion() and then add to this
+
+Gdip_FillRegion(pGraphics, pBrush, Region)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipFillRegion", Ptr, pGraphics, Ptr, pBrush, Ptr, Region)
+}
+
+;#####################################################################################
+
+; Function				Gdip_FillPath
+; Description			This function uses a brush to fill a path in the Graphics of a bitmap
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBrush				Pointer to a brush
+; Region				Pointer to a Path
+;
+; return				status enumeration. 0 = success
+
+Gdip_FillPath(pGraphics, pBrush, Path)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	return DllCall("gdiplus\GdipFillPath", Ptr, pGraphics, Ptr, pBrush, Ptr, Path)
+}
+
+;#####################################################################################
+
+; Function				Gdip_DrawImagePointsRect
+; Description			This function draws a bitmap into the Graphics of another bitmap and skews it
+;
+; pGraphics				Pointer to the Graphics of a bitmap
+; pBitmap				Pointer to a bitmap to be drawn
+; Points				Points passed as x1,y1|x2,y2|x3,y3 (3 points: top left, top right, bottom left) describing the drawing of the bitmap
+; sx					x-coordinate of source upper-left corner
+; sy					y-coordinate of source upper-left corner
+; sw					width of source rectangle
+; sh					height of source rectangle
+; Matrix				a matrix used to alter image attributes when drawing
+;
+; return				status enumeration. 0 = success
+;
+; notes					if sx,sy,sw,sh are missed then the entire source bitmap will be used
+;						Matrix can be omitted to just draw with no alteration to ARGB
+;						Matrix may be passed as a digit from 0 - 1 to change just transparency
+;						Matrix can be passed as a matrix with any delimiter
+
+Gdip_DrawImagePointsRect(pGraphics, pBitmap, Points, sx="", sy="", sw="", sh="", Matrix=1)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	StringSplit, Points, Points, |
+	VarSetCapacity(PointF, 8*Points0)   
+	Loop, %Points0%
+	{
+		StringSplit, Coord, Points%A_Index%, `,
+		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
+	}
+
+	if (Matrix&1 = "")
+		ImageAttr := Gdip_SetImageAttributesColorMatrix(Matrix)
+	else if (Matrix != 1)
+		ImageAttr := Gdip_SetImageAttributesColorMatrix("1|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0|0|" Matrix "|0|0|0|0|0|1")
+		
+	if (sx = "" && sy = "" && sw = "" && sh = "")
+	{
+		sx := 0, sy := 0
+		sw := Gdip_GetImageWidth(pBitmap)
+		sh := Gdip_GetImageHeight(pBitmap)
+	}
+
+	E := DllCall("gdiplus\GdipDrawImagePointsRect"
+				, Ptr, pGraphics
+				, Ptr, pBitmap
+				, Ptr, &PointF
+				, "int", Points0
+				, "float", sx
+				, "float", sy
+				, "float", sw
+				, "float", sh
+				, "int", 2
+				, Ptr, ImageAttr
+				, Ptr, 0
+				, Ptr, 0)
+	if ImageAttr
+		Gdip_DisposeImageAttributes(ImageAttr)
+	return E
+}
+
+;#####################################################################################
+
 ; Function				Gdip_DrawImage
 ; Description			This function draws a bitmap into the Graphics of another bitmap
 ;
@@ -4665,7 +5629,7 @@ Gdip_LibrarySubVersion()
 Gdip_DrawImage(pGraphics, pBitmap, dx="", dy="", dw="", dh="", sx="", sy="", sw="", sh="", Matrix=1)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	if (Matrix&1 = "")
 		ImageAttr := Gdip_SetImageAttributesColorMatrix(Matrix)
 	else if (Matrix != 1)
@@ -4724,7 +5688,7 @@ Gdip_DrawImage(pGraphics, pBitmap, dx="", dy="", dw="", dh="", sx="", sy="", sw=
 Gdip_SetImageAttributesColorMatrix(Matrix)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	VarSetCapacity(ColourMatrix, 100, 0)
 	Matrix := RegExReplace(RegExReplace(Matrix, "^[^\d-\.]+([\d\.])", "$1", "", 1), "[^\d-\.]+", "|")
 	StringSplit, Matrix, Matrix, |
@@ -4737,7 +5701,6 @@ Gdip_SetImageAttributesColorMatrix(Matrix)
 	DllCall("gdiplus\GdipSetImageAttributesColorMatrix", Ptr, ImageAttr, "int", 1, "int", 1, Ptr, &ColourMatrix, Ptr, 0, "int", 0)
 	return ImageAttr
 }
-*/
 
 ;#####################################################################################
 
@@ -4769,8 +5732,8 @@ Gdip_GraphicsFromImage(pBitmap)
 
 Gdip_GraphicsFromHDC(hdc)
 {
-	DllCall("gdiplus\GdipCreateFromHDC", A_PtrSize ? "UPtr" : "UInt", hdc, A_PtrSize ? "UPtr*" : "UInt*", pGraphics)
-	return pGraphics
+    DllCall("gdiplus\GdipCreateFromHDC", A_PtrSize ? "UPtr" : "UInt", hdc, A_PtrSize ? "UPtr*" : "UInt*", pGraphics)
+    return pGraphics
 }
 
 ;#####################################################################################
@@ -4801,7 +5764,7 @@ Gdip_GetDC(pGraphics)
 Gdip_ReleaseDC(pGraphics, hdc)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	return DllCall("gdiplus\GdipReleaseDC", Ptr, pGraphics, Ptr, hdc)
 }
 
@@ -4820,9 +5783,144 @@ Gdip_ReleaseDC(pGraphics, hdc)
 
 Gdip_GraphicsClear(pGraphics, ARGB=0x00ffffff)
 {
-	return DllCall("gdiplus\GdipGraphicsClear", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", ARGB)
+    return DllCall("gdiplus\GdipGraphicsClear", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", ARGB)
 }
 
+;#####################################################################################
+
+; Function				Gdip_BlurBitmap
+; Description			Gives a pointer to a blurred bitmap from a pointer to a bitmap
+;
+; pBitmap				Pointer to a bitmap to be blurred
+; Blur					The Amount to blur a bitmap by from 1 (least blur) to 100 (most blur)
+;
+; return				If the function succeeds, the return value is a pointer to the new blurred bitmap
+;						-1 = The blur parameter is outside the range 1-100
+;
+; notes					This function will not dispose of the original bitmap
+
+Gdip_BlurBitmap(pBitmap, Blur)
+{
+	if (Blur > 100) || (Blur < 1)
+		return -1	
+	
+	sWidth := Gdip_GetImageWidth(pBitmap), sHeight := Gdip_GetImageHeight(pBitmap)
+	dWidth := sWidth//Blur, dHeight := sHeight//Blur
+
+	pBitmap1 := Gdip_CreateBitmap(dWidth, dHeight)
+	G1 := Gdip_GraphicsFromImage(pBitmap1)
+	Gdip_SetInterpolationMode(G1, 7)
+	Gdip_DrawImage(G1, pBitmap, 0, 0, dWidth, dHeight, 0, 0, sWidth, sHeight)
+
+	Gdip_DeleteGraphics(G1)
+
+	pBitmap2 := Gdip_CreateBitmap(sWidth, sHeight)
+	G2 := Gdip_GraphicsFromImage(pBitmap2)
+	Gdip_SetInterpolationMode(G2, 7)
+	Gdip_DrawImage(G2, pBitmap1, 0, 0, sWidth, sHeight, 0, 0, dWidth, dHeight)
+
+	Gdip_DeleteGraphics(G2)
+	Gdip_DisposeImage(pBitmap1)
+	return pBitmap2
+}
+
+;#####################################################################################
+
+; Function:     		Gdip_SaveBitmapToFile
+; Description:  		Saves a bitmap to a file in any supported format onto disk
+;   
+; pBitmap				Pointer to a bitmap
+; sOutput      			The name of the file that the bitmap will be saved to. Supported extensions are: .BMP,.DIB,.RLE,.JPG,.JPEG,.JPE,.JFIF,.GIF,.TIF,.TIFF,.PNG
+; Quality      			If saving as jpg (.JPG,.JPEG,.JPE,.JFIF) then quality can be 1-100 with default at maximum quality
+;
+; return      			If the function succeeds, the return value is zero, otherwise:
+;						-1 = Extension supplied is not a supported file format
+;						-2 = Could not get a list of encoders on system
+;						-3 = Could not find matching encoder for specified file format
+;						-4 = Could not get WideChar name of output file
+;						-5 = Could not save file to disk
+;
+; notes					This function will use the extension supplied from the sOutput parameter to determine the output format
+
+Gdip_SaveBitmapToFile(pBitmap, sOutput, Quality=75)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	SplitPath, sOutput,,, Extension
+	if Extension not in BMP,DIB,RLE,JPG,JPEG,JPE,JFIF,GIF,TIF,TIFF,PNG
+		return -1
+	Extension := "." Extension
+
+	DllCall("gdiplus\GdipGetImageEncodersSize", "uint*", nCount, "uint*", nSize)
+	VarSetCapacity(ci, nSize)
+	DllCall("gdiplus\GdipGetImageEncoders", "uint", nCount, "uint", nSize, Ptr, &ci)
+	if !(nCount && nSize)
+		return -2
+	
+	If (A_IsUnicode){
+		StrGet_Name := "StrGet"
+		Loop, %nCount%
+		{
+			sString := %StrGet_Name%(NumGet(ci, (idx := (48+7*A_PtrSize)*(A_Index-1))+32+3*A_PtrSize), "UTF-16")
+			if !InStr(sString, "*" Extension)
+				continue
+			
+			pCodec := &ci+idx
+			break
+		}
+	} else {
+		Loop, %nCount%
+		{
+			Location := NumGet(ci, 76*(A_Index-1)+44)
+			nSize := DllCall("WideCharToMultiByte", "uint", 0, "uint", 0, "uint", Location, "int", -1, "uint", 0, "int",  0, "uint", 0, "uint", 0)
+			VarSetCapacity(sString, nSize)
+			DllCall("WideCharToMultiByte", "uint", 0, "uint", 0, "uint", Location, "int", -1, "str", sString, "int", nSize, "uint", 0, "uint", 0)
+			if !InStr(sString, "*" Extension)
+				continue
+			
+			pCodec := &ci+76*(A_Index-1)
+			break
+		}
+	}
+	
+	if !pCodec
+		return -3
+
+	if (Quality != 75)
+	{
+		Quality := (Quality < 0) ? 0 : (Quality > 100) ? 100 : Quality
+		if Extension in .JPG,.JPEG,.JPE,.JFIF
+		{
+			DllCall("gdiplus\GdipGetEncoderParameterListSize", Ptr, pBitmap, Ptr, pCodec, "uint*", nSize)
+			VarSetCapacity(EncoderParameters, nSize, 0)
+			DllCall("gdiplus\GdipGetEncoderParameterList", Ptr, pBitmap, Ptr, pCodec, "uint", nSize, Ptr, &EncoderParameters)
+			Loop, % NumGet(EncoderParameters, "UInt")      ;%
+			{
+				elem := (24+(A_PtrSize ? A_PtrSize : 4))*(A_Index-1) + 4 + (pad := A_PtrSize = 8 ? 4 : 0)
+				if (NumGet(EncoderParameters, elem+16, "UInt") = 1) && (NumGet(EncoderParameters, elem+20, "UInt") = 6)
+				{
+					p := elem+&EncoderParameters-pad-4
+					NumPut(Quality, NumGet(NumPut(4, NumPut(1, p+0)+20, "UInt")), "UInt")
+					break
+				}
+			}      
+		}
+	}
+
+	if (!A_IsUnicode)
+	{
+		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sOutput, "int", -1, Ptr, 0, "int", 0)
+		VarSetCapacity(wOutput, nSize*2)
+		DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sOutput, "int", -1, Ptr, &wOutput, "int", nSize)
+		VarSetCapacity(wOutput, -1)
+		if !VarSetCapacity(wOutput)
+			return -4
+		E := DllCall("gdiplus\GdipSaveImageToFile", Ptr, pBitmap, Ptr, &wOutput, Ptr, pCodec, "uint", p ? p : 0)
+	}
+	else
+		E := DllCall("gdiplus\GdipSaveImageToFile", Ptr, pBitmap, Ptr, &sOutput, Ptr, pCodec, "uint", p ? p : 0)
+	return E ? -5 : 0
+}
 
 ;#####################################################################################
 
@@ -4976,18 +6074,18 @@ Gdip_CreateBitmapFromFile(sFile, IconNumber=1, IconSize="")
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	, PtrA := A_PtrSize ? "UPtr*" : "UInt*"
-
+	
 	SplitPath, sFile,,, ext
 	if ext in exe,dll
 	{
 		Sizes := IconSize ? IconSize : 256 "|" 128 "|" 64 "|" 48 "|" 32 "|" 16
 		BufSize := 16 + (2*(A_PtrSize ? A_PtrSize : 4))
-
+		
 		VarSetCapacity(buf, BufSize, 0)
 		Loop, Parse, Sizes, |
 		{
 			DllCall("PrivateExtractIcons", "str", sFile, "int", IconNumber-1, "int", A_LoopField, "int", A_LoopField, PtrA, hIcon, PtrA, 0, "uint", 1, "uint", 0)
-
+			
 			if !hIcon
 				continue
 
@@ -4996,7 +6094,7 @@ Gdip_CreateBitmapFromFile(sFile, IconNumber=1, IconSize="")
 				DestroyIcon(hIcon)
 				continue
 			}
-
+			
 			hbmMask  := NumGet(buf, 12 + ((A_PtrSize ? A_PtrSize : 4) - 4))
 			hbmColor := NumGet(buf, 12 + ((A_PtrSize ? A_PtrSize : 4) - 4) + (A_PtrSize ? A_PtrSize : 4))
 			if !(hbmColor && DllCall("GetObject", Ptr, hbmColor, "int", BufSize, Ptr, &buf))
@@ -5016,7 +6114,7 @@ Gdip_CreateBitmapFromFile(sFile, IconNumber=1, IconSize="")
 			DestroyIcon(hIcon)
 			return -2
 		}
-
+		
 		VarSetCapacity(dib, 104)
 		DllCall("GetObject", Ptr, hbm, "int", A_PtrSize = 8 ? 104 : 84, Ptr, &dib) ; sizeof(DIBSECTION) = 76+2*(A_PtrSize=8?4:0)+2*A_PtrSize
 		Stride := NumGet(dib, 12, "Int"), Bits := NumGet(dib, 20 + (A_PtrSize = 8 ? 4 : 0)) ; padding
@@ -5039,7 +6137,7 @@ Gdip_CreateBitmapFromFile(sFile, IconNumber=1, IconSize="")
 		else
 			DllCall("gdiplus\GdipCreateBitmapFromFile", Ptr, &sFile, PtrA, pBitmap)
 	}
-
+	
 	return pBitmap
 }
 
@@ -5048,7 +6146,7 @@ Gdip_CreateBitmapFromFile(sFile, IconNumber=1, IconSize="")
 Gdip_CreateBitmapFromHBITMAP(hBitmap, Palette=0)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	DllCall("gdiplus\GdipCreateBitmapFromHBITMAP", Ptr, hBitmap, Ptr, Palette, A_PtrSize ? "UPtr*" : "uint*", pBitmap)
 	return pBitmap
 }
@@ -5081,8 +6179,8 @@ Gdip_CreateHICONFromBitmap(pBitmap)
 
 Gdip_CreateBitmap(Width, Height, Format=0x26200A)
 {
-	DllCall("gdiplus\GdipCreateBitmapFromScan0", "int", Width, "int", Height, "int", 0, "int", Format, A_PtrSize ? "UPtr" : "UInt", 0, A_PtrSize ? "UPtr*" : "uint*", pBitmap)
-	Return pBitmap
+    DllCall("gdiplus\GdipCreateBitmapFromScan0", "int", Width, "int", Height, "int", 0, "int", Format, A_PtrSize ? "UPtr" : "UInt", 0, A_PtrSize ? "UPtr*" : "uint*", pBitmap)
+    Return pBitmap
 }
 
 ;#####################################################################################
@@ -5090,7 +6188,7 @@ Gdip_CreateBitmap(Width, Height, Format=0x26200A)
 Gdip_CreateBitmapFromClipboard()
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	if !DllCall("OpenClipboard", Ptr, 0)
 		return -1
 	if !DllCall("IsClipboardFormatAvailable", "uint", 8)
@@ -5234,7 +6332,7 @@ Gdip_CreateTextureBrush(pBitmap, WrapMode=1, x=0, y=0, w="", h="")
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	, PtrA := A_PtrSize ? "UPtr*" : "UInt*"
-
+	
 	if !(w && h)
 		DllCall("gdiplus\GdipCreateTexture", Ptr, pBitmap, "int", WrapMode, PtrA, pBrush)
 	else
@@ -5252,7 +6350,7 @@ Gdip_CreateTextureBrush(pBitmap, WrapMode=1, x=0, y=0, w="", h="")
 Gdip_CreateLineBrush(x1, y1, x2, y2, ARGB1, ARGB2, WrapMode=1)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	CreatePointF(PointF1, x1, y1), CreatePointF(PointF2, x2, y2)
 	DllCall("gdiplus\GdipCreateLineBrush", Ptr, &PointF1, Ptr, &PointF2, "Uint", ARGB1, "Uint", ARGB2, "int", WrapMode, A_PtrSize ? "UPtr*" : "UInt*", LGpBrush)
 	return LGpBrush
@@ -5345,6 +6443,250 @@ Gdip_DeleteMatrix(Matrix)
 }
 
 ;#####################################################################################
+; Text functions
+;#####################################################################################
+
+Gdip_TextToGraphics(pGraphics, Text, Options, Font="Arial", Width="", Height="", Measure=0)
+{
+	IWidth := Width, IHeight:= Height
+	
+	RegExMatch(Options, "i)X([\-\d\.]+)(p*)", xpos)
+	RegExMatch(Options, "i)Y([\-\d\.]+)(p*)", ypos)
+	RegExMatch(Options, "i)W([\-\d\.]+)(p*)", Width)
+	RegExMatch(Options, "i)H([\-\d\.]+)(p*)", Height)
+	RegExMatch(Options, "i)C(?!(entre|enter))([a-f\d]+)", Colour)
+	RegExMatch(Options, "i)Top|Up|Bottom|Down|vCentre|vCenter", vPos)
+	RegExMatch(Options, "i)NoWrap", NoWrap)
+	RegExMatch(Options, "i)R(\d)", Rendering)
+	RegExMatch(Options, "i)S(\d+)(p*)", Size)
+
+	if !Gdip_DeleteBrush(Gdip_CloneBrush(Colour2))
+		PassBrush := 1, pBrush := Colour2
+	
+	if !(IWidth && IHeight) && (xpos2 || ypos2 || Width2 || Height2 || Size2)
+		return -1
+
+	Style := 0, Styles := "Regular|Bold|Italic|BoldItalic|Underline|Strikeout"
+	Loop, Parse, Styles, |
+	{
+		if RegExMatch(Options, "\b" A_loopField)
+		Style |= (A_LoopField != "StrikeOut") ? (A_Index-1) : 8
+	}
+  
+	Align := 0, Alignments := "Near|Left|Centre|Center|Far|Right"
+	Loop, Parse, Alignments, |
+	{
+		if RegExMatch(Options, "\b" A_loopField)
+			Align |= A_Index//2.1      ; 0|0|1|1|2|2
+	}
+
+	xpos := (xpos1 != "") ? xpos2 ? IWidth*(xpos1/100) : xpos1 : 0
+	ypos := (ypos1 != "") ? ypos2 ? IHeight*(ypos1/100) : ypos1 : 0
+	Width := Width1 ? Width2 ? IWidth*(Width1/100) : Width1 : IWidth
+	Height := Height1 ? Height2 ? IHeight*(Height1/100) : Height1 : IHeight
+	if !PassBrush
+		Colour := "0x" (Colour2 ? Colour2 : "ff000000")
+	Rendering := ((Rendering1 >= 0) && (Rendering1 <= 5)) ? Rendering1 : 4
+	Size := (Size1 > 0) ? Size2 ? IHeight*(Size1/100) : Size1 : 12
+
+	hFamily := Gdip_FontFamilyCreate(Font)
+	hFont := Gdip_FontCreate(hFamily, Size, Style)
+	FormatStyle := NoWrap ? 0x4000 | 0x1000 : 0x4000
+	hFormat := Gdip_StringFormatCreate(FormatStyle)
+	pBrush := PassBrush ? pBrush : Gdip_BrushCreateSolid(Colour)
+	if !(hFamily && hFont && hFormat && pBrush && pGraphics)
+		return !pGraphics ? -2 : !hFamily ? -3 : !hFont ? -4 : !hFormat ? -5 : !pBrush ? -6 : 0
+   
+	CreateRectF(RC, xpos, ypos, Width, Height)
+	Gdip_SetStringFormatAlign(hFormat, Align)
+	Gdip_SetTextRenderingHint(pGraphics, Rendering)
+	ReturnRC := Gdip_MeasureString(pGraphics, Text, hFont, hFormat, RC)
+
+	if vPos
+	{
+		StringSplit, ReturnRC, ReturnRC, |
+		
+		if (vPos = "vCentre") || (vPos = "vCenter")
+			ypos += (Height-ReturnRC4)//2
+		else if (vPos = "Top") || (vPos = "Up")
+			ypos := 0
+		else if (vPos = "Bottom") || (vPos = "Down")
+			ypos := Height-ReturnRC4
+		
+		CreateRectF(RC, xpos, ypos, Width, ReturnRC4)
+		ReturnRC := Gdip_MeasureString(pGraphics, Text, hFont, hFormat, RC)
+	}
+
+	if !Measure
+		E := Gdip_DrawString(pGraphics, Text, hFont, hFormat, pBrush, RC)
+
+	if !PassBrush
+		Gdip_DeleteBrush(pBrush)
+	Gdip_DeleteStringFormat(hFormat)   
+	Gdip_DeleteFont(hFont)
+	Gdip_DeleteFontFamily(hFamily)
+	return E ? E : ReturnRC
+}
+
+;#####################################################################################
+
+Gdip_DrawString(pGraphics, sString, hFont, hFormat, pBrush, ByRef RectF)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	if (!A_IsUnicode)
+	{
+		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, Ptr, 0, "int", 0)
+		VarSetCapacity(wString, nSize*2)
+		DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, Ptr, &wString, "int", nSize)
+	}
+	
+	return DllCall("gdiplus\GdipDrawString"
+					, Ptr, pGraphics
+					, Ptr, A_IsUnicode ? &sString : &wString
+					, "int", -1
+					, Ptr, hFont
+					, Ptr, &RectF
+					, Ptr, hFormat
+					, Ptr, pBrush)
+}
+
+;#####################################################################################
+
+Gdip_MeasureString(pGraphics, sString, hFont, hFormat, ByRef RectF)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	VarSetCapacity(RC, 16)
+	if !A_IsUnicode
+	{
+		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, "uint", 0, "int", 0)
+		VarSetCapacity(wString, nSize*2)   
+		DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, Ptr, &wString, "int", nSize)
+	}
+	
+	DllCall("gdiplus\GdipMeasureString"
+					, Ptr, pGraphics
+					, Ptr, A_IsUnicode ? &sString : &wString
+					, "int", -1
+					, Ptr, hFont
+					, Ptr, &RectF
+					, Ptr, hFormat
+					, Ptr, &RC
+					, "uint*", Chars
+					, "uint*", Lines)
+	
+	return &RC ? NumGet(RC, 0, "float") "|" NumGet(RC, 4, "float") "|" NumGet(RC, 8, "float") "|" NumGet(RC, 12, "float") "|" Chars "|" Lines : 0
+}
+
+; Near = 0
+; Center = 1
+; Far = 2
+Gdip_SetStringFormatAlign(hFormat, Align)
+{
+   return DllCall("gdiplus\GdipSetStringFormatAlign", A_PtrSize ? "UPtr" : "UInt", hFormat, "int", Align)
+}
+
+; StringFormatFlagsDirectionRightToLeft    = 0x00000001
+; StringFormatFlagsDirectionVertical       = 0x00000002
+; StringFormatFlagsNoFitBlackBox           = 0x00000004
+; StringFormatFlagsDisplayFormatControl    = 0x00000020
+; StringFormatFlagsNoFontFallback          = 0x00000400
+; StringFormatFlagsMeasureTrailingSpaces   = 0x00000800
+; StringFormatFlagsNoWrap                  = 0x00001000
+; StringFormatFlagsLineLimit               = 0x00002000
+; StringFormatFlagsNoClip                  = 0x00004000 
+Gdip_StringFormatCreate(Format=0, Lang=0)
+{
+   DllCall("gdiplus\GdipCreateStringFormat", "int", Format, "int", Lang, A_PtrSize ? "UPtr*" : "UInt*", hFormat)
+   return hFormat
+}
+
+; Regular = 0
+; Bold = 1
+; Italic = 2
+; BoldItalic = 3
+; Underline = 4
+; Strikeout = 8
+Gdip_FontCreate(hFamily, Size, Style=0)
+{
+   DllCall("gdiplus\GdipCreateFont", A_PtrSize ? "UPtr" : "UInt", hFamily, "float", Size, "int", Style, "int", 0, A_PtrSize ? "UPtr*" : "UInt*", hFont)
+   return hFont
+}
+
+Gdip_FontFamilyCreate(Font)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	if (!A_IsUnicode)
+	{
+		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &Font, "int", -1, "uint", 0, "int", 0)
+		VarSetCapacity(wFont, nSize*2)
+		DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &Font, "int", -1, Ptr, &wFont, "int", nSize)
+	}
+	
+	DllCall("gdiplus\GdipCreateFontFamilyFromName"
+					, Ptr, A_IsUnicode ? &Font : &wFont
+					, "uint", 0
+					, A_PtrSize ? "UPtr*" : "UInt*", hFamily)
+	
+	return hFamily
+}
+
+;#####################################################################################
+; Matrix functions
+;#####################################################################################
+
+Gdip_CreateAffineMatrix(m11, m12, m21, m22, x, y)
+{
+   DllCall("gdiplus\GdipCreateMatrix2", "float", m11, "float", m12, "float", m21, "float", m22, "float", x, "float", y, A_PtrSize ? "UPtr*" : "UInt*", Matrix)
+   return Matrix
+}
+
+Gdip_CreateMatrix()
+{
+   DllCall("gdiplus\GdipCreateMatrix", A_PtrSize ? "UPtr*" : "UInt*", Matrix)
+   return Matrix
+}
+
+;#####################################################################################
+; GraphicsPath functions
+;#####################################################################################
+
+; Alternate = 0
+; Winding = 1
+Gdip_CreatePath(BrushMode=0)
+{
+	DllCall("gdiplus\GdipCreatePath", "int", BrushMode, A_PtrSize ? "UPtr*" : "UInt*", Path)
+	return Path
+}
+
+Gdip_AddPathEllipse(Path, x, y, w, h)
+{
+	return DllCall("gdiplus\GdipAddPathEllipse", A_PtrSize ? "UPtr" : "UInt", Path, "float", x, "float", y, "float", w, "float", h)
+}
+
+Gdip_AddPathPolygon(Path, Points)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+	
+	StringSplit, Points, Points, |
+	VarSetCapacity(PointF, 8*Points0)   
+	Loop, %Points0%
+	{
+		StringSplit, Coord, Points%A_Index%, `,
+		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
+	}   
+
+	return DllCall("gdiplus\GdipAddPathPolygon", Ptr, Path, Ptr, &PointF, "int", Points0)
+}
+
+Gdip_DeletePath(Path)
+{
+	return DllCall("gdiplus\GdipDeletePath", A_PtrSize ? "UPtr" : "UInt", Path)
+}
+
+;#####################################################################################
 ; Quality functions
 ;#####################################################################################
 
@@ -5395,7 +6737,7 @@ Gdip_SetCompositingMode(pGraphics, CompositingMode=0)
 Gdip_Startup()
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	if !DllCall("GetModuleHandle", "str", "gdiplus", Ptr)
 		DllCall("LoadLibrary", "str", "gdiplus")
 	VarSetCapacity(si, A_PtrSize = 8 ? 24 : 16, 0), si := Chr(1)
@@ -5406,7 +6748,7 @@ Gdip_Startup()
 Gdip_Shutdown(pToken)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	DllCall("gdiplus\GdiplusShutdown", Ptr, pToken)
 	if hModule := DllCall("GetModuleHandle", "str", "gdiplus", Ptr)
 		DllCall("FreeLibrary", Ptr, hModule)
@@ -5437,7 +6779,7 @@ Gdip_ResetWorldTransform(pGraphics)
 
 Gdip_GetRotatedTranslation(Width, Height, Angle, ByRef xTranslation, ByRef yTranslation)
 {
-	pi := 3.14159, TAngle := Angle*(pi/180)
+	pi := 3.14159, TAngle := Angle*(pi/180)	
 
 	Bound := (Angle >= 0) ? Mod(Angle, 360) : 360-Mod(-Angle, -360)
 	if ((Bound >= 0) && (Bound <= 90))
@@ -5474,7 +6816,7 @@ Gdip_GetRotatedDimensions(Width, Height, Angle, ByRef RWidth, ByRef RHeight)
 ; RotateNoneFlipXY     = Rotate180FlipNone
 ; Rotate90FlipXY       = Rotate270FlipNone
 ; Rotate180FlipXY      = RotateNoneFlipNone
-; Rotate270FlipXY      = Rotate90FlipNone
+; Rotate270FlipXY      = Rotate90FlipNone 
 
 Gdip_ImageRotateFlip(pBitmap, RotateFlipType=1)
 {
@@ -5513,7 +6855,7 @@ Gdip_GetClipRegion(pGraphics)
 Gdip_SetClipRegion(pGraphics, Region, CombineMode=0)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	return DllCall("gdiplus\GdipSetClipRegion", Ptr, pGraphics, Ptr, Region, "int", CombineMode)
 }
 
@@ -5535,7 +6877,7 @@ Gdip_DeleteRegion(Region)
 Gdip_LockBits(pBitmap, x, y, w, h, ByRef Stride, ByRef Scan0, ByRef BitmapData, LockMode = 3, PixelFormat = 0x26200a)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	CreateRect(Rect, x, y, w, h)
 	VarSetCapacity(BitmapData, 16+2*(A_PtrSize ? A_PtrSize : 4), 0)
 	E := DllCall("Gdiplus\GdipBitmapLockBits", Ptr, pBitmap, Ptr, &Rect, "uint", LockMode, "int", PixelFormat, Ptr, &BitmapData)
@@ -5549,7 +6891,7 @@ Gdip_LockBits(pBitmap, x, y, w, h, ByRef Stride, ByRef Scan0, ByRef BitmapData, 
 Gdip_UnlockBits(pBitmap, ByRef BitmapData)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	return DllCall("Gdiplus\GdipBitmapUnlockBits", Ptr, pBitmap, Ptr, &BitmapData)
 }
 
@@ -5572,9 +6914,9 @@ Gdip_GetLockBitPixel(Scan0, x, y, Stride)
 Gdip_PixelateBitmap(pBitmap, ByRef pBitmapOut, BlockSize)
 {
 	static PixelateBitmap
-
+	
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
-
+	
 	if (!PixelateBitmap)
 	{
 		if A_PtrSize != 8 ; x86 machine code
@@ -5630,7 +6972,7 @@ Gdip_PixelateBitmap(pBitmap, ByRef pBitmapOut, BlockSize)
 		0FAFC903CA0FAF8C2490000000410FAFC18D04814863C8488B442478488D440102418BCD40887001448818448850FF448840FE4883C00448FFC975E8FFC2
 		413BD77CB233C04883C428415F415E415D415C5F5E5D5BC3
 		)
-
+		
 		VarSetCapacity(PixelateBitmap, StrLen(MCode_PixelateBitmap)//2)
 		Loop % StrLen(MCode_PixelateBitmap)//2		;%
 			NumPut("0x" SubStr(MCode_PixelateBitmap, (2*A_Index)-1, 2), PixelateBitmap, A_Index-1, "UChar")
@@ -5638,7 +6980,7 @@ Gdip_PixelateBitmap(pBitmap, ByRef pBitmapOut, BlockSize)
 	}
 
 	Gdip_GetImageDimensions(pBitmap, Width, Height)
-
+	
 	if (Width != Gdip_GetImageWidth(pBitmapOut) || Height != Gdip_GetImageHeight(pBitmapOut))
 		return -1
 	if (BlockSize > Width || BlockSize > Height)
@@ -5650,7 +6992,7 @@ Gdip_PixelateBitmap(pBitmap, ByRef pBitmapOut, BlockSize)
 		return -3
 
 	E := DllCall(&PixelateBitmap, Ptr, Scan01, Ptr, Scan02, "int", Width, "int", Height, "int", Stride1, "int", BlockSize)
-
+	
 	Gdip_UnlockBits(pBitmap, BitmapData1), Gdip_UnlockBits(pBitmapOut, BitmapData2)
 	return 0
 }
@@ -5742,7 +7084,6 @@ StrGetB(Address, Length=-1, Encoding=0)
 		char_count := DllCall("MultiByteToWideChar", "uint", Encoding, "uint", 0, "uint", Address, "int", Length, "uint", &String, "int", char_count * 2)
 		String := StrGetB(&String, char_count, 1200)
 	}
-
+	
 	return String
-}
-
+}	 
