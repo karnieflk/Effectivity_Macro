@@ -2,14 +2,14 @@
  * * * Compile_AHK SETTINGS BEGIN * * *
 
 [AHK2EXE]
-Exe_File=%In_Dir%\Effectivity Macro 2.5B Dual Tab.exe
+Exe_File=%In_Dir%\Effectivity Macro 2.5.4 Beta Dual Tab.exe
 [VERSION]
 Set_Version_Info=1
-File_Description=Effectivity Macro 2.5 Beta
+File_Description=Effectivity Macro 2.5.2 Beta
 File_Version=2.0.0.0
 Inc_File_Version=0
 Legal_Copyright=Jarett Karnia
-Product_Version=2.0.0.10
+Product_Version=2.0.0.13
 [ICONS]
 Icon_1=%In_Dir%\Rewrite of 1.4 Revised.ahk_1.ico
 Icon_4=%In_Dir%\Rewrite of 1.4 Revised.ahk_4.ico
@@ -47,7 +47,7 @@ DetectHiddenText on
 #InstallMouseHook
 
 
-Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array, breakloop,Creating_image, Log_Events, Plus_SIgn, Enable_Two_Tabs, pToken, Base_ACM_Window
+Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array, breakloop,Creating_image, Log_Events, Plus_SIgn, Enable_Two_Tabs, pToken, Base_ACM_Window, ACM_Class
 
 ; below is for testing between home and work computer
 /*
@@ -80,7 +80,7 @@ Added another formatting senario
 */
 
 
-Version_Number = 2.5 Beta
+Version_Number = 2.5.3 Beta
 ;~ Version_Number = 1.1 test
 Effectivity_Macro :=  "Effectivity Macro V" Version_Number
 Checkp=0
@@ -101,6 +101,8 @@ Serialzcounter2 = 0
 Serialzcounter = 0
 TotalPrefixes = 0
 Radiobutton = 1
+ACM_Class = TTAFrameXClass
+
 
 Unit_Test = 0 ; Set this to 1 to perform unit tests  and offline testing
 Log_Events = 0 ;Set this to 1 to perform logging
@@ -210,8 +212,12 @@ SplashTextOn,,20,,Checking for update....
 Versioncheck("0")
 SplashTextOff
 Formatted_text_completed = 0
+
+IfExist, %File_Install_Work_Folder%\TempReuse.txt
+	FileRead, Editfield, %File_Install_Work_Folder%\TempReuse.txt
 If Editfield <>
 	Formatted_text_completed = 1
+
 
 Serials_GUI_Screen(editfield, editfield2, TotalPrefixes, Serialcount)
 
@@ -281,6 +287,9 @@ else
 $^Numpad1::
 $^1::
 {
+	IfExist, %File_Install_Work_Folder%\TempReuse.txt
+		FileDelete, IfExist, %File_Install_Work_Folder%\TempReuse.txt
+	
 Added_Serial_Count(Add_Or_Subtract := "Reset")
 Copy_text_and_Format()
 Formatted_text_completed = 1
@@ -938,6 +947,7 @@ Debug_Log_Event(Event) ; no unit tesing && Documentation
 
 	Quitapp: ; no unit testing
 	{
+		
 		Result := 	Move_Message_Box("262148","Quit " Effectivity_Macro, "Are you sure you want to quit?")
 
 		If result =  Yes
@@ -974,8 +984,8 @@ Copy_text_and_Format(Input_text := "") ; no unit test needed as it all the other
 	Formatted_Serial_Array := Put_Formatted_Serials_into_Array(Formatted_Text)
 	
 	
-	Checked := SerialbreakquestionGUI() ; Goes to the Serialsgui.ahk and into the SerialbreakquestionGUI subroutine
-	
+	Checked := SerialbreakquestionGUI(Reuse_Effectivity) ; Goes to the Serialsgui.ahk and into the SerialbreakquestionGUI subroutine
+		;~ MsgBox, % Reuse_Effectivity " is reuse"
 	If Checked = Canceled
 	{
 		Gui_Image_Show("Start")
@@ -1029,9 +1039,19 @@ Editfield := Extract_Serial_Array(Combined_Serial_Array)
 	Gui_Image_Show("Start")
 	if (checked)
 		gosub, Export_Serials
+
+	if (Reuse_Effectivity)
+		gosub, TempReuse
 	return
 }              
 
+tempreuse:
+{
+	GuiControlGet, EditField	
+	FileAppend, %Editfield%, %File_Install_Work_Folder%\TempReuse.txt
+
+return
+}
 One_Operation_Key_Press(Mod_Key, Key)
 {
 Send {%Mod_key% Down}{%Key%}{%Mod_Key% Up}	
@@ -1596,11 +1616,11 @@ Loop
 			WinGet, Base_ACM_Window, Id, A
 	Make_New_Window(Active_ID)
 		SerialFullScreen(Active_ID)
-		Get_Effectivity_Tab_Location(Effectivityx, Effectivityy)
+		Active_ID := Get_Effectivity_Tab_Location(Effectivityx, Effectivityy)
 	Sleep()
 	}
 
-	Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
+Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
 	WinGet, Active_ID, Id, A
 	Sleep()
 	Get_Prefix_Button_Screen_Position(prefixx, prefixy)
@@ -1959,6 +1979,8 @@ Return
 
 Select_tab(Tab_Number)
 {
+	global Active_ID
+	Win_check(Active_ID)
 		One_Operation_Key_Press("Ctrl", tab_number)
 		Sleep(5)
 return
@@ -2262,7 +2284,7 @@ return Add_count
 Enterserials(Prefix_Holder_for_ACM_Input,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete, Base_ACM_Window)
 {
 
-	global  prefixx, prefixy, Applyx, Applyy, Add_Button_X_Location, Add_Button_Y_Location, StartTime, Sleep_Delay, Start_Total_Time, Enable_Two_Tabs
+	global  prefixx, prefixy, Applyx, Applyy, Add_Button_X_Location, Add_Button_Y_Location, StartTime, Sleep_Delay, Start_Total_Time, Enable_Two_Tabs, File_Install_Work_Folder
 
 If (!Complete)
 {
@@ -2316,6 +2338,9 @@ else
 	 GuiControl,, Radio2, 1
 	 gosub, radio_button
   Gui_Image_Show("Stop")
+  IfExist, %File_Install_Work_Folder%\TempReuse.txt
+	Reuse_ASK_gui()
+	
   Exit
 	  
    }
@@ -2323,6 +2348,30 @@ else
    
 }
 
+Reuse_ASK_gui()
+{
+gui, reuse:add, text,,Would you like to reload Macro with this run's effectivity list?
+gui, reuse:add, button,greload_reuse,Reload
+gui, reuse:add, button, xp+100 yp gQuit_app_reuse, Quit app
+gui,reuse:Show
+	return
+}
+
+reload_reuse:
+{
+Reload	
+sleep(10)
+ExitApp
+	return
+}
+
+quit_app_reuse:
+{
+	FileDelete,%File_Install_Work_Folder%\TempReuse.txt
+	sleep(10)
+	ExitApp
+	return
+}
 
 
 /*
@@ -2446,32 +2495,58 @@ return
 
 Make_New_Window(ByRef Active_ID)
 {
-	global File_Install_Work_Folder
+	global File_Install_Work_Folder, ACM_Class
+	;~ MsgBox,  % ACM_Class
 	CLipboard = 
 	SetTitleMatchMode, 2
+	Sleep(5)
 	Send {Ctrl Down}{l}
 	Sleep(5)
 	SEnd {c}
+	Sleep(1)
+	Send {Ctrl up}
 	;~ Tooltip %Clipboard%
 	Sleep(5)
+	ClipWait 
 	If Clipboard  !=
 		FileAppend, %clipboard%, %File_Install_Work_Folder%\TempAddress.txt
+	Sleep(3)
+	Send {Ctrl Down}
+	Sleep(1)
 	Send {n}{Ctrl Up}
-	Sleep()
+	Sleep(1)
 	FileRead, TempAddress, %File_Install_Work_Folder%\TempAddress.txt
-sleep(3)
-CoordMode, mouse, Relative
+	Sleep(10)
+	WinGetActiveTitle, Activetitle
+	if Activetitle contains New Tab
+	{
+		CoordMode, mouse, Relative
 Click 10, 300
 CoordMode, mouse, Screen
-WinGet, Active_ID, Id, A
-sleep()
+}
+else
+{
+		SetTitleMatchMode, 2
+	WinActivate,New Tab - Google Chrome ahk_class %ACM_Class%
+	Sleep(1)
+	WinWaitActive,New Tab - Google Chrome ahk_class %ACM_Class%
+}
+sleep(1)
+
+sleep(3)
+WinGet, Active_ID, Id, New Tab ahk_class %ACM_Class%
+sleep(3)
 Win_check(Active_ID)
 Sleep(5)
 One_Operation_Key_Press("Ctrl", "l")
  ;~ Send {Ctrl Down}{l}{Ctrl up}
- Sleep(3)
- SendRaw %Tempaddress%
  Sleep(5)
+ Loop, Parse, TempAddress
+{	
+ SendRaw %A_LoopField%
+ Sleep(.5)
+}
+ Sleep(10)
  FileDelete, %File_Install_Work_Folder%\TempAddress.txt
  ;~ tooltip deleted file
  Sleep(5)
@@ -2482,8 +2557,9 @@ One_Operation_Key_Press("Ctrl", "l")
 	return
 }
 
-Set_Up_Tabs(Effx,Effy, Addx,addy, Active_ID)
+Set_Up_Tabs(Effx,Effy, Addx,addy, ByRef Active_ID)
 {
+	Sleep(5)
 Send {Alt Down}{d}
 Sleep(5)
 Send {Enter}{ALT Up}
@@ -2494,7 +2570,7 @@ Loop
 		Exit
 Click, %Effx%,%Effy%
 Sleep(5)
-Winget, Active_ID, ID, a
+;~ Winget, Active_ID, ID, a
 REsult := PLus_Sign_Search(Active_ID)
 } until (Result = "Found")
 
@@ -2535,12 +2611,13 @@ milli2hms(milli, ByRef hours=0, ByRef mins=0, ByRef secs=0, secPercision=0) ; no
 
 Win_check(Active_ID) ; no unit test needed
 {
-WinGetTitle, Title, ahk_id %Active_ID%
-   IfWinNotActive , %Title%
+;~ WinGetTitle, Title, ahk_id %Active_ID%
+   IfWinNotActive ,  ahk_id %Active_ID%
    {
-	  WinActivate, %Title%
-	  WinWaitActive, %Title%,,3
-	  sleep(5)
+	  WinActivate,  ahk_id %Active_ID%
+	  Sleep()
+	  WinWaitActive,  ahk_id %Active_ID%,,3
+	 sleep(5)
    }
 
    return
@@ -2987,7 +3064,7 @@ sleep()
    return
 }
 
-Get_Effectivity_Tab_Location(ByRef X_Location, ByRef Y_Location )
+Get_Effectivity_Tab_Location(ByRef X_Location, ByRef Y_Location)
 	{
 		
    SetTimer, ToolTipTimerEffectivity, 10  ;timer routine will occur every 10ms..
@@ -2996,10 +3073,11 @@ Wait_For_Shift_Mouse_Click()
 
    MouseGetPos, X_Location, Y_Location
 sleep()
+Winget, Active_ID, ID, A
    SetTimer, ToolTipTimerEffectivity,Off
    Textapplybutton =
    Tooltip,
-   return
+   return Active_ID
 	}
 
 ToolTipTimerEffectivity:
@@ -3356,30 +3434,37 @@ return
 			return
 			}
 
-			SerialbreakquestionGUI() ; no unit test needed
+			SerialbreakquestionGUI( ByRef Save_effectivity_check := "") ; no unit test needed
 			{
-				global createexcel, checked, Escaped
+				global createexcel, checked, Escaped, Save_Effectivity_checkbox,Save_effectivity
+				
 				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
 
 				gui 1: -alwaysontop
-				Gui, 8:Add, Picture, x0 y0 w400 h90 +0x4000000, %File_Install_Work_Folder%\images\background.png
+				Gui, 8:Add, Picture, x0 y0 w400 h110 +0x4000000, %File_Install_Work_Folder%\images\background.png
 				Gui, 8: Add, text, x10 y20 BackgroundTrans, Do you want to combine the serial breaks, or keep the serial breaks seperated?
 				Gui, 8:add, button, xp+50 yp+20 gcombinequstion, Combine
 				gui, 8:add, button, xp+75 yp gkeepseperated, Keep Seperated
 				gui, 8:add, button, xp+115 yp goneup, 1-UP all Effectivity
 				Gui, 8:Add, Checkbox, XP-190 yp+30 vcreateexcel, Export Effectivity to Excel file (Effectivity.CSV)
-				Gui, 8:show, x%amonx% y%amony% w400 h90
+				Gui, 8:Add, Checkbox, XP yp+20 vSave_Effectivity_checkbox,Save formatted Effectivity for reuse
+				Gui, 8:show, x%amonx% y%amony% w400 h110
 				gui 8: +alwaysontop
 				CoordMode, Mouse, Relative
 				MouseMove 200,75
 				CoordMode, Mouse, Screen
+				
 				Pausescript()			
+
+				;~ MsgBox, % Save_effectivity  " is save effectivity"
+				Save_effectivity_check := Save_effectivity
 				If Escaped = 1
 				{
 					Escaped = 
 					Checked = Canceled
 				}
 				gui 1: +alwaysontop
+					Gui, 8:destroy
 				return checked
 			}
 			
@@ -3412,33 +3497,38 @@ Escaped = 1
 
 			oneup()
 			{
-				global checked, Oneupserial
+				global checked, Oneupserial, Save_effectivity
 				UnPausescript()
 				GuiControlGet, checked,, createexcel
+				GuiControlGet,Save_effectivity,, Save_Effectivity_checkbox
+				;~ MsgBox, % Save_effectivity " is save effectivity `n create excel is " checked
 				gui 1: +alwaysontop
 				Oneupserial = 1
-				Gui, 8:destroy
+				;~ Gui, 8:destroy
 				Return Checked
 			}
 
 			combinequstion()
 			{
-				global checked, combine
+				global checked, combine, Save_effectivity
+				
 				UnPausescript()
 				GuiControlGet, checked,, createexcel
+					GuiControlGet,Save_effectivity,, Save_Effectivity_checkbox
 				gui 1: +alwaysontop
 				combine = 1
-				Gui, 8:destroy				
+				;~ Gui, 8:destroy				
 				Return Checked
 			}
 
 			keepseperated()
 			{
-				global checked
+				global checked, Save_effectivity
 				UnPausescript()
 				GuiControlGet, checked,, createexcel
+					GuiControlGet,Save_effectivity,, Save_Effectivity_checkbox
 				gui 1: +alwaysontop
-				Gui, 8:destroy
+				;~ Gui, 8:destroy
 				combine = 0
 				Oneupserial = 0
 				Return Checked
