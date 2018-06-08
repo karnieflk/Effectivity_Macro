@@ -2,19 +2,37 @@
  * * * Compile_AHK SETTINGS BEGIN * * *
 
 [AHK2EXE]
-Exe_File=%In_Dir%\Effectivity Macro 2.5.4 Beta Dual Tab.exe
+Exe_File=%In_Dir%\Effectivity Macro 2.0.exe
 [VERSION]
 Set_Version_Info=1
-File_Description=Effectivity Macro 2.5.2 Beta
 File_Version=2.0.0.0
 Inc_File_Version=0
 Legal_Copyright=Jarett Karnia
-Product_Version=2.0.0.13
+Product_Version=2.0.0.0
 [ICONS]
-Icon_1=%In_Dir%\Rewrite of 1.4 Revised.ahk_1.ico
-Icon_4=%In_Dir%\Rewrite of 1.4 Revised.ahk_4.ico
+Icon_1=C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\icons\Serial.ico
+Icon_4=C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\icons\paused.ico
 
 * * * Compile_AHK SETTINGS END * * *
+*/
+
+/*
+	* * * Compile_AHK SETTINGS BEGIN * * *
+	
+	[AHK2EXE]
+	Exe_File=%In_Dir%\Effectivity Macro 2.5.7 Beta Dual Tab.exe
+	[VERSION]
+	Set_Version_Info=1
+	File_Description=Effectivity Macro 2.5.7 Beta
+	File_Version=2.0.0.0
+	Inc_File_Version=0
+	Legal_Copyright=Jarett Karnia
+	Product_Version=2.0.0.13
+	[ICONS]
+	Icon_1=%In_Dir%\Rewrite of 1.4 Revised.ahk_1.ico
+	Icon_4=%In_Dir%\Rewrite of 1.4 Revised.ahk_4.ico
+	
+	* * * Compile_AHK SETTINGS END * * *
 */
 
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
@@ -24,8 +42,8 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 SetWorkingDir   %A_ScriptDir% ; Ensures a consistent starting directory.
 /*!
 	Library: Effectivity Macro
-		This macro Gets the user selected text from the CPI tool and enters it into ACM effectivity screen
-
+	This macro Gets the user selected text from the CPI tool and enters it into ACM effectivity screen
+	
 	Author: Jarett Karnia
 	Version: 2.0
 */
@@ -47,40 +65,52 @@ DetectHiddenText on
 #InstallMouseHook
 
 
-Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array, breakloop,Creating_image, Log_Events, Plus_SIgn, Enable_Two_Tabs, pToken, Base_ACM_Window, ACM_Class
+Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_Monitor, Log_Events, Unit_test, File_Install_Work_Folder, Oneupserial, combineser, Active_ID, Image_Red_Exclamation_Point, At_home,Issues_Image, Ini_var_store_array, breakloop,Creating_image, Log_Events, Plus_SIgn, Enable_Two_Tabs, pToken, Base_ACM_Window, ACM_Class, Existing_Effectivity_image, Zoomlevel
 
 ; below is for testing between home and work computer
 /*
-if A_UserName = karnijs
-At_home = 0
-else
-At_home = 1
+	if A_UserName = karnijs
+		At_home = 0
+	else
+		At_home = 1
 */
 
 /*
-
-TODO ************************
-*** complete*** Setup the Export to Excel. - Make it into a CSV file so that is works faster
-Create more unit tests
-Create Testing scripts
-
-Changes over 1.3B
-Faster way to make excep export file
-New way to update and check, now it does it very quickly and every launch
-Dual tabs
-Double check for ACM after OKay box
-Added another formatting senario
+	
+	TODO ************************
+	*** complete*** Setup the Export to Excel. - Make it into a CSV file so that is works faster
+	Create more unit tests
+	Create Testing scripts
+	
+	Changes over 1.3B
+	Faster way to make excep export file
+	New way to update and check, now it does it very quickly and every launch
+	Dual tabs
+	Double check for ACM after OKay box
+	Added another formatting senario
+	
+	2.5.3
+	Added in options for to retian list to spec book input
+	2.5.4
+	Added in auto check for already in ACM
+	2.5.5
+	Added in auto scale for chrome window to better reliability
+	Added in auto put back from the scaling window
+	
+	2.5.6
+	Added that reuse gui screen goes to the top.
+	
 */
 
 ;~ #include Unit_testing\Unit_testing.ahk  ; Uncomment this to run unit test modules, to narrow down what function is broken
 /*
-****************************************************************************************************************************************************
-************ Variable Setup *******************************************************************************
-*****************************************************************************************
+	****************************************************************************************************************************************************
+	************ Variable Setup *******************************************************************************
+	*****************************************************************************************
 */
 
 
-Version_Number = 2.5.3 Beta
+Version_Number = 2..0
 ;~ Version_Number = 1.1 test
 Effectivity_Macro :=  "Effectivity Macro V" Version_Number
 Checkp=0
@@ -122,19 +152,20 @@ Image_Red_Exclamation_Point = %File_install_Image_Folder%\red_image.png
 Issues_Image = %File_install_Image_Folder%\Issues_Image.png
 Creating_image = %File_install_Image_Folder%\Creating_image.png
 Plus_SIgn = %File_install_Image_Folder%\Plus_SIgn.png
+Existing_Effectivity_image = %File_install_Image_Folder%\Existing.png
 
 
 Result := Folder_Exist_Check(File_Install_Work_Folder)
 If Result contains Folder_Not_Exist
-Folder_Create(File_Install_Work_Folder)
+	Folder_Create(File_Install_Work_Folder)
 
 Result := Folder_Exist_Check(File_install_Image_Folder)
 If Result contains  Folder_Not_Exist
-Folder_Create(File_install_Image_Folder)
+	Folder_Create(File_install_Image_Folder)
 
 Result := Folder_Exist_Check(File_install_Icon_Folder)
 If Result contains Folder_Not_Exist
-Folder_Create(File_install_Icon_Folder)
+	Folder_Create(File_install_Icon_Folder)
 
 Result := Config_File_Check(Configuration_File_Location)
 
@@ -143,13 +174,13 @@ If Result  contains File_Not_Exist
 	Config_File_Create(Configuration_File_Location, At_home)
 	sleep(5)
 	IniWrite, 20,  %Configuration_File_Location%,refreshrate,refreshrate
-		IniWrite, 3,  %Configuration_File_Location%,Sleep_Delay,Sleep_Delay
+	IniWrite, 3,  %Configuration_File_Location%,Sleep_Delay,Sleep_Delay
 	Sleep()
 }
 
 If Sleep_Delay = Error
 {
-
+	
 	IniWrite, 3,  %Configuration_File_Location%,Sleep_Delay,Sleep_Delay
 	Load_ini_file(Configuration_File_Location)
 }
@@ -182,7 +213,7 @@ Create_Tray_Menu()
 Create_Main_GUI_Menu()
 
 editfield := Temp_File_Read(File_Install_Work_Folder,"TempAdd.txt")
-If Editfield != 
+If Editfield !=
 	Formatted_text_completed = 1
 
 Temp_File_Delete(File_Install_Work_Folder,"TempAdd.txt")
@@ -209,15 +240,22 @@ If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null") || (
 
 
 SplashTextOn,,20,,Checking for update....
-Versioncheck("0")
+;~ Versioncheck("0")
 SplashTextOff
 Formatted_text_completed = 0
-
-IfExist, %File_Install_Work_Folder%\TempReuse.txt
-	FileRead, Editfield, %File_Install_Work_Folder%\TempReuse.txt
-If Editfield <>
-	Formatted_text_completed = 1
-
+IniRead, reuse, %Configuration_File_Location%, reuse,reuse
+If (reuse)
+{
+	IfExist, %File_Install_Work_Folder%\TempReuse.txt
+		FileRead, Editfield, %File_Install_Work_Folder%\TempReuse.txt
+	If Editfield <>
+		Formatted_text_completed = 1
+}
+else if reuse = 0
+{
+	IfExist, %File_Install_Work_Folder%\TempReuse.txt
+		FileDelete, %File_Install_Work_Folder%\TempReuse.txt
+}
 
 Serials_GUI_Screen(editfield, editfield2, TotalPrefixes, Serialcount)
 
@@ -229,58 +267,59 @@ If (Unit_test)
 
 pToken := Gdip_Startup()
 
-	
+
 return
 
 /*
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Hotkeys \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-	*/
+*/
 #`::ListLines
 +#~::ListVars
 
-   Insert::
-   Pause::
-   {
-	  if A_IsPaused = 0
-	  {
-		 Gui 1: -AlwaysOnTop
-		 Gui, Submit, NoHide
-
-  Loop, 4
-	Move_Message_Box("262144", Effectivity_Macro,"Macro is paused. Press pause to unpause", ".1")
-
-	Move_Message_Box("262144", Effectivity_Macro,"Macro is paused. Press pause to unpause", "10")
-
-	Pausescript()
-		 Return
-	  }else  {
-	   gosub, radio_button
-		 Gui 1: +AlwaysOnTop
-UnPausescript()
-		 Gui, Submit, NoHide
-	  }
-	  return
-   }
+Insert::
+Pause::
+{
+	if A_IsPaused = 0
+	{
+		Gui 1: -AlwaysOnTop
+		Gui, Submit, NoHide
+		
+		Loop, 4
+			Move_Message_Box("262144", Effectivity_Macro,"Macro is paused. Press pause to unpause", ".1")
+		
+		Move_Message_Box("262144", Effectivity_Macro,"Macro is paused. Press pause to unpause", "10")
+		
+		Pausescript()
+		Return
+	}else  {
+		gosub, radio_button
+		Gui 1: +AlwaysOnTop
+		UnPausescript()
+		Gui, Submit, NoHide
+	}
+	return
+}
 
 
 
 ~Esc::
 {
-Serialcount := Added_Serial_Count("0")
-Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successful Serial additions to ACM is " Serialcount " `n`n Are you sure that you want to stop the macro?.`n`n Press YES to stop the Macro.`n`n No to keep going.")
-   If Result = Yes
-{
-	  Gui 1: -AlwaysOnTop
-	  Gui_Image_Show("Stop")
-	  Gui, Submit, NoHide
-	  Send {Shift Up}{Ctrl Up}
-	  breakloop = 1
-	  exit
-	  }
-else
-   Return
+	Serialcount := Added_Serial_Count("0")
+	Result := Move_Message_Box("262148", Effectivity_Macro, "The number of successful Serial additions to ACM is " Serialcount " `n`n Are you sure that you want to stop the macro?.`n`n Press YES to stop the Macro.`n`n No to keep going.")
+	If Result = Yes
+	{
+		tooltip,
+		Gui 1: -AlwaysOnTop
+		Gui_Image_Show("Stop")
+		Gui, Submit, NoHide
+		Send {Shift Up}{Ctrl Up}
+		breakloop = 1
+		exit
+	}
+	else
+		Return
 }
 
 ;Sets the hotkey for Ctrl + 1 or Ctrl + numpad 1
@@ -290,26 +329,26 @@ $^1::
 	IfExist, %File_Install_Work_Folder%\TempReuse.txt
 		FileDelete, IfExist, %File_Install_Work_Folder%\TempReuse.txt
 	
-Added_Serial_Count(Add_Or_Subtract := "Reset")
-Copy_text_and_Format()
-Formatted_text_completed = 1
-Start_Macro()
-return
+	Added_Serial_Count(Add_Or_Subtract := "Reset")
+	Copy_text_and_Format()
+	Formatted_text_completed = 1
+	Start_Macro()
+	return
 }
 
 $^Numpad2::
 $^2::
 {
-Start_Macro()
-return
+	Start_Macro()
+	return
 }
 
 #If Winactive("ahk_class TTAFrameXClass") or WinActive(Effectivity_Macro)
 
 ^q::
 {
-   Exit_Program()
-   Return
+	Exit_Program()
+	Return
 }
 
 #if winactive(Effectivity_Macro)
@@ -317,8 +356,8 @@ return
 
 F1::
 {
-  HowTo()
-   Return
+	HowTo()
+	Return
 }
 
 #if winactive ; stops the requirement for only the macro screen or acm
@@ -328,144 +367,144 @@ F1::
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Below are the functions from the Autorun section Before it gets to Serials_GUI_Screen()i \./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-	*/
+*/
 
-	Folder_Exist_Check(Folder) ; unit  && Documentation
-	{
-		Result := FileExist(Folder)
-		If Result =
+Folder_Exist_Check(Folder) ; unit  && Documentation
+{
+	Result := FileExist(Folder)
+	If Result =
 		Result = Folder_Not_Exist
-		else
-			Result = Folder_Exist
-
-		Debug_Log_Event("Folder_Exist_Check() .... " Folder "..... Result is " Result)
-
-		return  Folder " - " Result
-
-/*!
-	Function: Folder_Exist_Check(Folder)
-			Checks to ensure that a folder exists on the users computer
-
-	Parameters:
+	else
+		Result = Folder_Exist
+	
+	Debug_Log_Event("Folder_Exist_Check() .... " Folder "..... Result is " Result)
+	
+	return  Folder " - " Result
+	
+	/*!
+		Function: Folder_Exist_Check(Folder)
+		Checks to ensure that a folder exists on the users computer
+		
+		Parameters:
 		Folder - This should contain the full file path of the folder
-					 >  Folder = C:\SerialMacro
-					>  Folder_Exist_Check(Folder)
-
-	Remarks:
+		>  Folder = C:\SerialMacro
+		>  Folder_Exist_Check(Folder)
+		
+		Remarks:
 		Uses the AutoHotkey built in function of `FileExist()` to determing is the file is on the computer
-
-	Returns:
+		
+		Returns:
 		The Name of the *Folder* Variable - the *result*  Variable
-			> Folder := C:\SerialMacro
+		> Folder := C:\SerialMacro
 		> Result := Folder_Exist_Check(Folder)
 		Result would be `C:\SerialMacro - Folder_Exist` if the folder **IS** on the C Drive
 		Result would be `C:\SerialMacro - Folder_Not_Exist` if the folder was **NOT** on the C Drive
-
-	Extra:
+		
+		Extra:
 		### Additional Information
-		For more information on the `FileExist()` function click on the link (Internet Connection Required) below:  
-		[FileExist()](https://autohotkey.com/docs/commands/FileExist.htm)
-*/
-	}
+		For more information on the `FileExist()` function click on the link (Internet Connection Required) below:
+			[FileExist()](https://autohotkey.com/docs/commands/FileExist.htm)
+	*/
+}
 
-	Folder_Create(Folder) ; unit && Documentation
-	{
-		FileCreateDir, %Folder%
-
-		Debug_Log_Event("Folder_Create() .... " Folder "..... Result is " Result)
-		sleep(5)
-		return ErrorLevel
-
-/*!
-	Function:  Folder_Create(Folder)
-			Creates a folder the users computer
-
-	Parameters:
+Folder_Create(Folder) ; unit && Documentation
+{
+	FileCreateDir, %Folder%
+	
+	Debug_Log_Event("Folder_Create() .... " Folder "..... Result is " Result)
+	sleep(5)
+	return ErrorLevel
+	
+	/*!
+		Function:  Folder_Create(Folder)
+		Creates a folder the users computer
+		
+		Parameters:
 		Folder - This should contain the full file path of the folder
-					 >  Folder = C:\SerialMacro
-					>  Folder_Create(Folder)
-
-	Remarks:
+		>  Folder = C:\SerialMacro
+		>  Folder_Create(Folder)
+		
+		Remarks:
 		Uses the AutoHotkey built in function of `FileCreateDir` to create a folder
-
-	Returns:
+		
+		Returns:
 		The Errorlevel for the `FileCreateDir`
 		> Folder := C:\SerialMacro
 		> Result := Folder_Create(Folder)
 		*Result* is 0 if the folder was created
 		*Result* is 1 if the folder was not able to be created
-
-	Extra:
+		
+		Extra:
 		### Additional Information
-		For more information on the `FileCreateDir` function click on the link (Internet Connection Required) below:  
-		[FileCreateDir](https://autohotkey.com/docs/commands/FileCreateDir.htm)
+		For more information on the `FileCreateDir` function click on the link (Internet Connection Required) below:
+			[FileCreateDir](https://autohotkey.com/docs/commands/FileCreateDir.htm)
+		
+		
+	*/
+}
 
 
-*/
-	}
-
-
-	Config_File_Check(File) ;unit && Documentation
-	{
-		Result := FileExist(File)
-		If Result =
+Config_File_Check(File) ;unit && Documentation
+{
+	Result := FileExist(File)
+	If Result =
 		Result = File_Not_Exist
-		else
-			Result = File_Exist
-		Debug_Log_Event("File_Exist_Check() ......C:\SerialMacro\" File "..... Result is " Result)
-		return File " - "  Result
-
-/*!
-	Function:  Config_File_Check(File)
-			checks the  existance of  the config file
-
-	Parameters:
+	else
+		Result = File_Exist
+	Debug_Log_Event("File_Exist_Check() ......C:\SerialMacro\" File "..... Result is " Result)
+	return File " - "  Result
+	
+	/*!
+		Function:  Config_File_Check(File)
+		checks the  existance of  the config file
+		
+		Parameters:
 		File - This should contain the full file path of the file
-					 >  Config_File = C:\SerialMacro\Config.ini
-					>  Config_File_Check(Config_File)
-
-	Remarks:
+		>  Config_File = C:\SerialMacro\Config.ini
+		>  Config_File_Check(Config_File)
+		
+		Remarks:
 		Uses the AutoHotkey built in function of `FileExist()` to check for the config file
-
-	Returns:
+		
+		Returns:
 		The Name of the *File* Variable - the *result*  Variable
 		>  Config_File = C:\SerialMacro\Config.ini
 		>  REsult :=- Config_File_Check(Config_File)
 		Result would be `C:\SerialMacro\Config.ini - File_Exist` if the file **IS** at the location specified in the *File* variable
 		Result would be `C:\SerialMacro\Config.ini - File_Not_Exist` if the folder was **NOT**  location specified in the *File* variable
-
-	Extra:
+		
+		Extra:
 		### Additional Information
-			For more information on the `FileExist()` function click on the link (Internet Connection Required) below:  
+		For more information on the `FileExist()` function click on the link (Internet Connection Required) below:
 			[FileExist()](https://autohotkey.com/docs/commands/FileExist.htm)
-*/
+	*/
+	
+	
+}
 
-
-	}
-
-	Config_File_Create(File, At_home:= 0) ; unit && Documentation
-	{
-		;	If (at_home)
-		;			FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini, %File%,1
-		;	else
-					FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\config.ini, %File%,0
-		Debug_Log_Event("File_Create() ......" File)
-		return ErrorLevel
-/*!
-	Function: 		Config_File_Create(File [, At_home:= 0])
-			Creates a config file on  the users computer at the location specified in the *File* variable
-
-	Parameters:
+Config_File_Create(File, At_home:= 0) ; unit && Documentation
+{
+	;	If (at_home)
+	;			FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\Config.ini, %File%,1
+	;	else
+	FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\config.ini, %File%,0
+	Debug_Log_Event("File_Create() ......" File)
+	return ErrorLevel
+	/*!
+		Function: 		Config_File_Create(File [, At_home:= 0])
+		Creates a config file on  the users computer at the location specified in the *File* variable
+		
+		Parameters:
 		File - This should contain the full file path of the Config file
-					 >  File = C:\SerialMacro\config.ini
-					>  Config_File_Create(File)  
+		>  File = C:\SerialMacro\config.ini
+		>  Config_File_Create(File)
 		At_Home (Optional)-   0: **Default** if nothing is in that location on the function
-				> Config_File_Create(File)
-				1:  Function will use the alternate Fileinstall location
-				> Config_File_Create(File, "1")
-
-
-	Remarks:
+		> Config_File_Create(File)
+		1:  Function will use the alternate Fileinstall location
+		> Config_File_Create(File, "1")
+		
+		
+		Remarks:
 		Uses the AutoHotkey built in function of `FileInstall` to combine a file with the compiled version of the program.
 		The 'At_home' optional variable is here because I got tired of having errors when testing at home, and instead of having to change the orginal file location from
 		> C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\Config.ini
@@ -478,47 +517,47 @@ F1::
 		> else
 		> At_home = 1
 		If I am on the work computer it will detect my username, or else it will be the home computer.   I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run. Note: I did have to comment them out becasue the program would not compile.
-
-	Returns:
+			
+		Returns:
 		The Errorlevel for the `Fileinstall` function
-			> Folder := C:\SerialMacro
+		> Folder := C:\SerialMacro
 		> Result := Folder_Create(Folder)
 		*Result* is 0 if the folder was created
 		*Result* is 1 if the folder was not able to be created
-
-	Extra:
+		
+		Extra:
 		### Additional Information
-			For more information on the `FileInstall` function click on the link (Internet Connection Required) below:
+		For more information on the `FileInstall` function click on the link (Internet Connection Required) below:
 			[FileInstall](https://autohotkey.com/docs/commands/FileInstall.htm)
+		
+	*/
+}
 
-*/
-	}
 
 
-
-	Install_Requied_Files_Root( File_Install_Work_Folder, At_home:= 0) ; no unit testing as functions have built in error checking && Documentation
-	{
+Install_Requied_Files_Root( File_Install_Work_Folder, At_home:= 0) ; no unit testing as functions have built in error checking && Documentation
+{
 	;	If (at_home)
 	;				FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
 	;				else
-					FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
-		return errorlevel
-
-/*!
-	Function: Install_Requied_Files_Root( File_Install_Work_Folder [, At_home:= 0])
-			Creates the How To Use PDF  file on  the users computer at the folder specifiec by the *File_Install_Work_Folder*
-
-	Parameters:
+	FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\How to use Effectivity Macro.pdf, %File_Install_Work_Folder%\How to use Effectivity Macro.pdf,1
+	return errorlevel
+	
+	/*!
+		Function: Install_Requied_Files_Root( File_Install_Work_Folder [, At_home:= 0])
+		Creates the How To Use PDF  file on  the users computer at the folder specifiec by the *File_Install_Work_Folder*
+		
+		Parameters:
 		File_Install_Work_Folder - This should contain the full file path of the Root script working folder
-					 >  File_Install_Work_Folder = C:\SerialMacro
-					>  Function: Install_Requied_Files_Root( File_Install_Work_Folder)
+		>  File_Install_Work_Folder = C:\SerialMacro
+		>  Function: Install_Requied_Files_Root( File_Install_Work_Folder)
 		At_Home (Optional)-   0: **Default** tf nothing is in that location on the function
-				> Install_Requied_Files_Root( File_Install_Work_Folder)
-				1:  Function will use the alternate Fileinstall location
-				> Install_Requied_Files_Root( File_Install_Work_Folder, "1")
-
-
-	Remarks:
+		> Install_Requied_Files_Root( File_Install_Work_Folder)
+		1:  Function will use the alternate Fileinstall location
+		> Install_Requied_Files_Root( File_Install_Work_Folder, "1")
+		
+		
+		Remarks:
 		Uses the AutoHotkey built in function of `FileInstall` to combine a file with the compiled version of the program.
 		The 'At_home' optional variable is here because I got tired of having errors when testing at home, and instead of having to change the orginal file location from
 		> C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files
@@ -531,58 +570,59 @@ F1::
 		> else
 		> At_home = 1
 		If I am on the work computer it will detect my username, or else it will be the home computer.   I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run. Note: I did have to comment them out becasue the program would not compile.
-
-
-	Returns:
+			
+		
+		Returns:
 		The Errorlevel for the `Fileinstall` function
-			> File_Install_Work_Folder = C:\SerialMacro
+		> File_Install_Work_Folder = C:\SerialMacro
 		> Result := Install_Requied_Files_Root( File_Install_Work_Folder)
 		*Result* is 0 if the file was created
 		*Result* is 1 if the file was not able to be created
-
-	Extra:
+		
+		Extra:
 		### Additional Information
-			For more information on the `FileInstall` function click on the link (Internet Connection Required) below:
+		For more information on the `FileInstall` function click on the link (Internet Connection Required) below:
 			[FileInstall](https://autohotkey.com/docs/commands/FileInstall.htm)
+		
+	*/
+}
 
-*/
-	}
-
-	Install_Requied_Files_Icons( File_Install_Work_Folder, at_home := 0)  ; no unit testing as functions have built in error checking && Documentation
-	{
-		Problems = 0
+Install_Requied_Files_Icons( File_Install_Work_Folder, at_home := 0)  ; no unit testing as functions have built in error checking && Documentation
+{
+	Problems = 0
 	;	If (at_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
 	;	else
-		FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
-		If (Errorlevel)
-			Problems = 1
-
+	FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\serial.ico, %File_Install_Work_Folder%\icons\serial.ico,1
+	If (Errorlevel)
+		Problems = 1
+	
 	;	if (At_home)
 	;			FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
 	;	else
-		FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
-
-		If (Errorlevel)
-			Problems = 1
-
-		return Problems
-
-/*!
-	Function: Install_Requied_Files_Icons( File_Install_Work_Folder [, at_home := 0])
-			Creates the icon  files on  the users computer at the folder specifiec by the *File_Install_Work_Folder*
-
-	Parameters:
+	FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\paused.ico, %File_Install_Work_Folder%\icons\paused.ico,1
+	
+	If (Errorlevel)
+		Problems = 1
+	
+	
+	return Problems
+	
+	/*!
+		Function: Install_Requied_Files_Icons( File_Install_Work_Folder [, at_home := 0])
+		Creates the icon  files on  the users computer at the folder specifiec by the *File_Install_Work_Folder*
+		
+		Parameters:
 		File_Install_Work_Folder - This should contain the full file path of the Root script working folder
-					 >  File_Install_Work_Folder = C:\SerialMacro
-					>  Function: Install_Requied_Files_Icons( File_Install_Work_Folder)
+		>  File_Install_Work_Folder = C:\SerialMacro
+		>  Function: Install_Requied_Files_Icons( File_Install_Work_Folder)
 		At_Home (Optional)-   0: **Default** tf nothing is in that location on the function
-				> Install_Requied_Files_Icons( File_Install_Work_Folder)
-				1:  Function will use the alternate Fileinstall location
-				> Install_Requied_Files_Icons( File_Install_Work_Folder, "1")
-
-
-	Remarks:
+		> Install_Requied_Files_Icons( File_Install_Work_Folder)
+		1:  Function will use the alternate Fileinstall location
+		> Install_Requied_Files_Icons( File_Install_Work_Folder, "1")
+		
+		
+		Remarks:
 		Uses the AutoHotkey built in function of `FileInstall` to combine a file with the compiled version of the program.
 		The 'At_home' optional variable is here because I got tired of having errors when testing at home, and instead of having to change the orginal file location from
 		>  C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\icons\serial.ico
@@ -597,110 +637,113 @@ F1::
 		> else
 		> At_home = 1
 		If I am on the work computer it will detect my username, or else it will be the home computer. I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run. Note: I did have to comment them out becasue the program would not compile.
-
-
-	Returns:
+			
+		
+		Returns:
 		The *Problems* variable
 		If there is an issue and one of the files cannot be installed, the Errorlevel of the `Fileinstall` will trigger a `Problems = 1`
 			> File_Install_Work_Folder = C:\SerialMacro
 		> Result := Install_Requied_Files_Icons( File_Install_Work_Folder)
 		*Result* is 0 if the files were created
 		*Result* is 1 if  at least one of the files was not able to be created
-
-	Extra:
+		
+		Extra:
 		### Additional Information
-			For more information on the `FileInstall` function click on the link (Internet Connection Required) below:
+		For more information on the `FileInstall` function click on the link (Internet Connection Required) below:
 			[FileInstall](https://autohotkey.com/docs/commands/FileInstall.htm)
+		
+	*/
+}
 
-*/
-	}
-
-	Install_Requied_Files_Images( File_Install_Work_Folder, at_home := 0)  ; no unit testing as functions have built in error checking && Documentation
-	{
-		Problems = 0
+Install_Requied_Files_Images( File_Install_Work_Folder, at_home := 0)  ; no unit testing as functions have built in error checking && Documentation
+{
+	Problems = 0
 	;	if (At_home)
 	;				FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
 	;				else
-					FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
-		If (Errorlevel)
-			Problems = 1
-
+	FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\red_image.png, %File_Install_Work_Folder%\images\red_image.png,1
+	If (Errorlevel)
+		Problems = 1
+	
 	;	If (At_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
 	;	else
-		;~ FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
-		;~ If (Errorlevel)
-			;~ Problems = 1
+	;~ FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\active_plus.png, %File_Install_Work_Folder%\images\active_plus.png,1
+	;~ If (Errorlevel)
+	;~ Problems = 1
 	;	If (At_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
 	;	else
-		;~ FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
-		;~ If (Errorlevel)
-			;~ Problems = 1
+	;~ FileInstall, C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\orange_button.png, %File_Install_Work_Folder%\images\orange_button.png,1
+	;~ If (Errorlevel)
+	;~ Problems = 1
 	;	If (At_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
 	;	else
-		FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
-		If (Errorlevel)
-			Problems = 1
+	FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\paused.png, %File_Install_Work_Folder%\images\paused.png,1
+	If (Errorlevel)
+		Problems = 1
 	;	If (At_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
 	;	else
-		FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
-		If (Errorlevel)
-			Problems = 1
+	FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\start.png, %File_Install_Work_Folder%\images\start.png,1
+	If (Errorlevel)
+		Problems = 1
 	;	If (At_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
 	;	else
-		FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
-		If (Errorlevel)
-			Problems = 1
+	FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Running.png, %File_Install_Work_Folder%\images\Running.png,1
+	If (Errorlevel)
+		Problems = 1
 	;	If (At_home)
 	;	FileInstall, E:\Git\Effectivity_Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
 	;	else
-		FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
-		If (Errorlevel)
-			Problems = 1
+	FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Stopped.png, %File_Install_Work_Folder%\images\Stopped.png,1
+	If (Errorlevel)
+		Problems = 1
 	;	If (At_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
 	;	else
-		FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
-		If (Errorlevel)
-			Problems = 1
-
+	FileInstall, C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\background.png, %File_Install_Work_Folder%\images\background.png,1
+	If (Errorlevel)
+		Problems = 1
+	
 	;		If (At_home)
 	;	FileInstall,E:\Git\Effectivity_Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
 	;	else
-		FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
-		If (Errorlevel)
-			Problems = 1
+	FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Issues_Image.png, %File_Install_Work_Folder%\images\Issues_Image.png,1
+	If (Errorlevel)
+		Problems = 1
+	
+	FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Creating_image.png, %File_Install_Work_Folder%\images\Creating_image.png,1
+	If (Errorlevel)
+		Problems = 1
+	
+	FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Plus_SIgn.png, %File_Install_Work_Folder%\images\Plus_SIgn.png,1
+	If (Errorlevel)
+		Problems = 1
+	
+	FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Existing.png, %File_Install_Work_Folder%\images\Existing.png,1
+	If (Errorlevel)
+		Problems = 1
+	
+	return Problems
+	
+	/*!
+		Function: 	Install_Requied_Files_Images( File_Install_Work_Folder [, at_home := 0])
+		Creates the image  files on  the users computer at the folder specifiec by the *File_Install_Work_Folder*
 		
-			FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Creating_image.png, %File_Install_Work_Folder%\images\Creating_image.png,1
-		If (Errorlevel)
-			Problems = 1
-		
-				FileInstall,C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\Plus_SIgn.png, %File_Install_Work_Folder%\images\Plus_SIgn.png,1
-		If (Errorlevel)
-			Problems = 1
-
-
-		return Problems
-
-/*!
-	Function: 	Install_Requied_Files_Images( File_Install_Work_Folder [, at_home := 0])
-			Creates the image  files on  the users computer at the folder specifiec by the *File_Install_Work_Folder*
-
-	Parameters:
+		Parameters:
 		File_Install_Work_Folder - This should contain the full file path of the Root script working folder
-					 >  File_Install_Work_Folder = C:\SerialMacro
-					>  Install_Requied_Files_Images( File_Install_Work_Folder)
+		>  File_Install_Work_Folder = C:\SerialMacro
+		>  Install_Requied_Files_Images( File_Install_Work_Folder)
 		At_Home (Optional)-   0: **Default** tf nothing is in that location on the function
-				> Install_Requied_Files_Images( File_Install_Work_Folder)
-				1:  Function will use the alternate Fileinstall location
-				> Install_Requied_Files_Images( File_Install_Work_Folder, "1")
-
-
-	Remarks:
+		> Install_Requied_Files_Images( File_Install_Work_Folder)
+		1:  Function will use the alternate Fileinstall location
+		> Install_Requied_Files_Images( File_Install_Work_Folder, "1")
+		
+		
+		Remarks:
 		Uses the AutoHotkey built in function of `FileInstall` to combine a file with the compiled version of the program.
 		The 'At_home' optional variable is here because I got tired of having errors when testing at home, and instead of having to change the orginal file location from
 		>   C:\Users\karnijs\Desktop\Autohotkey\02_Effectivity Macro\1.4\Install_Files\images\red_image.png
@@ -727,26 +770,26 @@ F1::
 		> else
 		> At_home = 1
 		If I am on the work computer it will detect my username, or else it will be the home computer. I did this because you cannot have a variable for the initlal location of the file for `FileInstall`. This is because AutohotKey does not know where the file is to install on compile if there is a variable in that location. Just saved me some time in the long run. Note: I did have to comment them out becasue the program would not compile.
-
-
-	Returns:
+			
+		
+		Returns:
 		The *Problems* variable
 		If there is an issue and one of the files cannot be installed, the Errorlevel of the `Fileinstall` will trigger a `Problems = 1`
 			> File_Install_Work_Folder = C:\SerialMacro
 		> Result := Install_Requied_Files_Images( File_Install_Work_Folder)
 		*Result* is 0 if the files were created
 		*Result* is 1 if  at least one of the files was not able to be created
-
-	Extra:
+		
+		Extra:
 		### Additional Information
-			For more information on the `FileInstall` function click on the link (Internet Connection Required) below:  
+		For more information on the `FileInstall` function click on the link (Internet Connection Required) below:
 			[FileInstall](https://autohotkey.com/docs/commands/FileInstall.htm)
+		
+	*/
+}
 
-*/
-	}
 
-
-	Load_ini_file(Configuration_File_Location) ; unit && Documentation
+Load_ini_file(Configuration_File_Location) ; unit && Documentation
 {
 	global
 	
@@ -755,7 +798,7 @@ F1::
 	loop,read,%Configuration_File_Location%
 	{
 		If A_LoopReadLine =
-		continue
+			continue
 		
 		if regexmatch(A_Loopreadline,"\[(.*)?]")
 		{
@@ -783,39 +826,39 @@ F1::
 		}
 		else if A_LoopReadLine !=
 		{
-		StringGetPos, keytemppos, A_LoopReadLine, =,
-		StringLeft, keytemp, A_LoopReadLine,%keytemppos%
-		StringReplace, keytemp,keytemp,%A_SPace%,,All
-		INIstoretemp := Keytemp ":" Section
-		Ini_var_store_array.Insert(INIstoretemp)
-		IniRead,%keytemp%, %Configuration_File_Location%, %Section%, %keytemp%
-		}}
+			StringGetPos, keytemppos, A_LoopReadLine, =,
+			StringLeft, keytemp, A_LoopReadLine,%keytemppos%
+			StringReplace, keytemp,keytemp,%A_SPace%,,All
+			INIstoretemp := Keytemp ":" Section
+			Ini_var_store_array.Insert(INIstoretemp)
+			IniRead,%keytemp%, %Configuration_File_Location%, %Section%, %keytemp%
+	}}
 	
 	return
 	
 	/*!
-	Function: 	Load_ini_file(Configuration_File_Location)
-	Loads the configuration Ini file from the  *Configuration_File_Location*
-	
-	Parameters:
-	Configuration_File_Location - This should contain the full file path of the Root script working folder
-	>  Configuration_File_Location = C:\SerialMacro\Config.ini
-	>  Load_ini_file(Configuration_File_Location)
-	
-	Remarks:
-	Uses the AutoHotkey built in function of `IniRead` to read the config file.
-	The function stores the variable names into an array for later retrievial by the `Write_ini_file()` function
-	
-	Returns:
-	There is no returned variable. The Funciton is Global, which makes all the variables it stores global variables, which makes the config file contents accessble to all functions
-	
-	Extra:
-	### Additional Information
-	For more information on the `IniRead` function click on the link (Internet Connection Required) below:  
-	[IniRead](https://autohotkey.com/docs/commands/IniRead.htm)
-	
+		Function: 	Load_ini_file(Configuration_File_Location)
+		Loads the configuration Ini file from the  *Configuration_File_Location*
+		
+		Parameters:
+		Configuration_File_Location - This should contain the full file path of the Root script working folder
+		>  Configuration_File_Location = C:\SerialMacro\Config.ini
+		>  Load_ini_file(Configuration_File_Location)
+		
+		Remarks:
+		Uses the AutoHotkey built in function of `IniRead` to read the config file.
+		The function stores the variable names into an array for later retrievial by the `Write_ini_file()` function
+		
+		Returns:
+		There is no returned variable. The Funciton is Global, which makes all the variables it stores global variables, which makes the config file contents accessble to all functions
+		
+		Extra:
+		### Additional Information
+		For more information on the `IniRead` function click on the link (Internet Connection Required) below:
+			[IniRead](https://autohotkey.com/docs/commands/IniRead.htm)
+		
 	*/
-}              
+}
 Write_ini_file(Configuration_File_Location) ; unit && Documentation
 {
 	global
@@ -830,31 +873,31 @@ Write_ini_file(Configuration_File_Location) ; unit && Documentation
 	return
 	
 	/*!
-	Function: 	Write_ini_file(Configuration_File_Location)
-	Writes the configuration variables to the configuration Ini file at  the  *Configuration_File_Location*
-	
-	Parameters:
-	Configuration_File_Location - This should contain the full file path of the Root script working folder
-	>  Configuration_File_Location = C:\SerialMacro\Config.ini
-	>  Write_ini_file(Configuration_File_Location)
-	
-	Remarks:
-	Uses the AutoHotkey built in function of `IniWrite` to read the config file.
-	The  highlighted  (green) **%** in the below code is there so written value to the `config.ini`  file ithe actual value of the variable and not the name of the variable from  the `ini_store_Array'
-	`IniWrite ,*%* %INI_Write1%, %Configuration_File_Location%, %INI_Write2%, %INI_Write1%`
-	
-	
-	
-	Returns:
-	There is no returned variable. The Funciton is Global, which makes all the variables it stores global variables, which makes the config file contents accessble to all functions
-	
-	Extra:
-	### Additional Information
-	For more information on the `IniRead` function click on the link (Internet Connection Required) below:  
-	[IniWrite](https://autohotkey.com/docs/commands/IniWrite.htm)
-	
+		Function: 	Write_ini_file(Configuration_File_Location)
+		Writes the configuration variables to the configuration Ini file at  the  *Configuration_File_Location*
+		
+		Parameters:
+		Configuration_File_Location - This should contain the full file path of the Root script working folder
+		>  Configuration_File_Location = C:\SerialMacro\Config.ini
+		>  Write_ini_file(Configuration_File_Location)
+		
+		Remarks:
+		Uses the AutoHotkey built in function of `IniWrite` to read the config file.
+		The  highlighted  (green) **%** in the below code is there so written value to the `config.ini`  file ithe actual value of the variable and not the name of the variable from  the `ini_store_Array'
+		`IniWrite ,*%* %INI_Write1%, %Configuration_File_Location%, %INI_Write2%, %INI_Write1%`
+		
+		
+		
+		Returns:
+		There is no returned variable. The Funciton is Global, which makes all the variables it stores global variables, which makes the config file contents accessble to all functions
+		
+		Extra:
+		### Additional Information
+		For more information on the `IniRead` function click on the link (Internet Connection Required) below:
+			[IniWrite](https://autohotkey.com/docs/commands/IniWrite.htm)
+		
 	*/
-}              
+}
 
 Debug_Log_Event(Event) ; no unit tesing && Documentation
 {
@@ -869,105 +912,105 @@ Debug_Log_Event(Event) ; no unit tesing && Documentation
 	
 	
 	/*!
-	Function: Debug_Log_Event(Event)
-	Whe using the Debugger in the SciTE4AutoHotkey , this function will display the *Event* that is passed to it in a window. If `Log_events` = 1
-	
-	Parameters:
-	Event - This is the text that will diaplay in the debugger window.
-	
-	Remarks:
-	Uses the AutoHotkey built in function of `OutputDebug`  
-	**NOTE:** the `Sleep(.5)` needs to be there or else the debugger window may not keep up with the even displays and crash.
-	
-	Returns:
-	There is no returned variable.
-	
-	Extra:
-	### Additional Information
-	For more information on the `OutputDebug` function click on the link (Internet Connection Required) below:  
-	[OutputDebug](https://autohotkey.com/docs/commands/OutputDebug.htm)
-	
+		Function: Debug_Log_Event(Event)
+		Whe using the Debugger in the SciTE4AutoHotkey , this function will display the *Event* that is passed to it in a window. If `Log_events` = 1
+		
+		Parameters:
+		Event - This is the text that will diaplay in the debugger window.
+		
+		Remarks:
+		Uses the AutoHotkey built in function of `OutputDebug`
+		**NOTE:** the `Sleep(.5)` needs to be there or else the debugger window may not keep up with the even displays and crash.
+		
+		Returns:
+		There is no returned variable.
+		
+		Extra:
+		### Additional Information
+		For more information on the `OutputDebug` function click on the link (Internet Connection Required) below:
+			[OutputDebug](https://autohotkey.com/docs/commands/OutputDebug.htm)
+		
 	*/
-}              
+}
 
 
 /*
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Below is the Create_Tray_Menu funciton along with some of the functions it calls to .\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-	*/
+*/
 
-	Create_Tray_Menu() ; no unit tests && Documentation
-	{
-		Menu, Tray, NoStandard
-		Menu, Tray, Add, How to use, HowTo
-		Menu Tray, Add, Check For update, Versioncheck
-		Menu, Tray, Add, Quit, Quitapp
-		return
-
-/*!
-	Function: Create_Tray_Menu()
-			Creates the system tray menu on the taskbar  
+Create_Tray_Menu() ; no unit tests && Documentation
+{
+	Menu, Tray, NoStandard
+	Menu, Tray, Add, How to use, HowTo
+	Menu Tray, Add, Check For update, Versioncheck
+	Menu, Tray, Add, Quit, Quitapp
+	return
+	
+	/*!
+		Function: Create_Tray_Menu()
+		Creates the system tray menu on the taskbar
 		
-	Returns:
+		Returns:
 		There is no returned variable.
-
-	Extra:
+		
+		Extra:
 		### Additional Information
-			For more information on the `Menu` function click on the link (Internet Connection Required) below:    
+		For more information on the `Menu` function click on the link (Internet Connection Required) below:
 			[Menu](https://autohotkey.com/docs/commands/Menu.htm)
+		
+	*/
+}
 
-*/
-	}
 
-
-	Howto() ; no unit testing && Documentation
-	{
-		splashtexton,,Effectivity Macro, Loading PDF
-		Run, C:\SerialMacro\How to use Effectivity Macro.pdf
-		sleep(20)
-		SplashTextOff
-		return
-
-/*!
-	Function: Howto()  
-		Opens the how to use PDF  
-
-	Returns:
+Howto() ; no unit testing && Documentation
+{
+	splashtexton,,Effectivity Macro, Loading PDF
+	Run, C:\SerialMacro\How to use Effectivity Macro.pdf
+	sleep(20)
+	SplashTextOff
+	return
+	
+	/*!
+		Function: Howto()
+		Opens the how to use PDF
+		
+		Returns:
 		There is no returned variable.
-
-	Extra:
+		
+		Extra:
 		### Additional Information
-			For more information on the `Splashtext` function  or the `run` function click on the link (Internet Connection Required) below:  
-			[Splashtext](https://autohotkey.com/docs/commands/Splashtext.htm)  
-			[Run](https://autohotkey.com/docs/commands/Run.htm)
+		For more information on the `Splashtext` function  or the `run` function click on the link (Internet Connection Required) below:
+			[Splashtext](https://autohotkey.com/docs/commands/Splashtext.htm)
+		[Run](https://autohotkey.com/docs/commands/Run.htm)
+		
+	*/
+}
 
-*/
-	}
-
-	Quitapp: ; no unit testing
+Quitapp: ; no unit testing
+{
+	
+	Result := 	Move_Message_Box("262148","Quit " Effectivity_Macro, "Are you sure you want to quit?")
+	
+	If result =  Yes
 	{
 		
-		Result := 	Move_Message_Box("262148","Quit " Effectivity_Macro, "Are you sure you want to quit?")
-
-		If result =  Yes
-		{
-		
-			Gui 1: -AlwaysOnTop
-			Gui_Image_Show("Stop") ; Options are Start, Paused, Running, Stopped
-			Gui, Submit, NoHide
-			Send {Shift Up}{Ctrl Up}
-			breakloop = 1
-			ExitApp
-		}
-		Return
+		Gui 1: -AlwaysOnTop
+		Gui_Image_Show("Stop") ; Options are Start, Paused, Running, Stopped
+		Gui, Submit, NoHide
+		Send {Shift Up}{Ctrl Up}
+		breakloop = 1
+		ExitApp
 	}
+	Return
+}
 
 /*
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. BEgin_Macro() from the Ctrl 1 grab text hotkey .\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-	*/
+*/
 
 Copy_text_and_Format(Input_text := "") ; no unit test needed as it all the other functions are tested individually.
 {
@@ -980,55 +1023,55 @@ Copy_text_and_Format(Input_text := "") ; no unit test needed as it all the other
 	Debug_Log_Event("Formatted text is " Formatted_Text)
 	
 	Formatted_Serial_Array := Object()
-
+	
 	Formatted_Serial_Array := Put_Formatted_Serials_into_Array(Formatted_Text)
 	
 	
 	Checked := SerialbreakquestionGUI(Reuse_Effectivity) ; Goes to the Serialsgui.ahk and into the SerialbreakquestionGUI subroutine
-		;~ MsgBox, % Reuse_Effectivity " is reuse"
+	;~ MsgBox, % Reuse_Effectivity " is reuse"
 	If Checked = Canceled
 	{
 		Gui_Image_Show("Start")
-	Checked = 
-exit	
+		Checked =
+		exit
 	}
 	;~ combine = 0
 	;~ Oneupserial = 0
 	
 	/*
-	Stop for testing
+		Stop for testing
 	*/
-
+	
 	
 	If (combine = "1") ||  (Oneupserial = "1")
 	{
-	
+		
 		Combined_Serial_Array := Combineserials(Formatted_Serial_Array) ;goes to the combine Serials subroutine
 		
-	
+		
 		Prefix_Count :=  Combined_Serial_Array.Length()
 		
 		If Oneupserial = 1
 		{
-	
-		Combined_Serial_Array := One_Up_All(Combined_Serial_Array)			
-	}
-	
-;Combined_Serial_Array := Checkforduplicates(Combined_Serial_Array)
-Editfield := Extract_Serial_Array(Combined_Serial_Array)
+			
+			Combined_Serial_Array := One_Up_All(Combined_Serial_Array)
+		}
+		
+		;Combined_Serial_Array := Checkforduplicates(Combined_Serial_Array)
+		Editfield := Extract_Serial_Array(Combined_Serial_Array)
 		StringReplace, Editfield, Editfield, `,,,All
 		Guicontrol,1:, Editfield, %Editfield%- - - - - - - - - - - - - - - - - - `n  ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
-
-}
+		
+	}
 	else  {
-	
+		
 		Prefix_Count :=  Formatted_Text_Serial_Count(Formatted_Text)
 		StringReplace, Formatted_Text, Formatted_Text, `,,,All
 		Guicontrol,1:, Editfield, %Formatted_Text% - - - - - - - - - - - - - - - - - - `n  ; Sets the listbox on teh GUi screen to the editfieldcombine vaariable and adds a newline
-	
+		
 	}
 	
-
+	
 	totalprefixes = %Prefix_Count% ; Sets the totalprefixes variables to the Prefixcombinecount variable
 	Guicontrol,, reloadprefixtext,%totalprefixes% ; Changes the valuse in the main GUI screen
 	Winactivate, Effectivity Macro ; Make the Main GUi window  Active
@@ -1039,28 +1082,28 @@ Editfield := Extract_Serial_Array(Combined_Serial_Array)
 	Gui_Image_Show("Start")
 	if (checked)
 		gosub, Export_Serials
-
+	
 	if (Reuse_Effectivity)
 		gosub, TempReuse
 	return
-}              
+}
 
 tempreuse:
 {
-	GuiControlGet, EditField	
+	GuiControlGet, EditField
 	FileAppend, %Editfield%, %File_Install_Work_Folder%\TempReuse.txt
-
-return
+	IniWrite, 1, %Configuration_File_Location%, Reuse, reuse
+	return
 }
 One_Operation_Key_Press(Mod_Key, Key)
 {
-Send {%Mod_key% Down}{%Key%}{%Mod_Key% Up}	
+	Send {%Mod_key% Down}{%Key%}{%Mod_Key% Up}
 	return
 }
 /*
-/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-Formatting functions
-/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+	/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+	Formatting functions
+	/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
 Format_Serial_Functions(Fullstring := "", Unit_test := 0) ; unit
 {
@@ -1068,9 +1111,9 @@ Format_Serial_Functions(Fullstring := "", Unit_test := 0) ; unit
 	newline = `n
 	sleep()
 	If (Unit_test) && (FullString = "") ; For testing
-	Fullstring := "GNN00288-00327, fag00001-00002,GNZ00001-00442,GNZ00444-00558,ML600001-00113,P6500001-00124,RLM00001-00105,TFZ00001-00358,TJ500001-00536,TJ500538-00539,TJ500545-00545,TJF00001-00446,TRS00001-00144,"
+		Fullstring := "GNN00288-00327, fag00001-00002,GNZ00001-00442,GNZ00444-00558,ML600001-00113,P6500001-00124,RLM00001-00105,TFZ00001-00358,TJ500001-00536,TJ500538-00539,TJ500545-00545,TJF00001-00446,TRS00001-00144,"
 	Else if (!Unit_Test) && (Fullstring = "")
-	FullString := Copy_selected_Text()
+		FullString := Copy_selected_Text()
 	
 	
 	If FullString = No_Text_Selected
@@ -1091,31 +1134,31 @@ Format_Serial_Functions(Fullstring := "", Unit_test := 0) ; unit
 	PreFormatted_Text := add_digits(PreFormatted_Text)
 	Debug_Log_Event("add_digits() PreFormatted_Text is " PreFormatted_Text)
 	return PreFormatted_Text
-}              
+}
 
 
 
 Put_Formatted_Serials_into_Array(Formatted_Text) ; unit
 {
 	;~ Array_start = 2
-	;~ Prefixstore= 
+	;~ Prefixstore=
 	;~ Formatted_Array1 := Object()
 	;~ Formatted_Array2 := Object()
 	Formatted_Array := Object()
 	Loop, Parse, Formatted_Text, `r`n
 	{
 		If A_LoopField =
-		continue
+			continue
 		;~ Prefix := Extract_Prefix(A_LoopField)
 		;~ If Prefix != %Prefixstore%
 		;~ {
-			;~ If Array_start = 1
-			;~ Array_start = 2				
-			;~ else
-				;~ Array_start = 1			
-			;~ Prefixstore := Prefix
+		;~ If Array_start = 1
+		;~ Array_start = 2
+		;~ else
+		;~ Array_start = 1
+		;~ Prefixstore := Prefix
 		;~ }
-				
+		
 		;~ Formatted_Array%Array_start%.Insert(A_LoopField)
 		Formatted_Array.Insert(A_LoopField)
 	}
@@ -1124,16 +1167,16 @@ Put_Formatted_Serials_into_Array(Formatted_Text) ; unit
 	;~ Formatted_Array.Insert(Formatted_Array2)
 	
 	;~ For index, element in Formatted_Array
-		;~ catch = %element%
-
+	;~ catch = %element%
+	
 	return Formatted_Array
 }
 
 Combineserials(Formatted_Serial_Array) ; unit
 {
 	Local Prefix_Combine_array := Object()
-
-
+	
+	
 	For index, element in Formatted_Serial_Array
 	{
 		;~ MsgBox, Formatted serial is %element%
@@ -1146,23 +1189,23 @@ Combineserials(Formatted_Serial_Array) ; unit
 			Second_Number_set =  ; sets the Second_Number_Set variable to nothirng
 			Continue ; skips over the rest of the loop and starts at the top of the parse loop
 		}
-
+		
 		First_Number_Set := Extract_First_Set_Of_Serial_Number(element)
 		Middle_Char := Extract_Serial_Dividing_Char(element)
-
+		
 		If Middle_Char = `- ; checks if Middle_Char variable is a hyphen
-		Second_Number_set := Extract_Second_Set_Of_Serial_Number(element)
-
+			Second_Number_set := Extract_Second_Set_Of_Serial_Number(element)
+		
 		else If Middle_Char = `, ; if the Middle_Char variable is a comma
 		{
 			Middle_Char = `- ; makes the Middle_Char variable a hyphen
 			Second_Number_set = %First_Number_Set%
 		}
 		Prefix_Combine_array := (Checkvalues(Prefix_Extract,First_Number_Set,Second_Number_set)) ; goes to the Checkvalues subroutine
-
+		
 		;~ For index, element in Prefix_Combine_array
 		;~ MsgBox, % element " Is element`n index is " index
-
+		
 		Debug_Log_Event("Combine_Serials() Prefix_Extract is "  Prefix_Extract)
 		Debug_Log_Event("Combine_Serials() First_Number_Set is "  First_Number_Set)
 		Debug_Log_Event("Combine_Serials() Middle_Char is "  Middle_Char)
@@ -1179,7 +1222,7 @@ Extract_Serial_Array(Combined_Serial_Array) ; unit
 		;~ MsgBox % Combined_Serial_Array[A_Index]
 		Editfield := Editfield element ",`n"
 	}
-
+	
 	return Editfield
 }
 
@@ -1189,7 +1232,7 @@ Formatted_Text_Serial_Count(Formatted_Text) ; unit
 	Loop, Parse, Formatted_Text,`,
 	{
 		If (A_LoopField = "") || (A_LoopField = "`r") || (A_LoopField = "`n")
-		continue
+			continue
 		Serial_Counter++
 	}
 	return Serial_Counter
@@ -1201,7 +1244,7 @@ Copy_selected_Text() ;Unit
 	One_Operation_Key_Press("Ctrl", "c") ; sends a control C to the computer to copy selected text
 	sleep(2)
 	if clipboard =  ; if no text is seleted then clipboard will be remain blank
-	return "No_Text_Selected"
+		return "No_Text_Selected"
 	else
 		return Clipboard
 }
@@ -1230,7 +1273,7 @@ Check_For_Single_Serials(PreFormatted_Text) ; unit
 		}
 		StringTrimLeft, First_Number_Set,A_LoopField,3
 		If First_Number_Set =
-		Combine_Serials_together := Prefix_Extract
+			Combine_Serials_together := Prefix_Extract
 		
 		else
 			Combine_Serials_together := Prefix_Extract First_Number_Set "-" First_Number_Set
@@ -1243,7 +1286,7 @@ Check_For_Single_Serials(PreFormatted_Text) ; unit
 		Debug_Log_Event("Check_For_Single_Serials() New Parse" )
 	}
 	return Revised_PreFormatted_Text
-}              
+}
 
 
 Combinecount(Prefix_Store_Array) ; unit
@@ -1253,12 +1296,12 @@ Combinecount(Prefix_Store_Array) ; unit
 	Loop, Parse, Prefix_Store_Array, `,  ; parse loop to breaks the Prefixmatching variable up at the commas
 	{
 		if a_loopfield =  ; If the text before the comma is nothing, then skip the rest of the loop.
-		Continue ; skip over the rest of the loop
+			Continue ; skip over the rest of the loop
 		
 		Prefixcombinecount++ ; Add one to Prefixcombinecount variable
 	}
 	return Prefixcombinecount
-}              
+}
 One_Up_All(Serial_Store_Array) ; unit
 {
 	One_Up_Prefix_array := Object()
@@ -1266,18 +1309,18 @@ One_Up_All(Serial_Store_Array) ; unit
 	For index, Element in Serial_Store_Array
 	{
 		If A_index > %Length%
-		Break
+			Break
 		Result := Extract_Prefix(Element)
 		
 		if (Element = "" or Element = "`," or Element = "`r" or Element = "`n")  ; If the text before the comma is nothing, then skip the rest of the loop.
-		Continue ; skip over the rest of  the loop
+			Continue ; skip over the rest of  the loop
 		
 		else
 			One_Up_Prefix_array.insert(Result "00001-99999") ; Sets the One_Up_Prefix_array variable to the Prefix variable and adds in 00001-99999
 	}
 	
 	return One_Up_Prefix_array
-}              
+}
 
 
 Extract_Prefix(Serial_Number) ; unit
@@ -1307,73 +1350,73 @@ Extract_Second_Set_Of_Serial_Number(Serial_Number) ; unit
 Checkvalues(Prefix_Store, First_Number_Set,  Second_Number_Set, Reset := 0) ; unit
 {
 	static Serial_Combine_Array := Object()
-
-
-
+	
+	
+	
 	oldprefix :=""
-
-
+	
+	
 	If (Reset) ; This is here for the sole purpose of Unit testing. Since the Serial_Combine_array is static, is keeps the values between function call.The below will reset  the Serial_Combine_array to nothing.
 	{
 		Serial_array_reset := Object()
-
+		
 		Serial_Combine_Array := Serial_array_reset
 		return
 	}
-
+	
 	For Serial_index, Serial_element in Serial_Combine_Array
 	{
 		If  Serial_element contains %Prefix_store%
 		{
 			Prefix_Beg :=  Extract_First_Set_Of_Serial_Number(Serial_element)
 			Prefix_Last :=  Extract_Second_Set_Of_Serial_Number(Serial_element)
-
+			
 			If 	Prefix_Beg > %Second_Number_Set%
 			{
 				Second_Number_Set = %Prefix_Beg%
 			}
-
+			
 			If 	Prefix_Beg < %First_Number_Set%
 			{
 				First_Number_Set = %Prefix_Beg%
 			}
-
+			
 			If 	Prefix_Last > %Second_Number_Set%
 			{
 				Second_Number_Set = %Prefix_Last%
 			}
-
+			
 			Serial_Combine_Array[Serial_index] :=  Prefix_store First_Number_Set "-" Second_Number_Set
 			return  Serial_Combine_Array
-		}}
-
-		Serial_Combine_Array.Insert(Prefix_store First_Number_Set . "-" . Second_Number_Set)
-
-		return  Serial_Combine_Array
-	}
+	}}
+	
+	Serial_Combine_Array.Insert(Prefix_store First_Number_Set . "-" . Second_Number_Set)
+	
+	return  Serial_Combine_Array
+}
 
 Remove_Formatting(Selected_Text) ; unit
 {
 	;~ MsgBox, % Selected_Text
-	;~ FIgure out formatting with https://pubtool.cat.com/pubtool/PreviewEmailLinkPeriodicalNoCPIAction.do?pubKey=244436&cpiNumber=N/A 
+	;~ FIgure out formatting with https://pubtool.cat.com/pubtool/PreviewEmailLinkPeriodicalNoCPIAction.do?pubKey=244436&cpiNumber=N/A
 	
-			If Selected_Text not contains `)
-			If Selected_Text not contains `:
-				if Selected_Text not contains ,,
+	If Selected_Text not contains `)
+		If Selected_Text not contains `:
+			if Selected_Text not contains ,,
 			{
-			StringReplace, Selected_Text,Selected_Text,%A_Space%,`, , All
-			
-		}
-		Selected_Text := Selected_Text ","
-		;~ ListLines
-		;~ sleep(5)
-		;~ MsgBox %Selected_Text%
-		
-		
+				StringReplace, Selected_Text,Selected_Text,%A_Space%,`, , All
+				
+			}
+	Selected_Text := Selected_Text ","
+	;~ ListLines
+	;~ sleep(5)
+	;~ MsgBox %Selected_Text%
+	
+	
 	StringReplace, Selected_Text,Selected_Text,`n,,All
 	StringReplace, Selected_Text,Selected_Text,`r,,All
 	StringReplace, Selected_Text,Selected_Text,`[,,All
-	StringReplace, Selected_Text,Selected_Text,`],,All	
+	StringReplace, Selected_Text,Selected_Text,`],,All
 	StringReplace, Selected_Text,Selected_Text,`;,`,,All
 	StringReplace, Selected_Text,Selected_Text,%A_Space%,,All
 	StringReplace, Selected_Text,Selected_Text, `),`)`n,All
@@ -1384,7 +1427,7 @@ Remove_Formatting(Selected_Text) ; unit
 	Debug_Log_Event("Remove_formatting()  return value is "  Selected_Text)
 	
 	Return Selected_Text
-}              
+}
 
 
 PreFormat_Text(Format_Removed_Text) ; unit
@@ -1404,7 +1447,7 @@ PreFormat_Text(Format_Removed_Text) ; unit
 		StringReplace, New_Format_Text,New_Format_Text, `,,`,`n, All
 		
 		If (New_Format_Text != "") && (New_Format_Text !=" ,")
-		Full_Text =  %Full_Text%%New_Format_Text%`,
+			Full_Text =  %Full_Text%%New_Format_Text%`,
 		
 		
 		Debug_Log_Event("Preformat_Text()  Format_Text is "  Format_Text)
@@ -1412,7 +1455,7 @@ PreFormat_Text(Format_Removed_Text) ; unit
 		Debug_Log_Event("Preformat_Text()  New_Format_Text is "  New_Format_Text)
 	}
 	Return Full_Text
-}              
+}
 
 Prefix_Alone_Check_And_Add_One_UP(Text) ; unit
 {
@@ -1442,7 +1485,7 @@ Prefix_Alone_Check_And_Add_One_UP(Text) ; unit
 			;~ StringReplace , Serial_Numbers,Serial_Numbers,`),`,`n,all
 			;~ TextStore = %TextStore%%Prefix%%Serial_Numbers%
 			TextStore = %TextStore%%A_LoopField%`,`n
-		}}
+	}}
 	
 	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Initial text is "  Text )
 	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Addcomma is "  Addcomma )
@@ -1454,57 +1497,57 @@ Prefix_Alone_Check_And_Add_One_UP(Text) ; unit
 	Debug_Log_Event("Prefix_Alone_Check_And_Add_One_UP()  Textstore is "  Textstore )
 	
 	return Textstore
-}              
+}
 
-	add_digits(Serial_Number) ; unit
+add_digits(Serial_Number) ; unit
+{
+	;~ MsgBox, % "Serial is "Serial_Number
+	Final_Combined_Digits =
+	combinestring =
+	Loop, Parse, Serial_Number,`,`n
 	{
-;~ MsgBox, % "Serial is "Serial_Number
-			Final_Combined_Digits =
-		combinestring =
-		Loop, Parse, Serial_Number,`,`n
-		{
-			;~ MsgBox, % "Loopfield is  " A_LoopField
-			If A_LoopField =
-				continue
-
-			Prefix  := Extract_Prefix(A_LoopField)
-			StringReplace, Remove_End_Parenthesis,A_LoopField,`),,
-			StringTrimLeft, Remove_End_Parenthesis,Remove_End_Parenthesis,3
-			;~ MsgBox % "Remove end is " Remove_End_Parenthesis
-			StringSplit, Serial_Temp, Remove_End_Parenthesis, `-
+		;~ MsgBox, % "Loopfield is  " A_LoopField
+		If A_LoopField =
+			continue
+		
+		Prefix  := Extract_Prefix(A_LoopField)
+		StringReplace, Remove_End_Parenthesis,A_LoopField,`),,
+		StringTrimLeft, Remove_End_Parenthesis,Remove_End_Parenthesis,3
+		;~ MsgBox % "Remove end is " Remove_End_Parenthesis
+		StringSplit, Serial_Temp, Remove_End_Parenthesis, `-
 		Loop, 2
 		{
-		index := A_Index
-   Loop % 5 - StrLen(Serial_Temp%A_index%)
-	   Serial_Temp%index% :="0"  Serial_Temp%index%
+			index := A_Index
+			Loop % 5 - StrLen(Serial_Temp%A_index%)
+				Serial_Temp%index% :="0"  Serial_Temp%index%
 		}
-
+		
 		;~ combinestring := SubStr(combinestring, 2)
-
+		
 		Final_Combined_Digits =%Final_Combined_Digits%%Prefix%%Serial_temp1%`-%Serial_temp2%`,`n
 		;~ MsgBox, % "final is  " Final_Combined_Digits
 	}
-
-		return Final_Combined_Digits
-	}
+	
+	return Final_Combined_Digits
+}
 
 
 
 Clear_Format_Variables(unit_test) ; unit no need
-	{
-		global
-		;Clear the variables
-		Clipboard =
-		Editfield =
-		If (!Unit_Test)
+{
+	global
+	;Clear the variables
+	Clipboard =
+	Editfield =
+	If (!Unit_Test)
 		Guicontrol,, Editfield, %Editfield%
-		return
-	}
+	return
+}
 
 Export_Serials:
 {
 	if checked = 0
-	Return
+		Return
 	
 	Progress, b w200 ,,Creating CSV file (This may take a minute or two)
 	Progress, 0
@@ -1514,10 +1557,10 @@ Export_Serials:
 	Loop
 	{
 		IfNotExist %WorkbookPath%
-		Break
+			Break
 		
 		IfExist %WorkbookPath%
-		WorkbookPath := A_Desktop "\Effectivity" Effectivitycount ".CSV"    ; full path to your Workbook
+			WorkbookPath := A_Desktop "\Effectivity" Effectivitycount ".CSV"    ; full path to your Workbook
 		Effectivitycount++
 	}
 	
@@ -1541,7 +1584,7 @@ Export_Serials:
 	Loop, parse, Editfield, `n
 	{
 		If A_LoopField contains - - - - - -
-		continue
+			continue
 		
 		Progress_total := Percent_Complete * A_Index
 		Progress,  %Progress_total%
@@ -1552,38 +1595,40 @@ Export_Serials:
 	}
 	Progress, off
 	Return
-}              
+}
 
 /*
-/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-ENter Serias Section
-/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+	/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+	ENter Serias Section
+	/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
 Enter_Serials_Variable_Setup(Type) ; no unit testing needed
 {
 	global
 	If Type = Start
-	StartTime := A_TickCount
+		StartTime := A_TickCount
 	If Type = Total
 		Start_Total_Time := A_TickCount
 	return
- }
+}
 
 Start_Macro() ; no unit testing needed as all contained functions are tested
 {
-	global 
+	global
 	gui,Submit, NoHide
-	GuiControlGet, EditfieldCHeck,,Editfield 
+	GuiControlGet, EditfieldCHeck,,Editfield
 	
 	If Formatted_text_completed !=1
 	{
-		Guicontrol,1:, Editfield,			  
+		Guicontrol,1:, Editfield,
+		StringReplace,EditfieldCHeck,EditfieldCHeck,`n,`,`n,All
+		StringReplace,EditfieldCHeck,EditfieldCHeck, - - - - - - - - - - - - - - - - - - ,,All
 		Copy_text_and_Format(EditfieldCHeck)
 	}
 	else
 		Formatted_text_completed = 0
 	
-
+	
 	GuiControlGet, Editfield
 	
 	If Editfield =
@@ -1592,35 +1637,40 @@ Start_Macro() ; no unit testing needed as all contained functions are tested
 		Exit
 	}
 	Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
-		Move_Message_Box("262144","Select ACM Screen","Click on the ACM window that you want to add effectivity to and then press the OK button`n`nNote that if the window is not full screen, the macro will make it full screen to increase macro reliability. `nAlso required so that macro can make the tab a new window for two tab operations reliability")
+	Move_Message_Box("262144","Select ACM Screen","Click on the ACM window that you want to add effectivity to and then press the OK button`n`nNote that if the window is not full screen, the macro will make it full screen to increase macro reliability. `nAlso required so that macro can make the tab a new window for two tab operations reliability")
 	sleep(5)
 	WinGetClass, Active_Class, A
 	If  (Active_Class !=  "TTAFrameXclass")
-Loop
-{
-	Move_Message_Box("262144","Select ACM Screen","ACM screen was not the active screen after you pressed OK.`n`n Please click on the desired ACM screen BEFORE  clicking OK on this message window.")
-	sleep(5)
-		WinGetClass, Active_Class, A
-	} until (Active_Class =  "TTAFrameXclass")
+		Loop
+		{
+			Move_Message_Box("262144","Select ACM Screen","ACM screen was not the active screen after you pressed OK.`n`n Please click on the desired ACM screen BEFORE  clicking OK on this message window.")
+			sleep(5)
+			WinGetClass, Active_Class, A
+		} until (Active_Class =  "TTAFrameXclass")
 	
-	Enter_Serials_Variable_Setup("total") 
+	Enter_Serials_Variable_Setup("total")
 	WinGet, Active_ID, Id, A
-
+	
 	;~ MsgBox, % Active_Class
 	;~ If Active_Class != TTAFrameXclass
-		
+	
 	SerialFullScreen(Active_ID)
+	sleep(5)
+	Send {Ctrl Down}{0}{Ctrl Up}
+	Sleep(5)
+	Send {F5}
+	Sleep(10)
 	CoordMode, mouse, Screen
 	If (Enable_Two_Tabs)
 	{
-			WinGet, Base_ACM_Window, Id, A
-	Make_New_Window(Active_ID)
+		WinGet, Base_ACM_Window, Id, A
+		Make_New_Window(Active_ID)
 		SerialFullScreen(Active_ID)
 		Active_ID := Get_Effectivity_Tab_Location(Effectivityx, Effectivityy)
-	Sleep()
+		Sleep()
 	}
-
-Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
+	
+	Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
 	WinGet, Active_ID, Id, A
 	Sleep()
 	Get_Prefix_Button_Screen_Position(prefixx, prefixy)
@@ -1628,527 +1678,667 @@ Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
 	Get_Apply_Button_Screen_Position(Applyx, Applyy)
 	Sleep()
 	
+	SplashTextOn ,300,20,,Adjusting Screen for ACM Markers
+	changewindow=0
+	Zoomcount = 0
+	Loop,
+	{
+		Initial_result := Find_issue_Check_images(1)
+		;~ MsgBox % Initial_result
+		if Initial_result = Empty
+			break
+		
+		If (Initial_result = "Not_Found")  || (  Initial_result = "error" )
+		{
+			;~ tooltip,  %A_Index%  is a_index and result is %Initial_result%
+			;~ changewindow = 1
+			WinActivate, ahk_id %Active_ID%
+			Sleep(.5)
+			WinWaitActive, ahk_id %Active_ID%
+			Sleep()
+		
+			;~ if A_Index = 5
+			;~ {
+				;~ loop, %Zoomcount%
+				;~ {
+					;~ SEnd {Ctrl Down}{+}{Ctrl Up}
+					;~ Zoomcount++
+				;~ }
+				
+				;~ SEnd {Ctrl Down}{+}{Ctrl Up}
+				;~ zoomcount++
+				;~ continue
+			;~ }
+			;~ else if  (A_Index >5) and (A_Index <= 9)
+			;~ {
+				;~ SEnd {Ctrl Down}{+}{Ctrl Up}
+				;~ Zoomcount++
+				;~ continue
+			;~ }
+			;~ else If A_Index <=4
+			;~ {
+				;~ Send {Ctrl Down}{-}{Ctrl Up}
+				;~ zoomcount--
+				;~ continue
+			;~ }
+			;~ else if A_Index =10
+			;~ {
+				;~ Send {Ctrl Down}{0}{Ctrl Up}
+				;~ Zoomcount=0
+				;~ continue
+			;~ }
+			;~ else if A_Index >=11
+			 if A_Index >=11
+			{
+				Move_Message_Box("0","Error","Cannot find search markers. `n`nOperation will exit. Please check monitor setting for screen resolution as close to 1680x1050  as possible")
+				Exit
+			}
+			Sleep()
+		}
+		
+		
+	}
+	SplashTextOn,300,20,,Found Screen Markers
+	Zoomlevel := Zoomcount
+	;~ MsgBox Zoomlevel = %Zoomlevel%
+	Sleep(10)
+	SplashTextOff
+	If changewindow =1
+	{
+		Sleep()
+		Send {F5}
+		
+		Get_Add_Button_Screen_Position(Add_Button_X_Location, Add_Button_Y_Location)
+		WinGet, Active_ID, Id, A
+		Sleep()
+		Get_Prefix_Button_Screen_Position(prefixx, prefixy)
+		Sleep()
+		Get_Apply_Button_Screen_Position(Applyx, Applyy)
+		Sleep()
+	}
+	
 	If (Enable_Two_Tabs)
-{
-Set_Up_Tabs(Effectivityx,Effectivityy, Add_Button_X_Location, Add_Button_Y_Location, Active_ID)
-Select_tab(1)
+	{
+		Set_Up_Tabs(Effectivityx,Effectivityy, Add_Button_X_Location, Add_Button_Y_Location, Active_ID)
+		Select_tab(1)
 		sleep()
-}
-
+	}
+	
 	Clear_ACM_Fields()
 	
 	Sleep(10)
-	Find_issue_Check_images()
+	
+	Find_issue_Check_images(1)
+	Effectivity_Exists_search()
 	Enter_Effectivity_Loop()
 	return
-}              
+}
 
 Enter_Effectivity_Loop()
 {
-global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location, prefixx, prefixy, Sleep_Delay, Enable_Two_Tabs
-static Apply_Button_Click_Delay = 1, Lock_Tab_one = 0
-static value = 0
-static First_Loop = 1, Engineering_location_x = 
-static Reset_Serial = 0
-Start_Dual_Eng_Model_Enter = 0
-Skip_Dual_NoSerial_Checks = 0		
-
-Enter_Serials_Variable_Setup("start")
-
-If (Enable_Two_Tabs)
-Tab_count = 2
-
-Loop
-{
-	Click, %prefixx%, %prefixy%
-SplashTextOff
-
-if (breakloop)
-	exit
+	global breakloop, serialsentered, Applyx, Applyy, Effectivity_Macro, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location, prefixx, prefixy, Sleep_Delay, Enable_Two_Tabs, Configuration_File_Location, Active_ID
+	static Apply_Button_Click_Delay = 1, Lock_Tab_one = 0
+	static value = 0
+	static First_Loop = 1, Engineering_location_x =
+	static Reset_Serial = 0
+	IniWrite, 0, %Configuration_File_Location%, reuse,reuse
+	Start_Dual_Eng_Model_Enter = 0
+	Skip_Dual_NoSerial_Checks = 0
 	
-Serial_number = 
-;~ Sleep()
-Load_ini_file(Configuration_File_Location)
-checkforactivity()
-found = 0
-If(Enable_Two_Tabs)
-{
-	if Lock_Tab_one != 1
-	{
-If Tab_count = 2
-	Tab_count = 1
-else 
-	Tab_count = 2
-}
-else 
-Tab_count = 1
-}
-
-Refresh_Screen_Check(Refreshrate, tab_one_refresh)
-
-Result = 
-
-
-If (First_Loop = 1) || (Reset_Serial = 1)
-{
-Reset_Serial = 0
-Serial_number := Get_Serial_Numbers()
-if (Enable_Two_Tabs)
-Tab%Tab_count%_Serial_Number := Serial_Number
-}
-else 
-{
-	Serial_Number := Serial_Number_Store
-if (Enable_Two_Tabs)
-Tab%Tab_count%_Serial_Number := Serial_Number
-}
-
-if Serial_Number  contains  - - - - -
-	{
-	Start_Dual_Eng_Model_Enter = 1
-	Reset_Serial = 1
-	if (Enable_Two_Tabs)
-	Lock_Tab_one = 1
-	continue
-	}
+	Enter_Serials_Variable_Setup("start")
 	
-Prefix := Extract_Prefix(Serial_Number)
-First_Effectivity_Numbers := LTrim(Extract_First_Set_Of_Serial_Number(Serial_Number), "0")
-Second_Effectivity_Numbers := LTrim(Extract_Second_Set_Of_Serial_Number(Serial_Number), "0")	 
-
-If Prefix =
-  Complete = 1
-	
-if breakloop = 1
-	{
-	Exit
-	break
-	}
-
-If (Enable_Two_Tabs)
-{
-Select_Tab(Tab_count)
-}
-
-Searchend_Until_Found_Loop()
-
-
-Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete,Base_ACM_Window)
-
-
-;~ }
-Sleep(Sleep_Delay)
-Debug_Log_Event("Sleep delay " Sleep_Delay)
-
-Apply_button_Click_Delay_Timer("Start")  
-
-if (!Start_Dual_Eng_Model_Enter)
-	{
-	Apply_Button_Click_Delayr_end_total = 0
+	If (Enable_Two_Tabs)
+		Tab_count = 2
 	
 	Loop
 	{
+		gui,80:destroy
+		
+		Win_check(Active_ID)
+		
+		Click, %prefixx%, %prefixy%
+		SplashTextOff
+		
 		if (breakloop)
-		exit		
+			exit
 		
-		;~ ToolTip, %Apply_Button_Click_Delayr_end% is delay end and %Apply_Button_Click_Delayr_end_total% is delay total and %Apply_Button_Click_Delay% is click delay
-		
-		Apply_Button_Click_Delayr_Start := A_TickCount
-		First_check :=   Find_issue_Check_images()
-		Debug_Log_Event("Apply_Button_Click_Delay -First_check =  " First_check)
-				
-			If (Unit_Test)
-			{
-				If Apply_Button_Click_Delay > 5
-					Apply_Button_Click_Delay = 5
-			}
-				If First_check = Not_Found
-			{
-				;~ MsgBox, firstcheck is notfound
-			Skip_Dual_NoSerial_Checks = 1
-			Found = 1
-			Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")
-				Break			
-			}	
-	else
-			{
-			Apply_Button_Click_Delayr_end := (A_TickCount - Apply_Button_Click_Delayr_Start) / 10
-			Apply_Button_Click_Delayr_end_total :=  (Apply_Button_Click_Delayr_end_total + Apply_Button_Click_Delayr_end)
-			Sleep()
-			}
-			
-		If Apply_Button_Click_Delayr_end_total >= %Apply_Button_Click_Delay%
-			{
-				Debug_Log_Event("Apply_Button_Click_Delay  >=  Apply_Button_Click_Delay -- BREAK loop")
-				Break
-			}
-	}
-			
-Loop,5
-{
-		Complete_Check :=   Find_issue_Check_images()
-
-		If Complete_Check = Not_Found
+		Serial_number =
+		;~ Sleep()
+		Load_ini_file(Configuration_File_Location)
+		checkforactivity()
+		found = 0
+		If (Enable_Two_Tabs)
 		{
-		Found = 1
-		Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")
-		Break		
+			if Lock_Tab_one != 1
+			{
+				If Tab_count = 2
+					Tab_count = 1
+				else
+					Tab_count = 2
+			}
+			else
+				Tab_count = 1
+		}
+		
+		Refresh_Screen_Check(Refreshrate, tab_one_refresh)
+		
+		Result =
+		
+		
+		If (First_Loop = 1) || (Reset_Serial = 1)
+		{
+			Reset_Serial = 0
+			Serial_number := Get_Serial_Numbers()
+			if (Enable_Two_Tabs)
+				Tab%Tab_count%_Serial_Number := Serial_Number
 		}
 		else
-	Sleep(5)
-	;~ Tooltip, Loop index is %A_Index%
-}
- 
- ;~ SplashTextOff
- 
-	If Found <> 1
-{		
+		{
+			Serial_Number := Serial_Number_Store
+			if (Enable_Two_Tabs)
+				Tab%Tab_count%_Serial_Number := Serial_Number
+		}
 		
-	If (breakloop)
-				exit
-Sleep(5)
+		if Serial_Number  contains  - - - - -
+		{
+			Start_Dual_Eng_Model_Enter = 1
+			Reset_Serial = 1
+			if (Enable_Two_Tabs)
+				Lock_Tab_one = 1
+			continue
+		}
+		
+		Prefix := Extract_Prefix(Serial_Number)
+		First_Effectivity_Numbers := LTrim(Extract_First_Set_Of_Serial_Number(Serial_Number), "0")
+		Second_Effectivity_Numbers := LTrim(Extract_Second_Set_Of_Serial_Number(Serial_Number), "0")
+		
+		If Prefix =
+			Complete = 1
+		
+		if breakloop = 1
+		{
+			Exit
+			break
+		}
+		
+		If (Enable_Two_Tabs)
+		{
+			Select_Tab(Tab_count)
+		}
+		
+		Searchend_Until_Found_Loop()
+		
+		
+		Enterserials(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete,Base_ACM_Window)
+		
+		
+		;~ }
+		Sleep(Sleep_Delay)
+		Debug_Log_Event("Sleep delay " Sleep_Delay)
+		
+		Apply_button_Click_Delay_Timer("Start")
+		
+		if (!Start_Dual_Eng_Model_Enter)
+		{
+			Apply_Button_Click_Delayr_end_total = 0
+			
+			Loop
+			{
+				if (breakloop)
+					exit
+				
+				;~ ToolTip, %Apply_Button_Click_Delayr_end% is delay end and %Apply_Button_Click_Delayr_end_total% is delay total and %Apply_Button_Click_Delay% is click delay
+				
+				Apply_Button_Click_Delayr_Start := A_TickCount
+				First_check :=   Find_issue_Check_images()
+				Debug_Log_Event("Apply_Button_Click_Delay -First_check =  " First_check)
+				
+				If (Unit_Test)
+				{
+					If Apply_Button_Click_Delay > 5
+						Apply_Button_Click_Delay = 5
+				}
+				If First_check = Not_Found
+				{
+					;~ MsgBox, firstcheck is notfound
+					Skip_Dual_NoSerial_Checks = 1
+					Found = 1
+					Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")
+					Break
+				}
+				else
+				{
+					Apply_Button_Click_Delayr_end := (A_TickCount - Apply_Button_Click_Delayr_Start) / 10
+					Apply_Button_Click_Delayr_end_total :=  (Apply_Button_Click_Delayr_end_total + Apply_Button_Click_Delayr_end)
+					Sleep()
+				}
+				
+				If Apply_Button_Click_Delayr_end_total >= %Apply_Button_Click_Delay%
+				{
+					Debug_Log_Event("Apply_Button_Click_Delay  >=  Apply_Button_Click_Delay -- BREAK loop")
+					Break
+				}
+			}
+			
+			Loop,5
+			{
+				Complete_Check :=   Find_issue_Check_images()
+				
+				If Complete_Check = Not_Found
+				{
+					Found = 1
+					Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")
+					Break
+				}
+				else
+					Sleep(5)
+				;~ Tooltip, Loop index is %A_Index%
+			}
+			
+			;~ SplashTextOff
+			
+			If Found <> 1
+			{
+				
+				If (breakloop)
+					exit
+				Sleep(5)
 				Searchend_Result :=	Find_issue_Check_images()
 				Debug_Log_Event("searchend_result = " Searchend_Result)
- ;~ ToolTip, %Searchend_Result% `n after the notfound 8 loop
- 
-				If (Searchend_Result = "Empty")				
+				;~ ToolTip, %Searchend_Result% `n after the notfound 8 loop
+				
+				If (Searchend_Result = "Empty")
 				{
 					Modifier =
-					Found = 1					
+					Found = 1
 				}
 				else If (Searchend_Result = "Not_Found")
 				{
-					Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")  
-					Found = 1	
-						If First_Loop = 1
+					Apply_Button_Click_Delay := Apply_button_Click_Delay_Timer("End")
+					Found = 1
+					If First_Loop = 1
 					{
-					First_Loop=0
-				Serial_Number_Store := Get_Serial_Numbers()
+						First_Loop=0
+						Serial_Number_Store := Get_Serial_Numbers()
 					}
-					else 
+					else
 						Serial_Number_Store := Get_Serial_Numbers()
 				}
-			
-			else IF (Searchend_Result = "Bad_Prefix")
+				
+				else IF (Searchend_Result = "Bad_Prefix")
 				{
 					
 					Bad_Prefix_Check := Bad_Prefix_check(Serial_number)
 					;~ MsgBox, %Bad_Prefix_check% `nis the result of the bad prefix check
-						Debug_Log_Event("Bad prefix check = " Bad_Prefix_check)			
-						If  Bad_Prefix_Check = Empty
-									{
-									Found = 1
-									break
-								}
-						else if Bad_Prefix_Check = End_loop
-							{
-							found = 0
-							Reset_Serial = 1
-							}
-				}		
-			else IF (Searchend_Result = "Dual_eng")
+					Debug_Log_Event("Bad prefix check = " Bad_Prefix_check)
+					If  Bad_Prefix_Check = Empty
+					{
+						Found = 1
+						break
+					}
+					else if Bad_Prefix_Check = End_loop
+					{
+						found = 0
+						Reset_Serial = 1
+					}
+				}
+				else IF (Searchend_Result = "Dual_eng")
 				{
 					First_Effectivity_Numbers := Extract_First_Set_Of_Serial_Number(Serial_Number)
-					Second_Effectivity_Numbers := Extract_Second_Set_Of_Serial_Number(Serial_Number)	 
+					Second_Effectivity_Numbers := Extract_Second_Set_Of_Serial_Number(Serial_Number)
 					activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
 					SplashTextOn,325,50,, This serial has Multiple Engineering/  sales models. `nThis Prefix will be moved to the End of the list.
 					Winmove, ,This serial has Multiple engeering Models,%amonx%, %Amony%
 					Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-					SplashTextOff	
+					SplashTextOff
 					Reset_Serial = 1
-					}
-		}				
+				}
+			}
 			Splashtextoff
-
-If Found= 1
-{
-
-Click %Applyx%,%Applyy%	
-
-If First_Loop = 1
-					{
-					First_Loop=0
-				Serial_Number_Store := Get_Serial_Numbers()
-					}
-					else 
-						Serial_Number_Store := Get_Serial_Numbers()
-Debug_Log_Event("Click apply")
-Add_To_Completed_LIst_and_serial_count(Serial_Number)	
-IF (Enable_Two_Tabs)
-continue
-else
-{
-Loop
-{
-Found := Find_ACM_Creating_Box_Loop()
-
-			If Found = 1
+			
+			If Found= 1
 			{
-			Searchend_Until_Found_Loop()
-				Break
-			}
-			else
-			{
-				Searchend_Result :=	Find_issue_Check_images()
-				If (Searchend_Result = "Empty")				
-								break
-								
-				Click %Applyx%,%Applyy%	
-				Sleep(3)
 				
+				Click %Applyx%,%Applyy%
+				
+				If First_Loop = 1
+				{
+					First_Loop=0
+					Serial_Number_Store := Get_Serial_Numbers()
+				}
+				else
+					Serial_Number_Store := Get_Serial_Numbers()
+				Debug_Log_Event("Click apply")
+				Add_To_Completed_LIst_and_serial_count(Serial_Number)
+				IF (Enable_Two_Tabs)
+					continue
+				else
+				{
+					Loop
+					{
+						Found := Find_ACM_Creating_Box_Loop()
+						
+						If Found = 1
+						{
+							Searchend_Until_Found_Loop()
+							Break
+						}
+						else
+						{
+							Searchend_Result :=	Find_issue_Check_images()
+							If (Searchend_Result = "Empty")
+								break
+							
+							Click %Applyx%,%Applyy%
+							Sleep(3)
+							
+						}
+					}
+				}
 			}
-}
-}
-}
-}
-else If (Start_Dual_Eng_Model_Enter)
-{
-Modifier = **Multiple Engineering Models**
-Create_Dual_Instructions_GUI()
-if Engineering_location_x = 
-Engineering_location_x := prefixx - 110
-
-MouseMove %Engineering_location_x%, %prefixy%
-
-Counter = 0
-loop
-{
-	if breakloop = 1
-		exit
-
-Result_check := Find_issue_Check_images()
-
-If (Result_check = "Not_found")
-{
-	MouseGetPos, Engineering_location_x, Engineering_location_y
-			Sleep(3)
-			Gui, 70:Destroy
-			Click %Applyx%, %Applyy%
-			Serial_Number_Store := Get_Serial_Numbers()
+		}
+		else If (Start_Dual_Eng_Model_Enter)
+		{
+			Modifier = **Multiple Engineering Models**
+			Create_Dual_Instructions_GUI()
+			if Engineering_location_x =
+				Engineering_location_x := prefixx - 110
+			
+			MouseMove %Engineering_location_x%, %prefixy%
+			
+			Counter = 0
+			loop
+			{
+				if breakloop = 1
+					exit
+				
+				Result_check := Find_issue_Check_images()
+				
+				If (Result_check = "Not_found")
+				{
+					MouseGetPos, Engineering_location_x, Engineering_location_y
+					Sleep(3)
+					Gui, 70:Destroy
+					Click %Applyx%, %Applyy%
+					Serial_Number_Store := Get_Serial_Numbers()
+					
+					Searchend_Until_Found_Loop()
+					
+					break
+				}
+				Gui 70: Flash
+				Sleep(10)
+			}
 			
 			Searchend_Until_Found_Loop()
+			Gui, 70:Destroy
+			Add_To_Completed_LIst_and_serial_count(Serial_Number, Modifier)
 			
-break
-}
-Gui 70: Flash
-Sleep(10)
-} 
-
-Searchend_Until_Found_Loop()
-	Gui, 70:Destroy
-Add_To_Completed_LIst_and_serial_count(Serial_Number, Modifier)	
-
-}}
-
-return
-}
-
-	New_win_close(Active_ID)
-	{
-		WinActivate, ahk_id %Active_ID%
-		;~ sleep(30)
-		WinGetPos, winX,winY,winWidth,winheight,   ahk_id %Active_ID%
-		winX := (winWidth - 25)
-		;~ MsgBox,  % winX
-		CoordMode, mouse, Screen
-		;~ MouseMove, %winX%, 6
-		;~ sleep(30)
-		Click, %winX%, 6
-		sleep(1)
-		;~ sleep(30)
-			;~ Click, %winX%, 6
-		CoordMode, mouse, Screen
-	return
-	}
+	}}
 	
+	return
+}
+
+Action_needed_gui()
+{
+	global
+	IfWinExist, ahk_id %Action_gui%
+		return
+	
+	activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+	Gui 80:Add,Text,Center, ACM Action Required as an Error Screen was detected
+	Gui 80:Add,Text,Center, Perform the Required action to remove the error and then press the Ok button.
+	gui, 80:add, Button,Center geff_ok,Ok
+	Gui  80:Show, x%amonx% y%amony% x100 y100 ,%Effectivity_Macro%
+	gui, 80: +AlwaysOnTop +LastFound
+	Action_gui := WinExist()
+	;~ MsgBox, % Action_gui "  is id of gui"
+	gosub, Flash_action_Screen
+	return
+}
+
+Flash_Action_screen:
+{
+	Loop,
+	{
+		IfWinExist, ahk_id %Action_gui%
+		{
+			;~ MsgBox, action gui exists
+			Gui 80: Flash
+			Sleep 2000
+		}
+		IfWinNotExist, ahk_id %Action_gui%
+		{
+			Break
+			;~ MsgBox, action gui no exists
+		}
+	}
+	return
+}
+
+
+eff_ok:
+UnPausescript() ; no return here, so that the script will close the gui screen as well.
+
+80guiclose:
+80guiescape:
+{
+	gui, 80:Destroy
+	return
+}
+
+New_win_close(Active_ID)
+{
+	WinActivate, ahk_id %Active_ID%
+	;~ sleep(30)
+	WinGetPos, winX,winY,winWidth,winheight,   ahk_id %Active_ID%
+	winX := (winWidth - 25)
+	;~ MsgBox,  % winX
+	CoordMode, mouse, Screen
+	;~ MouseMove, %winX%, 6
+	;~ sleep(30)
+	Click, %winX%, 6
+	sleep(1)
+	;~ sleep(30)
+	;~ Click, %winX%, 6
+	CoordMode, mouse, Screen
+	return
+}
+
 Searchend_Until_Found_Loop()
 {
 	global breakloop
 	
-	loop, 
-{
-Result := Searchend()
-Sleep()
-if (breakloop)
-	exit
-}
-until (Result = "found")
-
-Return
+	loop,
+	{
+		Result := Searchend()
+		Sleep()
+		if (breakloop)
+			exit
+	}
+	until (Result = "found")
+	
+	Return
 }
 
 Select_tab(Tab_Number)
 {
 	global Active_ID
 	Win_check(Active_ID)
-		One_Operation_Key_Press("Ctrl", tab_number)
-		Sleep(5)
-return
+	One_Operation_Key_Press("Ctrl", tab_number)
+	Sleep(5)
+	return
 }
 
 Refresh_Screen_Check(refreshrate, tab_one_refresh)
 {
 	static RefreshrateTemp = 1 , Rate = 1
 	
-value := Added_Serial_Count("Get")
-if RefreshrateTemp <> %Refreshrate%
-{
-	Rate := value / Refreshrate
-	Rate :=  Floor(Rate)
-	if Rate = 0
-		Rate++
-RefreshrateTemp := Refreshrate
-	;~ tooltip, New Refreshrate is %Refreshrate% Rate is %Rate% RefreshrateTemp is %RefreshrateTemp%
-}
-
-Refreshcheckrate := (Refreshrate * Rate)
-If (Enable_Two_Tabs)
-	value := value/2
-If value >= %Refreshcheckrate%
-	{		
-	Rate++
-	Refresh_Screen()
-	Sleep(10)
+	value := Added_Serial_Count("Get")
+	if RefreshrateTemp <> %Refreshrate%
+	{
+		Rate := value / Refreshrate
+		Rate :=  Floor(Rate)
+		if Rate = 0
+			Rate++
+		RefreshrateTemp := Refreshrate
+		;~ tooltip, New Refreshrate is %Refreshrate% Rate is %Rate% RefreshrateTemp is %RefreshrateTemp%
 	}
-	Return	
+	
+	Refreshcheckrate := (Refreshrate * Rate)
+	If (Enable_Two_Tabs)
+		value := value/2
+	If value >= %Refreshcheckrate%
+	{
+		Rate++
+		Refresh_Screen()
+		Sleep(10)
+	}
+	Return
 }
 
 Find_ACM_Creating_Box_Loop()
 {
 	global breakloop, Applyx, Applyy
 	Found = 0
-Loop, 5
+	Loop, 5
 	{
 		if (breakloop)
 			exit
 		
-	Result := ACM_Creating_Box_Find()
-	Debug_Log_Event("ACM_Creating_Box_Find result  is " result " on loop cycle " A_Index)
-	ListLines, on 
-	If Result = Found		
-	{
-		;~ MsgBox, found creating box
-		sleep(2)
-		Loop
+		Result := ACM_Creating_Box_Find()
+		Debug_Log_Event("ACM_Creating_Box_Find result  is " result " on loop cycle " A_Index)
+		ListLines, on
+		If Result = Found
 		{
-			if (breakloop)
-			exit
-			
-			Result := ACM_Creating_Box_Find()	
-			Debug_Log_Event("Acm Creating Box find result is " Result)
-		} until (result = "Not_Found")
-		;~ MsgBox, not found
-found = 1
-Break
+			;~ MsgBox, found creating box
+			sleep(2)
+			Loop
+			{
+				if (breakloop)
+					exit
+				
+				Result := ACM_Creating_Box_Find()
+				Debug_Log_Event("Acm Creating Box find result is " Result)
+			} until (result = "Not_Found")
+			;~ MsgBox, not found
+			found = 1
+			Break
+		}
+		
+		Sleep()
+		gui,80:destroy
+		Effectivity_Exists_search()
+		;~ MsgBox, result is %result%
+		
+		
+		;~ If (A_Index = 2) or (A_Index = 4)
+		;~ Click, %Applyx%, %Applyy%
 	}
-	Sleep()
-	;~ If (A_Index = 2) or (A_Index = 4)
-	;~ Click, %Applyx%, %Applyy%
-}	
-
-return Found
+	
+	return Found
 }
 
 Add_To_Completed_LIst_and_serial_count(Serial_Number, Modifier = "")
 {
 	
-		Add_To_Completed_LIst(Serial_number, Modifier)
-		Sleep()
-			Serial_count := Added_Serial_Count("Add")
-					Sleep()
-					Debug_Log_Event("Add_To_completed_list_and Serial_count()** Serial_number is " Serial_Number " Modifier is " Modifier "  Serial_count is " Serial_count)
-				
-			GuiControl,1:,serialsentered,%Serial_count%
-			Gui,1:Submit,NoHide
+	Add_To_Completed_LIst(Serial_number, Modifier)
+	Sleep()
+	Serial_count := Added_Serial_Count("Add")
+	Sleep()
+	Debug_Log_Event("Add_To_completed_list_and Serial_count()** Serial_number is " Serial_Number " Modifier is " Modifier "  Serial_count is " Serial_count)
+	
+	GuiControl,1:,serialsentered,%Serial_count%
+	Gui,1:Submit,NoHide
 	
 	return
 	
 }
 Bad_Prefix_check(Serial_number)
 {
-					SplashTextOn, 300,25,, Waiting to confirm Prefix is NOT In ACM...
-					Sleep(10)
-					ISSUE_Result :=   Find_issue_Check_images()		
-					Debug_Log_Event("Double check for bad prefix = " ISSUE_Result)
-					If ISSUE_Result = empty
-						{
-							SplashTextOff
-							return "Empty"
-						}
-					Loop, 2
-						{		
-							if (breakloop)
-							exit
-							
-							Splashtextoff
-							ISSUE_Result :=   Find_issue_Check_images()
-							Debug_Log_Event("Double check 3 cycle Loop = " ISSUE_Result " in loop cycle" A_Index)
-							IF ISSUE_Result = Empty
-								return "Empty"
-							
-							IF ISSUE_Result = Bad_Prefix
-								{
-									Splashtextoff
-									Debug_Log_Event("serial no go Prefix = " Prefix)
-									Prefix := Extract_Prefix(Serial_Number)
-										First_Effectivity_Numbers := Extract_First_Set_Of_Serial_Number(Serial_Number)
-										Second_Effectivity_Numbers := Extract_Second_Set_Of_Serial_Number(Serial_Number)	 
-									Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-									return "End_loop"			
-								}		
-							else if ISSUE_Result = Not_Found
-								return "Not_found"			
-							else
-								Sleep(10)
-						}
-						return "0"
+	SplashTextOn, 300,25,, Waiting to confirm Prefix is NOT In ACM...
+	Sleep(10)
+	ISSUE_Result :=   Find_issue_Check_images()
+	Debug_Log_Event("Double check for bad prefix = " ISSUE_Result)
+	If ISSUE_Result = empty
+	{
+		SplashTextOff
+		return "Empty"
+	}
+	Loop, 2
+	{
+		if (breakloop)
+			exit
+		
+		Splashtextoff
+		ISSUE_Result :=   Find_issue_Check_images()
+		Debug_Log_Event("Double check 3 cycle Loop = " ISSUE_Result " in loop cycle" A_Index)
+		IF ISSUE_Result = Empty
+			return "Empty"
+		
+		IF ISSUE_Result = Bad_Prefix
+		{
+			Splashtextoff
+			Debug_Log_Event("serial no go Prefix = " Prefix)
+			Prefix := Extract_Prefix(Serial_Number)
+			First_Effectivity_Numbers := Extract_First_Set_Of_Serial_Number(Serial_Number)
+			Second_Effectivity_Numbers := Extract_Second_Set_Of_Serial_Number(Serial_Number)
+			Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+			return "End_loop"
+		}
+		else if ISSUE_Result = Not_Found
+			return "Not_found"
+		else
+			Sleep(10)
+	}
+	return "0"
 }
-Apply_button_Click_Delay_Timer(Time)  
-{	
-static Average_time = 1
-static Start_time = 0
-static End_time = 0
-static Time_off= 0
-static paused_off_store = 0
-static paused_Start = 0
-
-If time = Get
-	Return Average_time
-
-If  time = Start
+Apply_button_Click_Delay_Timer(Time)
 {
-	paused_off_store = 0	
-	paused_Start = 0
-	Time_off = 0
-	Start_time := A_TickCount
-return
-}
-
+	static Average_time = 1
+	static Start_time = 0
+	static End_time = 0
+	static Time_off= 0
+	static paused_off_store = 0
+	static paused_Start = 0
+	
+	If time = Get
+		Return Average_time
+	
+	If  time = Start
+	{
+		paused_off_store = 0
+		paused_Start = 0
+		Time_off = 0
+		Start_time := A_TickCount
+		return
+	}
+	
 	If time = End
 	{
 		End_time := A_TickCount
-		Total_Time := (End_time - Start_time) 
+		Total_Time := (End_time - Start_time)
 		Total_Time := (Total_Time - paused_off_store)  / 100
-		Average_time := ((Total_Time + Average_time) / 2.0) 
+		Average_time := ((Total_Time + Average_time) / 2.0)
 		If Average_time < 1
-			{
-				Average_time := 1
-			}
+		{
+			Average_time := 1
+		}
 		Average_time := Round(Average_time,2)
-		paused_off_store = 0	
-		Return Average_time	
-}
-Return
+		paused_off_store = 0
+		Return Average_time
+	}
+	Return
 }
 
-	Create_Dual_Instructions_GUI() ; no unit test needed
-	{
+Create_Dual_Instructions_GUI() ; no unit test needed
+{
 	activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-Gui 70:Add,Text,, Select an engeering model
-Gui  70:Show, x%amonx% y%amony%,%Effectivity_Macro%
-gui, 70: +AlwaysOnTop
-Gui 70: Flash
-return
+	Gui 70:Add,Text,, Select an engeering model
+	Gui  70:Show, x%amonx% y%amony%,%Effectivity_Macro%
+	gui, 70: +AlwaysOnTop
+	Gui 70: Flash
+	return
 }
 
 Refresh_Screen()
@@ -2156,217 +2346,231 @@ Refresh_Screen()
 	global Applyx, Applyy, prefixx, prefixy,Active_ID, breakloop, Refreshrate, Add_Button_X_Location, Add_Button_Y_Location, Enable_Two_Tabs
 	
 	If breakloop = 1
-	  {
-		 Gui 1: -AlwaysOnTop
-		 SplashTextOn,,,Macro Stopped
-		 Gui_Image_Show("Stop") ; options are Stop, Run, Pause, Start
-		 Sleep(10)
-		  SplashTextOff
-		  Exit
-	  }
-
-					 If (Enable_Two_Tabs)
-					 {
-						Tab = 2
-					 Loop, 2
-					{
-						Win_check(Active_ID)
-						Select_tab(Tab)
-						Tab--
-						Sleep()
-							If (breakloop)
-									break		
-						Loop
-						{
-					 Result :=   Searchend()
-					Sleep()
-					  If (Result = Failure) or (Result = Timedout)
-						Exit
-					} until (Result = "Found")
-					
-					Sleep()
-								Win_check(Active_ID)
-								
-					 Send {F5}
-					 Sleep(3)	
-					}					 
-
-					Tab = 2
-						Loop, 2
-						{
-							Win_check(Active_ID)
-							Select_tab(Tab)
-							Tab--
-							Sleep(3)
-							Loop
-									{									
-										If (breakloop)
-											break									
-									
-									Click %Add_Button_X_Location%,%Add_Button_Y_Location%
-									sleep(15)
-									Result :=   Searchend()
-											  If (Result = Failure) or (Result = Timedout)
-												Exit
-												If Result = Found
-													Break
-									} 
-							}
-					}
-				else		 
-			 {
-					 Loop
-					{
-						if (breakloop)
-							exit
-					 Result :=   Searchend()
-					Sleep()
-					  If (Result = Failure) or (Result = Timedout)
-						Exit
-					} until (Result = "Found")
-					
-					 sleep(3)
-					Win_check(Active_ID)
-					 sleep()
-					 Send {F5}
-					 sleep(10)
-					  Counter = 0
-					  Loop
-					{
-						if (breakloop)
-							exit
-					Add_Result :=	PLus_Sign_Search(Active_ID)
-						
-					} until Add_Result = "Found"
-					
-					Sleep()
-					Loop
-								{									
-									If (breakloop)
-										break
-								
-								Click %Add_Button_X_Location%,%Add_Button_Y_Location%
-									Sleep(1.0)
-					 Result :=   Searchend()
-					  If (Result = Failure) or (Result = Timedout)
-						Exit
-					if (Result = "Found")
-								break
-								else
-									Sleep(5)
-					}
-				}
-return
+	{
+		Gui 1: -AlwaysOnTop
+		SplashTextOn,,,Macro Stopped
+		Gui_Image_Show("Stop") ; options are Stop, Run, Pause, Start
+		Sleep(10)
+		SplashTextOff
+		Exit
+	}
+	
+	If (Enable_Two_Tabs)
+	{
+		Tab = 2
+		Loop, 2
+		{
+			Win_check(Active_ID)
+			Select_tab(Tab)
+			Tab--
+			Sleep()
+			If (breakloop)
+				break
+			Loop
+			{
+				Result :=   Searchend()
+				Sleep()
+				If (Result = Failure) or (Result = Timedout)
+					Exit
+			} until (Result = "Found")
+			
+			Sleep()
+			Win_check(Active_ID)
+			
+			Send {F5}
+			Sleep(3)
+		}
+		
+		Tab = 2
+		Loop, 2
+		{
+			Win_check(Active_ID)
+			Select_tab(Tab)
+			Tab--
+			Sleep(3)
+			Loop
+			{
+				If (breakloop)
+					break
+				
+				Click %Add_Button_X_Location%,%Add_Button_Y_Location%
+				sleep(15)
+				Result :=   Searchend()
+				If (Result = Failure) or (Result = Timedout)
+					Exit
+				If Result = Found
+					Break
+			}
+		}
+	}
+	else
+	{
+		Loop
+		{
+			if (breakloop)
+				exit
+			Result :=   Searchend()
+			Sleep()
+			If (Result = Failure) or (Result = Timedout)
+				Exit
+		} until (Result = "Found")
+		
+		sleep(3)
+		Win_check(Active_ID)
+		sleep()
+		Send {F5}
+		sleep(10)
+		Counter = 0
+		Loop
+		{
+			if (breakloop)
+				exit
+			Add_Result :=	PLus_Sign_Search(Active_ID)
+			
+		} until Add_Result = "Found"
+		
+		Sleep()
+		Loop
+		{
+			If (breakloop)
+				break
+			
+			Click %Add_Button_X_Location%,%Add_Button_Y_Location%
+			Sleep(1.0)
+			Result :=   Searchend()
+			If (Result = Failure) or (Result = Timedout)
+				Exit
+			if (Result = "Found")
+				break
+			else
+				Sleep(5)
+		}
+	}
+	return
 }
 
 Added_Serial_Count(Add_Or_Subtract) ; unit
 {
 	static Add_Count = 0
-Debug_Log_Event("added_serial_count() add is  " Add_Or_Subtract)
-			If Add_Or_Subtract = Reset
-		{
-			Add_Count = 0
-			Debug_Log_Event("reset add or subtract")
-		}
-else if Add_Or_Subtract = Add
+	Debug_Log_Event("added_serial_count() add is  " Add_Or_Subtract)
+	If Add_Or_Subtract = Reset
+	{
+		Add_Count = 0
+		Debug_Log_Event("reset add or subtract")
+	}
+	else if Add_Or_Subtract = Add
 		Add_count ++
-else If Add_Or_Subtract = Get
+	else If Add_Or_Subtract = Get
+		return Add_count
+	;~ Tooltip,  %Add_count%  is the serial count and the added amount is %Add_Or_Subtract%
+	
+	
+	Debug_Log_Event("added_serial_count current total is  " Add_count)
+	;~ Tooltip,  %Add_count%  is the serial count and the added amount is %Add_Or_Subtract%
 	return Add_count
-	;~ Tooltip,  %Add_count%  is the serial count and the added amount is %Add_Or_Subtract% 
-
-		
-Debug_Log_Event("added_serial_count current total is  " Add_count)
-	;~ Tooltip,  %Add_count%  is the serial count and the added amount is %Add_Or_Subtract% 
-return Add_count
 }
 
 
 Enterserials(Prefix_Holder_for_ACM_Input,First_Effectivity_Numbers,Second_Effectivity_Numbers, Active_ID, Complete, Base_ACM_Window)
 {
-
-	global  prefixx, prefixy, Applyx, Applyy, Add_Button_X_Location, Add_Button_Y_Location, StartTime, Sleep_Delay, Start_Total_Time, Enable_Two_Tabs, File_Install_Work_Folder
-
-If (!Complete)
-{
-CoordMode, mouse, Screen
-	win_check(Active_ID)
-	Sleep(2)
-   Click, %prefixx%, %prefixy%
-   Click, %prefixx%, %prefixy%
-   Click, %prefixx%, %prefixy%
-   sleep(2)
-   mousemove 300,300
-   sleep(3)
-   SEndRaw, %Prefix_Holder_for_ACM_Input%
-   sleep(1.5)
-   Send {Tab}
- win_check(Active_ID)
-   Sendraw, %First_Effectivity_Numbers%
-   sleep(1.5)
-   Send {Tab}
-   If Second_Effectivity_Numbers = 99999
-	Second_Effectivity_Numbers = 
 	
-  win_check(Active_ID)
-   SendRaw, %Second_Effectivity_Numbers%
-   sleep(3)
-   Send {Tab 2}
-   Debug_Log_Event("Entered " Prefix_Holder_for_ACM_Input  First_Effectivity_Numbers "-"  Second_Effectivity_Numbers " into ACM window") 
-}
-else
-	  {
-	  ElapsedTime := A_TickCount - StartTime
-	  Complete_Operation_time :=  A_TickCount - Start_Total_Time
-	  ;~ Complete_Operation_time := ElaspedTime + Start_Total_Time
-	  Total_Time := milli2hms(ElapsedTime, h, m, s)
-	  Complete_Operation_time := milli2hms(Complete_Operation_time, h, m, s)
-	  
-	  ;~ ToolTip %Complete_Operation_time% was the total time
-	  sleep(5)
-	  If (Enable_Two_Tabs)
+	global  prefixx, prefixy, Applyx, Applyy, Add_Button_X_Location, Add_Button_Y_Location, StartTime, Sleep_Delay, Start_Total_Time, Enable_Two_Tabs, File_Install_Work_Folder, Zoomlevel
+	
+	If (!Complete)
 	{
-			New_win_close(Active_ID)
-	;~ sleep(30)
-	WinActivate, ahk_id %Base_ACM_Window%
-	Sleep(5)
+		CoordMode, mouse, Screen
+		win_check(Active_ID)
+		Sleep(2)
+		Click, %prefixx%, %prefixy%
+		Click, %prefixx%, %prefixy%
+		Click, %prefixx%, %prefixy%
+		sleep(2)
+		mousemove 300,300
+		sleep(3)
+		SEndRaw, %Prefix_Holder_for_ACM_Input%
+		sleep(1.5)
+		Send {Tab}
+		win_check(Active_ID)
+		Sendraw, %First_Effectivity_Numbers%
+		sleep(1.5)
+		Send {Tab}
+		If Second_Effectivity_Numbers = 99999
+			Second_Effectivity_Numbers =
+		
+		win_check(Active_ID)
+		SendRaw, %Second_Effectivity_Numbers%
+		sleep(3)
+		Send {Tab 2}
+		Debug_Log_Event("Entered " Prefix_Holder_for_ACM_Input  First_Effectivity_Numbers "-"  Second_Effectivity_Numbers " into ACM window")
 	}
-	  Send {f5}
-	  sleep(3)
-	  Serialcount := Added_Serial_Count("0")
-	   Move_Message_Box("0",""," The number of successful Serial additions to ACM is "  Serialcount "`n`nMacro Finished due to no more Serials to add. `n`n It took the macro " Total_Time " to perform tasks. `n`n Please close Serial Macro Window after checking to ensure serials were entered correctly.")
-	  Guicontrol,1:, Editfield,
-	 GuiControl,, Radio2, 1
-	 gosub, radio_button
-  Gui_Image_Show("Stop")
-  IfExist, %File_Install_Work_Folder%\TempReuse.txt
-	Reuse_ASK_gui()
+	else
+	{
+		ElapsedTime := A_TickCount - StartTime
+		Complete_Operation_time :=  A_TickCount - Start_Total_Time
+		;~ Complete_Operation_time := ElaspedTime + Start_Total_Time
+		Total_Time := milli2hms(ElapsedTime, h, m, s)
+		Complete_Operation_time := milli2hms(Complete_Operation_time, h, m, s)
+		
+		;~ ToolTip %Complete_Operation_time% was the total time
+		sleep(5)
+		If (Enable_Two_Tabs)
+		{
+			New_win_close(Active_ID)
+			;~ sleep(30)
+			WinActivate, ahk_id %Base_ACM_Window%
+			Sleep(5)
+		}
+		Send {f5}
+		sleep(10)
+		
+		Loop, % Abs(Zoomlevel)
+		{
+			If Zoomlevel > 0
+				SEnd {Ctrl DOwn}{-}{ctrl up}
+			
+			else if Zoomlevel < 0
+				SEnd {Ctrl DOwn}{+}{ctrl up}
+			sleep()
+		}
+		Serialcount := Added_Serial_Count("0")
+		Move_Message_Box("0",""," The number of successful Serial additions to ACM is "  Serialcount "`n`nPlease note, that if there was an error for already added effectivity, this number may be off. `n`nMacro Finished due to no more Serials to add. `n`n It took the macro " Total_Time " to perform tasks. `n`n Please close Serial Macro Window after checking to ensure serials were entered correctly.")
+		Guicontrol,1:, Editfield,
+		GuiControl,, Radio2, 1
+		gosub, radio_button
+		Gui_Image_Show("Stop")
+		IfExist, %File_Install_Work_Folder%\TempReuse.txt
+			Reuse_ASK_gui()
+		
+		Exit
+		
+	}
+	Return
 	
-  Exit
-	  
-   }
-   Return
-   
 }
 
 Reuse_ASK_gui()
 {
-gui, reuse:add, text,,Would you like to reload Macro with this run's effectivity list?
-gui, reuse:add, button,greload_reuse,Reload
-gui, reuse:add, button, xp+100 yp gQuit_app_reuse, Quit app
-gui,reuse:Show
+	gui, reuse:add, text,,Would you like to reload Macro with this run's effectivity list?
+	gui, reuse:add, button,greload_reuse,Reload
+	gui, reuse:add, button, xp+100 yp gQuit_app_reuse, Quit app
+	gui, reuse: +AlwaysOnTop
+	gui,reuse:Show
+	
 	return
 }
 
 reload_reuse:
 {
-Reload	
-sleep(10)
-ExitApp
+	IniWrite, 1, %Configuration_File_Location%, reuse,reuse
+	Reload
+	sleep(10)
+	ExitApp
 	return
 }
 
 quit_app_reuse:
 {
+	IniWrite, 0, %Configuration_File_Location%, reuse,reuse
 	FileDelete,%File_Install_Work_Folder%\TempReuse.txt
 	sleep(10)
 	ExitApp
@@ -2375,129 +2579,129 @@ quit_app_reuse:
 
 
 /*
-/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-Macro Timeout Functions and GUI
-/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+	/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+	Macro Timeout Functions and GUI
+	/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
 
-Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers) 
- { 
-	;~ MsgBox, Serialnogo prefix is %Prefix% 
-	Serial_Number := Prefix First_Effectivity_Numbers "-" Second_Effectivity_Numbers 
- 	Modifier = **Not In ACM** 
- 	Add_To_Completed_LIst(Serial_Number, Modifier) 
- 	GuiControlGet, Editfield 
- Loop, Parse, Editfield, `n 
- { 
- 	;~ MsgBox, %A_LoopField% `n` is Serialnogo 
- Prefix_Check := Extract_Prefix(A_LoopField) 
- If Prefix_Check = %Prefix% 
- { 
- 	Modifier = **Not In ACM** 
- 	First_Half_Serial_Num := Extract_First_Set_Of_Serial_Number(A_LoopField) 
- 	Second_Half_Serial_Num := Extract_Second_Set_Of_Serial_Number(A_LoopField) 
- 	 
- 	Serial_number := Prefix First_Half_Serial_Num "-" Second_Half_Serial_Num 
- 	Add_To_Completed_LIst(Serial_Number, Modifier) 
-
- continue 
- } 
-else 
- EditfieldStore := EditfieldStore A_LoopField "`n" 
- } 
- Guicontrol,,Editfield, %EditfieldStore% 
- Clear_ACM_Fields() 
- return 
- } 
+Serialnogo(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
+{
+	;~ MsgBox, Serialnogo prefix is %Prefix%
+	Serial_Number := Prefix First_Effectivity_Numbers "-" Second_Effectivity_Numbers
+	Modifier = **Not In ACM**
+	Add_To_Completed_LIst(Serial_Number, Modifier)
+	GuiControlGet, Editfield
+	Loop, Parse, Editfield, `n
+	{
+		;~ MsgBox, %A_LoopField% `n` is Serialnogo
+		Prefix_Check := Extract_Prefix(A_LoopField)
+		If Prefix_Check = %Prefix%
+		{
+			Modifier = **Not In ACM**
+			First_Half_Serial_Num := Extract_First_Set_Of_Serial_Number(A_LoopField)
+			Second_Half_Serial_Num := Extract_Second_Set_Of_Serial_Number(A_LoopField)
+			
+			Serial_number := Prefix First_Half_Serial_Num "-" Second_Half_Serial_Num
+			Add_To_Completed_LIst(Serial_Number, Modifier)
+			
+			continue
+		}
+		else
+			EditfieldStore := EditfieldStore A_LoopField "`n"
+	}
+	Guicontrol,,Editfield, %EditfieldStore%
+	Clear_ACM_Fields()
+	return
+}
 
 
 Add_To_Completed_LIst(Serial_number, Modifier := "")
 {
-If Serial_number = 
-	return
-
-GuiControlGet, Editfield2
-
+	If Serial_number =
+		return
+	
+	GuiControlGet, Editfield2
+	
 	;~ MsgBox % Editfield2 Serial_Number  Modifier
-		GuiControl,, Editfield2, %Editfield2%%Serial_number%  %Modifier% `n
-		gui,Submit,NoHide
-		
-			Debug_Log_Event("Add serial =   " Serial_Number Modifier )
-Return
+	GuiControl,, Editfield2, %Editfield2%%Serial_number%  %Modifier% `n
+	gui,Submit,NoHide
+	
+	Debug_Log_Event("Add serial =   " Serial_Number Modifier )
+	Return
 }
 
 Clear_ACM_Fields()
 {
 	global Editfield2, Active_ID, prefixx, prefixy
-
-win_check(Active_ID)
-   Click, %prefixx%, %prefixy%
-   sleep(5)
-   One_Operation_Key_Press("Ctrl", "a")
-   ;~ Send {ctrl down}{a}{Ctrl up}
-   sleep()
-   Send {Del}{Tab}
-   Send {Del}{Tab}
-   Send {Del}{Tab}
-   ;~ Click, %prefixx%, %prefixy%
-   ;~ Send {Del}
-   ;msgbox, Beforetrim:`n %EditField2%
-   StringTrimRight, EditField2, Editfield2,1
-   ;msgbox, after trim :`n %EditField2%`n Prefixstore is %PrefixStore1%`nSerial is %Serialstore1%-%Serialstore3% Mod is %Modifier%
-
-   Editfield2n = %Editfield2%%Modifier%`n
-   EditField2 = %EditField2n%
-   Guicontrol, 1:,Editfield2, %Editfield2%
-   Gui 1: +alwaysontop
-   Modifier =
-   sleep(2)
-   Return
+	
+	win_check(Active_ID)
+	Click, %prefixx%, %prefixy%
+	sleep(5)
+	One_Operation_Key_Press("Ctrl", "a")
+	;~ Send {ctrl down}{a}{Ctrl up}
+	sleep()
+	Send {Del}{Tab}
+	Send {Del}{Tab}
+	Send {Del}{Tab}
+	;~ Click, %prefixx%, %prefixy%
+	;~ Send {Del}
+	;msgbox, Beforetrim:`n %EditField2%
+	StringTrimRight, EditField2, Editfield2,1
+	;msgbox, after trim :`n %EditField2%`n Prefixstore is %PrefixStore1%`nSerial is %Serialstore1%-%Serialstore3% Mod is %Modifier%
+	
+	Editfield2n = %Editfield2%%Modifier%`n
+	EditField2 = %EditField2n%
+	Guicontrol, 1:,Editfield2, %Editfield2%
+	Gui 1: +alwaysontop
+	Modifier =
+	sleep(2)
+	Return
 }
 
 
 Multiple_Eng_Model_Move_To_End(Prefix,First_Effectivity_Numbers,Second_Effectivity_Numbers)
-{	
-Afterloop := Prefix First_Effectivity_Numbers "-" Second_Effectivity_Numbers "`n"
-GuiControlGet, Editfield
-Loop, Parse, Editfield, `n
 {
-	If (A_LoopField = "`n") or (A_LoopField = "")
-		continue
-
-	If A_LoopField contains  - - - -
+	Afterloop := Prefix First_Effectivity_Numbers "-" Second_Effectivity_Numbers "`n"
+	GuiControlGet, Editfield
+	Loop, Parse, Editfield, `n
 	{
-		Stop_Check = 1
+		If (A_LoopField = "`n") or (A_LoopField = "")
+			continue
+		
+		If A_LoopField contains  - - - -
+		{
+			Stop_Check = 1
 			EditfieldStore := EditfieldStore  A_LoopField "`n"  Afterloop
 			continue
+		}
+		
+		If (!Stop_check)
+		{
+			Prefix_Check := Extract_Prefix(A_LoopField)
+			If Prefix_Check = %Prefix%
+				Afterloop := Afterloop A_LoopField "`n"
+			else
+				EditfieldStore := EditfieldStore A_LoopField "`n"
+		}
+		
+		else
+		{
+			If (A_LoopField = "`n") or (A_LoopField = "")
+				continue
+			EditfieldStore := EditfieldStore A_LoopField  "`n"
+		}
 	}
-
-If (!Stop_check)
-{
-Prefix_Check := Extract_Prefix(A_LoopField)
-If Prefix_Check = %Prefix%
-Afterloop := Afterloop A_LoopField "`n"
-else
-EditfieldStore := EditfieldStore A_LoopField "`n"
-}
-
-else
-{
-		If (A_LoopField = "`n") or (A_LoopField = "")
-		continue
-	EditfieldStore := EditfieldStore A_LoopField  "`n"
-}
-}
-
-Guicontrol,,Editfield, %EditfieldStore%
-Clear_ACM_Fields()
-return
+	
+	Guicontrol,,Editfield, %EditfieldStore%
+	Clear_ACM_Fields()
+	return
 }
 
 Make_New_Window(ByRef Active_ID)
 {
 	global File_Install_Work_Folder, ACM_Class
 	;~ MsgBox,  % ACM_Class
-	CLipboard = 
+	CLipboard =
 	SetTitleMatchMode, 2
 	Sleep(5)
 	Send {Ctrl Down}{l}
@@ -2507,7 +2711,7 @@ Make_New_Window(ByRef Active_ID)
 	Send {Ctrl up}
 	;~ Tooltip %Clipboard%
 	Sleep(5)
-	ClipWait 
+	ClipWait
 	If Clipboard  !=
 		FileAppend, %clipboard%, %File_Install_Work_Folder%\TempAddress.txt
 	Sleep(3)
@@ -2521,37 +2725,37 @@ Make_New_Window(ByRef Active_ID)
 	if Activetitle contains New Tab
 	{
 		CoordMode, mouse, Relative
-Click 10, 300
-CoordMode, mouse, Screen
-}
-else
-{
+		Click 10, 300
+		CoordMode, mouse, Screen
+	}
+	else
+	{
 		SetTitleMatchMode, 2
-	WinActivate,New Tab - Google Chrome ahk_class %ACM_Class%
-	Sleep(1)
-	WinWaitActive,New Tab - Google Chrome ahk_class %ACM_Class%
-}
-sleep(1)
-
-sleep(3)
-WinGet, Active_ID, Id, New Tab ahk_class %ACM_Class%
-sleep(3)
-Win_check(Active_ID)
-Sleep(5)
-One_Operation_Key_Press("Ctrl", "l")
- ;~ Send {Ctrl Down}{l}{Ctrl up}
- Sleep(5)
- Loop, Parse, TempAddress
-{	
- SendRaw %A_LoopField%
- Sleep(.5)
-}
- Sleep(10)
- FileDelete, %File_Install_Work_Folder%\TempAddress.txt
- ;~ tooltip deleted file
- Sleep(5)
-;~ WinGet, Active_ID, Id, A
-;~ Sleep(5)
+		WinActivate,New Tab - Google Chrome ahk_class %ACM_Class%
+		Sleep(1)
+		WinWaitActive,New Tab - Google Chrome ahk_class %ACM_Class%
+	}
+	sleep(1)
+	
+	sleep(3)
+	WinGet, Active_ID, Id, New Tab ahk_class %ACM_Class%
+	sleep(3)
+	Win_check(Active_ID)
+	Sleep(5)
+	One_Operation_Key_Press("Ctrl", "l")
+	;~ Send {Ctrl Down}{l}{Ctrl up}
+	Sleep(5)
+	Loop, Parse, TempAddress
+	{
+		SendRaw %A_LoopField%
+		Sleep(.5)
+	}
+	Sleep(10)
+	FileDelete, %File_Install_Work_Folder%\TempAddress.txt
+	;~ tooltip deleted file
+	Sleep(5)
+	;~ WinGet, Active_ID, Id, A
+	;~ Sleep(5)
 	Send {Enter}
 	Sleep(5)
 	return
@@ -2560,1191 +2764,1257 @@ One_Operation_Key_Press("Ctrl", "l")
 Set_Up_Tabs(Effx,Effy, Addx,addy, ByRef Active_ID)
 {
 	Sleep(5)
-Send {Alt Down}{d}
-Sleep(5)
-Send {Enter}{ALT Up}
-Sleep(5)
-Loop
-{
-	If (breakloop)
-		Exit
-Click, %Effx%,%Effy%
-Sleep(5)
-;~ Winget, Active_ID, ID, a
-REsult := PLus_Sign_Search(Active_ID)
-} until (Result = "Found")
-
-Sleep(2)
-
-Loop,
-{
-	If (breakloop)
-		Exit
-	Click %Addx%,%addy%
-	Sleep(3)
-Result := Searchend()
-} until (Result = "Found")
-
+	Send {Alt Down}{d}
+	Sleep(5)
+	Send {Enter}{ALT Up}
+	Sleep(5)
+	Loop
+	{
+		If (breakloop)
+			Exit
+		Click, %Effx%,%Effy%
+		Sleep(5)
+		;~ Winget, Active_ID, ID, a
+		REsult := PLus_Sign_Search(Active_ID)
+	} until (Result = "Found")
+	
+	Sleep(2)
+	
+	Loop,
+	{
+		If (breakloop)
+			Exit
+		Click %Addx%,%addy%
+		Sleep(3)
+		Result := Searchend()
+	} until (Result = "Found")
+	
 	return
 }
 
 
 /*
-/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-Supporting Functions
-/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+	/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+	Supporting Functions
+	/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
 milli2hms(milli, ByRef hours=0, ByRef mins=0, ByRef secs=0, secPercision=0) ; no unit testing needed
 {
-   SetFormat, FLOAT, 0.%secPercision%
-   milli /= 1000.0
-   secs := mod(milli, 60)
-   secs = %secs%Sec
-   SetFormat, FLOAT, 0.0
-   milli //= 60
-   mins := mod(milli, 60)
-   mins = %mins%Min
-   hours := milli //60
-   Hours = %hours%hrs
-   return hours . ":" . mins . ":" . secs
+	SetFormat, FLOAT, 0.%secPercision%
+	milli /= 1000.0
+	secs := mod(milli, 60)
+	secs = %secs%Sec
+	SetFormat, FLOAT, 0.0
+	milli //= 60
+	mins := mod(milli, 60)
+	mins = %mins%Min
+	hours := milli //60
+	Hours = %hours%hrs
+	return hours . ":" . mins . ":" . secs
 }
 
 Win_check(Active_ID) ; no unit test needed
 {
-;~ WinGetTitle, Title, ahk_id %Active_ID%
-   IfWinNotActive ,  ahk_id %Active_ID%
-   {
-	  WinActivate,  ahk_id %Active_ID%
-	  Sleep()
-	  WinWaitActive,  ahk_id %Active_ID%,,3
-	 sleep(5)
-   }
-
-   return
+	;~ WinGetTitle, Title, ahk_id %Active_ID%
+	IfWinNotActive ,  ahk_id %Active_ID%
+	{
+		WinActivate,  ahk_id %Active_ID%
+		Sleep()
+		WinWaitActive,  ahk_id %Active_ID%,,3
+		sleep(5)
+	}
+	
+	return
 }
 
 
 checkforactivity() ; no unit test needed
 {
 	global breakloop, Active_ID
-   while A_TimeIdlePhysical < 2999 ; meaning there has been user activity
-   {
-	  Gui 1: -AlwaysOnTop
-
-	  
-		 If breakloop = 1
-		 {
+	while A_TimeIdlePhysical < 2999 ; meaning there has been user activity
+	{
+		Gui 1: -AlwaysOnTop
+		
+		
+		If breakloop = 1
+		{
 			SplashTextOff
 			Break
 			Return
-		 }
-		 
-		 If (A_TimeIdlePhysical > 0) and (A_TimeIdlePhysical < 1000)
-		 Timeleft = 3
-	
-		 If (A_TimeIdlePhysical > 1000) and (A_TimeIdlePhysical < 2000)
-		 Timeleft = 2
-		 
-		   If (A_TimeIdlePhysical > 2000) and (A_TimeIdlePhysical < 3000)
-		 Timeleft = 1
-
-	 If (breakloop)
-			{
+		}
+		
+		If (A_TimeIdlePhysical > 0) and (A_TimeIdlePhysical < 1000)
+			Timeleft = 3
+		
+		If (A_TimeIdlePhysical > 1000) and (A_TimeIdlePhysical < 2000)
+			Timeleft = 2
+		
+		If (A_TimeIdlePhysical > 2000) and (A_TimeIdlePhysical < 3000)
+			Timeleft = 1
+		
+		If (breakloop)
+		{
 			SplashTextOff
 			Break
 		}
-		 SplashTextOn,350,50,Macro paused, Macro is now paused due to user activity.`n Macro will resume after %timeleft% seconds of no user input
+		SplashTextOn,350,50,Macro paused, Macro is now paused due to user activity.`n Macro will resume after %timeleft% seconds of no user input
 		Gui_Image_Show("Pause") ; options are Stop, Run, Pause, Start
-		 Gui, Submit, NoHide
-		 sleep(10)
-	  }
-
-	  if A_TimeIdlePhysical > 3000 ; meaning there has been no user activity
-	  {
-		   splashtextoff
-			Gui 1: +AlwaysOnTop
-			win_check(Active_ID)
-		   Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
-		 Editfield_Control("Editfield")
+		Gui, Submit, NoHide
+		sleep(10)
+	}
+	
+	if A_TimeIdlePhysical > 3000 ; meaning there has been no user activity
+	{
+		splashtextoff
+		Gui 1: +AlwaysOnTop
+		win_check(Active_ID)
+		Gui_Image_Show("Run") ; options are Stop, Run, Pause, Start
+		Editfield_Control("Editfield")
 		Guicontrol,,Radio1,1
 		gosub, radio_button
-			Gui, Submit, NoHide
-		 }
-		 SplashTextOff
-	  return
-   }
-
-
- Get_Serial_Numbers()
- {
-	global Effectivity_Macro, nextserialtoadd
-	 COntrolSEnd,,{Ctrl Down}{Home}{Ctrl Up}, %Effectivity_Macro% ;note that the controlsend has two commas after the function call (THis always messed me up)
-   sleep()
-   COntrolSEnd,,{Shift Down}{End}{Shift Up}, %Effectivity_Macro%
-   Sleep()
-   ControlGet,Serial_Number,Selected,,,%Effectivity_Macro%
-
-   COntrolSEnd,,{Del 2}, %Effectivity_Macro%
-   GuiControl,,nextserialtoadd,%Serial_Number%
-return Serial_Number
+		Gui, Submit, NoHide
+	}
+	SplashTextOff
+	return
 }
 
 
-   SerialFullScreen(Active_ID) ; no unit test needed
-   {
-	  WinGetPos, Xarbor,yarbor,warbor,harbor, ahk_id %Active_ID%
-	  CurrmonAM := GetCurrentMonitor()
-	  SysGet,Aarea,MonitorWorkArea,%CurrmonAM%
-	  WidthA := AareaRight- AareaLeft
-	  HeightA := aareaBottom - aAreaTop
-	  lefta := (aAreaLeft - 4) ; this is -4 becuase Oracle puts a 4 pixel border on its seamless windows
-	  topa := (AAreaTop - 4) ; this is -4 becuase Oracle puts a 4 pixel border on its seamless windows
-;~ MsgBox % WidthA HeightA
-	  ;~ MsgBox, % "Left is "leftt " top is " topp "`nxarbor is " xarbor " yarbor is " yarbor
-	  MouseGetPos mmx,mmy
-	  If (yarbor = topa)
-	  {
-		 If (xarbor = lefta)
-		 ;Msgbox, win maxed
-		 Return
-	  }
-	  Else
-		 ;msgbox, not maxed
-	  CoordMode, mouse, Relative
-	  MouseMove 300,4
-	  Click 2
-	  Coordmode, mouse, screen
+Get_Serial_Numbers()
+{
+	global Effectivity_Macro, nextserialtoadd
+	COntrolSEnd,,{Ctrl Down}{Home}{Ctrl Up}, %Effectivity_Macro% ;note that the controlsend has two commas after the function call (THis always messed me up)
+	sleep()
+	COntrolSEnd,,{Shift Down}{End}{Shift Up}, %Effectivity_Macro%
+	Sleep()
+	ControlGet,Serial_Number,Selected,,,%Effectivity_Macro%
+	
+	COntrolSEnd,,{Del 2}, %Effectivity_Macro%
+	GuiControl,,nextserialtoadd,%Serial_Number%
+	return Serial_Number
+}
 
-	  return
-   }
+
+SerialFullScreen(Active_ID) ; no unit test needed
+{
+	WinGetPos, Xarbor,yarbor,warbor,harbor, ahk_id %Active_ID%
+	CurrmonAM := GetCurrentMonitor()
+	SysGet,Aarea,MonitorWorkArea,%CurrmonAM%
+	WidthA := AareaRight- AareaLeft
+	HeightA := aareaBottom - aAreaTop
+	lefta := (aAreaLeft - 4) ; this is -4 becuase Oracle puts a 4 pixel border on its seamless windows
+	topa := (AAreaTop - 4) ; this is -4 becuase Oracle puts a 4 pixel border on its seamless windows
+	;~ MsgBox % WidthA HeightA
+	;~ MsgBox, % "Left is "leftt " top is " topp "`nxarbor is " xarbor " yarbor is " yarbor
+	MouseGetPos mmx,mmy
+	If (yarbor = topa)
+	{
+		If (xarbor = lefta)
+			;Msgbox, win maxed
+		Return
+	}
+	Else
+		;msgbox, not maxed
+	CoordMode, mouse, Relative
+	MouseMove 300,4
+	Click 2
+	Coordmode, mouse, screen
+	
+	return
+}
 
 GetCurrentMonitor() ; no unit test needed
 {
-   SysGet, numberOfMonitors, MonitorCount
-   WinGetPos, winX, winY, winWidth, winHeight, A
-   winMidX := winX + winWidth / 2
-   winMidY := winY + winHeight / 2
-   Loop %numberOfMonitors%
-   {
-	  SysGet, monArea, Monitor, %A_Index%
-	  if (winMidX > monAreaLeft && winMidX < monAreaRight && winMidY < monAreaBottom && winMidY > monAreaTop)
-		 return A_Index
-   }
-   SysGet, MonitorPrimary, MonitorPrimary
-   return "No Monitor Found"
+	SysGet, numberOfMonitors, MonitorCount
+	WinGetPos, winX, winY, winWidth, winHeight, A
+	winMidX := winX + winWidth / 2
+	winMidY := winY + winHeight / 2
+	Loop %numberOfMonitors%
+	{
+		SysGet, monArea, Monitor, %A_Index%
+		if (winMidX > monAreaLeft && winMidX < monAreaRight && winMidY < monAreaBottom && winMidY > monAreaTop)
+			return A_Index
+	}
+	SysGet, MonitorPrimary, MonitorPrimary
+	return "No Monitor Found"
 }
 
 
 
 Searchend()
 {
-global Image_Red_Exclamation_Point, Active_ID, pToken
-   listlines off
-
+	global Image_Red_Exclamation_Point, Active_ID, pToken
+	listlines off
+	Effectivity_Exists_search()
 	Current_Monitor := GetCurrentMonitor()
 	;~ pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Image_Red_Exclamation_Point)
-   bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
-   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
-    Gdip_DisposeImage(Gdip_BitmapFromHWND(Active_ID))
-   Gdip_DisposeImage(bmpHaystack)   
-   Gdip_DisposeImage(bmpNeedle1)
-    DeleteObject(bmpHaystack)   
-    DeleteObject(bmpNeedle1)   
-    ;~ DeleteObject(ErrorLevel)   
-   ;~ Gdip_Shutdown(pToken)
-   
-	  ;listlines on
-   If RETSearch < 0
-   {
- ImageSearch_Failure(RETSearch, "Searchend")	
-	  Exit
-   }
-
-   If RETSearch > 0
-   {
-	  ;~ SetTimer, refreshcheck, Off
-	  Refreshchecks = 0
-	  SleepStill = 0
-	  ;Msgbox, found
-	  ;~ MsgBox, %foundlist%
-	  Return "Found"
+	bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
+	RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
+	Gdip_DisposeImage(Gdip_BitmapFromHWND(Active_ID))
+	Gdip_DisposeImage(bmpHaystack)
+	Gdip_DisposeImage(bmpNeedle1)
+	DeleteObject(bmpHaystack)
+	DeleteObject(bmpNeedle1)
+	;~ DeleteObject(ErrorLevel)
+	;~ Gdip_Shutdown(pToken)
+	
+	;listlines on
+	If RETSearch < 0
+	{
+		ImageSearch_Failure(RETSearch, "Searchend")
+		Exit
 	}
-
-   Return "Not_Found"
+	
+	If RETSearch > 0
+	{
+		;~ SetTimer, refreshcheck, Off
+		Refreshchecks = 0
+		SleepStill = 0
+		;Msgbox, found
+		;~ MsgBox, %foundlist%
+		Return "Found"
+	}
+	
+	Return "Not_Found"
 }
 
- ImageSearch_Failure(RETSearch, Function)
- {
-  if RETSearch = -1001
-	  Failure_Code = invalid haystack or needle bitmap pointer
-	  if RETSearch = -1002
-	  Failure_Code = invalid variation value
-	  if RETSearch = -1003
-	  Failure_Code = Unable to lock haystack bitmap bits
-	  if RETSearch = -1004
-	  Failure_Code = Unable to lock needle bitmap bits
-	  if RETSearch = -1005
-	  Failure_Code = Cannot find monitor for screen capture	
-	  Move_Message_Box("262144", Effectivity_Macro, "Error " Searchend " Function " Failure_code)
-	return 
+ImageSearch_Failure(RETSearch, Function)
+{
+	if RETSearch = -1001
+		Failure_Code = invalid haystack or needle bitmap pointer
+	if RETSearch = -1002
+		Failure_Code = invalid variation value
+	if RETSearch = -1003
+		Failure_Code = Unable to lock haystack bitmap bits
+	if RETSearch = -1004
+		Failure_Code = Unable to lock needle bitmap bits
+	if RETSearch = -1005
+		Failure_Code = Cannot find monitor for screen capture
+	Move_Message_Box("262144", Effectivity_Macro, "Error " Searchend " Function " Failure_code)
+	return
+}
+
+Effectivity_Exists_search(First_check := "0")
+{
+	global Existing_Effectivity_image, Active_ID, pToken
+	static Initial_found_list  =
+	listlines off
+	
+	Current_Monitor := GetCurrentMonitor()
+	bmpNeedle1 := Gdip_CreateBitmapFromFile(Existing_Effectivity_image)
+	bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
+	RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
+	Gdip_DisposeImage(Gdip_BitmapFromHWND(Active_ID))
+	Gdip_DisposeImage(bmpHaystack)
+	Gdip_DisposeImage(bmpNeedle1)
+	DeleteObject(bmpHaystack)
+	DeleteObject(bmpNeedle1)
+	DeleteObject(ErrorLevel)
+	
+	If (First_check)
+	{
+		;~ MsgBox first check
+		Initial_found_list := Foundlist
+		;~ MsgBox % "foundlist is `n" Foundlist
+		return
+	}
+	;listlines on
+	If RETSearch < 0
+	{
+		ImageSearch_Failure(RETSearch, "Effectivity exists search")
+		Exit
+	}
+	
+	If RETSearch > 0
+	{
+		
+		
+		If Foundlist = %Initial_found_list%
+		{
+			;~ MsgBox, % "fouindlist and initial is `n" Foundlist "`n`n" Initial_found_list
+			Return "Not_Found"
+		}
+		Refreshchecks = 0
+		SleepStill = 0
+		;Msgbox, found
+		;~ MsgBox, %foundlist%
+		Action_needed_gui()
+		sleep(10)
+		
+		Return "Found"
+	}
+	
+	Return "Not_Found"
 }
 
 ACM_Creating_Box_Find()
 {
-global Creating_image, Active_ID, pToken
-
-   listlines off
-
+	global Creating_image, Active_ID, pToken
+	
+	listlines off
+	
 	Current_Monitor := GetCurrentMonitor()
 	;~ pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Creating_image)
-   bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
-   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
-   Sleep(.1)
-    Gdip_DisposeImage(Gdip_BitmapFromHWND(Active_ID))
-      Gdip_DisposeImage(bmpHaystack)
-   Gdip_DisposeImage(bmpNeedle1)
-  DeleteObject(bmpHaystack)   
-    DeleteObject(bmpNeedle1)   
-;~ DeleteObject(ErrorLevel)   
-   ;~ Gdip_Shutdown(pToken)
-	  ;listlines on
-   If RETSearch < 0
-   {
-	 ImageSearch_Failure(RETSearch, "ACM_Creating_Box_Find")	
-	  Exit
-   }
-
-   If RETSearch > 0
-   {
-	  ;~ SetTimer, refreshcheck, Off
-	  Refreshchecks = 0
-	  SleepStill = 0
-	  ;Msgbox, found
-	  ;~ MsgBox, %foundlist%
-	  Return "Found"
+	bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
+	RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
+	Sleep(.1)
+	Gdip_DisposeImage(Gdip_BitmapFromHWND(Active_ID))
+	Gdip_DisposeImage(bmpHaystack)
+	Gdip_DisposeImage(bmpNeedle1)
+	DeleteObject(bmpHaystack)
+	DeleteObject(bmpNeedle1)
+	;~ DeleteObject(ErrorLevel)
+	;~ Gdip_Shutdown(pToken)
+	;listlines on
+	If RETSearch < 0
+	{
+		ImageSearch_Failure(RETSearch, "ACM_Creating_Box_Find")
+		Exit
 	}
-
-   Return "Not_Found"
+	
+	If RETSearch > 0
+	{
+		;~ SetTimer, refreshcheck, Off
+		Refreshchecks = 0
+		SleepStill = 0
+		;Msgbox, found
+		;~ MsgBox, %foundlist%
+		Return "Found"
+	}
+	
+	Return "Not_Found"
 }
 
 
-Find_issue_Check_images()
+Find_issue_Check_images(First_check := "0")
 {
-global Issues_Image, Active_ID, pToken
-static First_check = 1, salesmodel1 = , salesmodel2 = , Engmodel1 = , Engmodel2 = , Prefixmodel1 = , Prefixmodel2 = , IE_type = 
-   listlines on
-   listresult = error
+	global Issues_Image, Active_ID, pToken
+	static  salesmodel1 = , salesmodel2 = , Engmodel1 = , Engmodel2 = , Prefixmodel1 = , Prefixmodel2 = , IE_type =
+	listlines on
+	IF (First_check)
+		Effectivity_Exists_search(1)
+	else
+		Effectivity_Exists_search()
+	
+	listresult = error
+	;~ MsgBox, check image %First_check%
 	Current_Monitor := GetCurrentMonitor()
 	;~ pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Issues_Image)
-   bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
-   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,List_Found,0,0,0,0,10,0,0,0)
-   ;~ MsgBox, %RETSearch% is the issue checks findings
-   Gdip_DisposeImage(Gdip_BitmapFromHWND(Active_ID))
-      Gdip_DisposeImage(bmpHaystack)
-   Gdip_DisposeImage(bmpNeedle1)
-     DeleteObject(bmpHaystack)   
-    DeleteObject(bmpNeedle1)   
-    DeleteObject(ErrorLevel)   
-   ;~ Gdip_Shutdown(pToken)
-If (First_check)
-{
-	If RETSearch = 6
+	bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
+	RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,List_Found,0,0,0,0,10,0,0,0)
+	;~ MsgBox, %RETSearch% is the issue checks findings
+	Gdip_DisposeImage(Gdip_BitmapFromHWND(Active_ID))
+	Gdip_DisposeImage(bmpHaystack)
+	Gdip_DisposeImage(bmpNeedle1)
+	DeleteObject(bmpHaystack)
+	DeleteObject(bmpNeedle1)
+	DeleteObject(ErrorLevel)
+	;~ Gdip_Shutdown(pToken)
+	If (First_check)
 	{
-		IE_type = Non_SI
-	Loop, Parse, list_found,`n
-{
-	StringSplit, coord, A_LoopField, `,
-If A_Index =1
-	Engmodel1 := Coord1
-
-If A_Index =2
-	Engmodel2 := Coord1
-
-If A_Index =3
-	Prefixmodel1 := Coord1
-
-If A_Index =4
-	Prefixmodel2 := Coord1
-}
-First_check = 0
-}	
-else if RETSearch = 8
-{
-	Ie_type = SI
-Loop, Parse, list_found,`n
-{
-	StringSplit, coord, A_LoopField, `,
-If A_Index =1
-	salesmodel1 := Coord1
-
-If A_Index =2
-	salesmodel2 := Coord1
-
-If A_Index =3
-	Engmodel1 := Coord1
-
-If A_Index =4
-	Engmodel2 := Coord1
-
-If A_Index =5
-	Prefixmodel1 := Coord1
-
-If A_Index =6
-	Prefixmodel2 := Coord1
-}
-First_check = 0
-}}
-else
-{
-	Loop, Parse, list_found,`n
-{
-	StringSplit, coord, A_LoopField, `,
-	IF Ie_type = SI
-{
-If (Coord1 = salesmodel1)  or (Coord1 = salesmodel2) or (Coord1 = Engmodel1) or (Coord1 = Engmodel2)
-		listresult = Dual_eng
-}
-else 
-{
-If  (Coord1 = Engmodel1) or (Coord1 = Engmodel2)
-		listresult = Dual_eng	
-}
-
-iF (Coord1 = Prefixmodel1) or (Coord1 = Prefixmodel2)
-	listresult = Bad_Prefix
-}
-
-}
-
-;~ MsgBox, % salesmodel1 "`n" salesmodel2 "`n"  Engmodel1 "`n" Engmodel2 "`n"  Prefixmodel1 "`n"  Prefixmodel2 "`n listbelow `n" list_found
-
-   ;~ Gdip_Shutdown(pToken)
-   If RETSearch < 0
-   {
-	 ImageSearch_Failure(RETSearch, "Find_Issues_Check_Images")	
-	  Exit
-   }
-
-If RETSearch = 0
-	listresult = Not_Found
-
-If Ie_type = SI
-{
-if RETSearch = 8
-	listresult = Empty
-}
-else IF Ie_type = Non_SI
-{
-if RETSearch = 6
-	listresult = Empty
-}
-   Return listresult
+		Engmodel1 =
+		Engmodel2 =
+		Prefixmodel1 =
+		Prefixmodel2 =
+		salesmodel1 =
+		salesmodel2 =
+		
+		If RETSearch = 6
+		{
+			IE_type = Non_SI
+			Loop, Parse, list_found,`n
+			{
+				StringSplit, coord, A_LoopField, `,
+				If A_Index =1
+					Engmodel1 := Coord1
+				
+				If A_Index =2
+					Engmodel2 := Coord1
+				
+				If A_Index =3
+					Prefixmodel1 := Coord1
+				
+				If A_Index =4
+					Prefixmodel2 := Coord1
+			}
+			First_check = 0
+		}
+		else if RETSearch = 8
+		{
+			Ie_type = SI
+			Loop, Parse, list_found,`n
+			{
+				StringSplit, coord, A_LoopField, `,
+				If A_Index =1
+					salesmodel1 := Coord1
+				
+				If A_Index =2
+					salesmodel2 := Coord1
+				
+				If A_Index =3
+					Engmodel1 := Coord1
+				
+				If A_Index =4
+					Engmodel2 := Coord1
+				
+				If A_Index =5
+					Prefixmodel1 := Coord1
+				
+				If A_Index =6
+					Prefixmodel2 := Coord1
+			}
+			;~ First_check = 0
+	}}
+	else
+	{
+		Loop, Parse, list_found,`n
+		{
+			StringSplit, coord, A_LoopField, `,
+			IF Ie_type = SI
+			{
+				If (Coord1 = salesmodel1)  or (Coord1 = salesmodel2) or (Coord1 = Engmodel1) or (Coord1 = Engmodel2)
+					listresult = Dual_eng
+			}
+			else
+			{
+				If  (Coord1 = Engmodel1) or (Coord1 = Engmodel2)
+					listresult = Dual_eng
+			}
+			
+			iF (Coord1 = Prefixmodel1) or (Coord1 = Prefixmodel2)
+				listresult = Bad_Prefix
+		}
+		
+	}
+	
+	;~ MsgBox, % salesmodel1 "`n" salesmodel2 "`n"  Engmodel1 "`n" Engmodel2 "`n"  Prefixmodel1 "`n"  Prefixmodel2 "`n listbelow `n" list_found
+	
+	;~ Gdip_Shutdown(pToken)
+	If RETSearch < 0
+	{
+		ImageSearch_Failure(RETSearch, "Find_Issues_Check_Images")
+		Exit
+	}
+	
+	If RETSearch = 0
+		listresult = Not_Found
+	
+	If Ie_type = SI
+	{
+		if RETSearch = 8
+			listresult = Empty
+	}
+	else IF Ie_type = Non_SI
+	{
+		if RETSearch = 6
+			listresult = Empty
+	}
+	Return listresult
 }
 
 PLus_Sign_Search(Active_ID)
 {
-global Plus_SIgn, pToken
-   listlines off
-
+	global Plus_SIgn, pToken
+	listlines off
+	
 	Current_Monitor := GetCurrentMonitor()
 	;~ pToken := Gdip_Startup()
 	bmpNeedle1 := Gdip_CreateBitmapFromFile(Plus_SIgn)
-   bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
-   RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
-      Gdip_DisposeImage(bmpHaystack)
-   Gdip_DisposeImage(bmpNeedle1)
-   
-  DeleteObject(bmpHaystack)   
-    DeleteObject(bmpNeedle1)   
-;~ DeleteObject(ErrorLevel)   
-   ;~ Gdip_Shutdown(pToken)
-	  ;listlines on
-   If RETSearch < 0
-   {
- ImageSearch_Failure(RETSearch, "Plus_Sign_Search")	
-	  Exit
-   }
-
-   If RETSearch > 0
-   {
-	  ;Msgbox, found
-	  ;~ MsgBox, %foundlist%
-	  Return "Found"
+	bmpHaystack :=    Gdip_BitmapFromHWND(Active_ID)
+	RETSearch := Gdip_ImageSearch(bmpHaystack,bmpNeedle1,Foundlist,0,0,0,0,10,0,0,0)
+	Gdip_DisposeImage(bmpHaystack)
+	Gdip_DisposeImage(bmpNeedle1)
+	
+	DeleteObject(bmpHaystack)
+	DeleteObject(bmpNeedle1)
+	;~ DeleteObject(ErrorLevel)
+	;~ Gdip_Shutdown(pToken)
+	;listlines on
+	If RETSearch < 0
+	{
+		ImageSearch_Failure(RETSearch, "Plus_Sign_Search")
+		Exit
 	}
-
-   Return "Not_Found"
+	
+	If RETSearch > 0
+	{
+		;Msgbox, found
+		;~ MsgBox, %foundlist%
+		Return "Found"
+	}
+	
+	Return "Not_Found"
 }
 
 
 /*
-/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-Below is the Functions to support the initial starting before entering the seirals
-/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+	/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+	Below is the Functions to support the initial starting before entering the seirals
+	/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
 
 Comma_Check(Effectivity_Macro)
 {
-   COntrolSEnd,, {Shift Down}{Right}{SHift Up},%Effectivity_Macro%
-   ControlGet,Commacheck,Selected,,,%Effectivity_Macro%
-   If Commacheck = ,
-   {
-	  ;Msgbox, COmmafound
-   }else  {
-	  ;msgbox, comma not found
-	  COntrolSEnd,, {Left}{BackSpace 2}, %Effectivity_Macro%
-   }
-   Return
+	COntrolSEnd,, {Shift Down}{Right}{SHift Up},%Effectivity_Macro%
+	ControlGet,Commacheck,Selected,,,%Effectivity_Macro%
+	If Commacheck = ,
+	{
+		;Msgbox, COmmafound
+	}else  {
+		;msgbox, comma not found
+		COntrolSEnd,, {Left}{BackSpace 2}, %Effectivity_Macro%
+	}
+	Return
 }
 
 
 Wait_For_Shift_Mouse_Click() ; no unit test needed
 {
-   Keywait, Shift,D
-   Keywait, Lbutton, D
-   KeyWait, Shift
+	Keywait, Shift,D
+	Keywait, Lbutton, D
+	KeyWait, Shift
 	return "Done"
 }
 
 
 Get_Add_Button_Screen_Position(ByRef X_Location, ByRef Y_Location) ; no unit test needed
 {
-   SetTimer, ToolTipTimerbutton, 10  ;timer routine will occur every 10ms..
-
-Wait_For_Shift_Mouse_Click()
-
-   MouseGetPos, X_Location, Y_Location
-sleep()
-   SetTimer, ToolTipTimerbutton,Off
-   Tooltip,
-   return
+	SetTimer, ToolTipTimerbutton, 10  ;timer routine will occur every 10ms..
+	
+	Wait_For_Shift_Mouse_Click()
+	
+	MouseGetPos, X_Location, Y_Location
+	sleep()
+	SetTimer, ToolTipTimerbutton,Off
+	Tooltip,
+	return
 }
 
 ToolTipTimerbutton:
 {
-   tooltip, Please Shift + mouse button click on the "Add Button" in the ACM effectivity screen to get its position.
-   Return
+	tooltip, Please Shift + mouse button click on the "Add Button" in the ACM effectivity screen to get its position.
+	Return
 }
 
 
 Get_Prefix_Button_Screen_Position(ByRef X_Location, ByRef Y_Location) ; no unit test needed
 {
-   settimer, ToolTipTimerprefix,10
-
-Wait_For_Shift_Mouse_Click()
-
-   MouseGetPos, X_Location, Y_Location
-sleep()
+	settimer, ToolTipTimerprefix,10
+	
+	Wait_For_Shift_Mouse_Click()
+	
+	MouseGetPos, X_Location, Y_Location
+	sleep()
 	settimer, ToolTipTimerprefix,Off
-   Tooltip,
-   return
+	Tooltip,
+	return
 }
 
 ToolTipTimerprefix:
 {
-ToolTip, Please Shift + mouse button click in the "prefix" edit field in the ACM effectivity screen to get it's location.
-   Return
+	ToolTip, Please Shift + mouse button click in the "prefix" edit field in the ACM effectivity screen to get it's location.
+	Return
 }
 
 
 Get_Apply_Button_Screen_Position(ByRef X_Location, ByRef Y_Location) ; no unit test needed
 {
-
-   SetTimer, ToolTipTimerapply, 10  ;timer routine will occur every 10ms..
-
-Wait_For_Shift_Mouse_Click()
-
-   MouseGetPos, X_Location, Y_Location
-sleep()
-   SetTimer, ToolTipTimerapply,Off
-   Textapplybutton =
-   Tooltip,
-   return
+	
+	SetTimer, ToolTipTimerapply, 10  ;timer routine will occur every 10ms..
+	
+	Wait_For_Shift_Mouse_Click()
+	
+	MouseGetPos, X_Location, Y_Location
+	sleep()
+	SetTimer, ToolTipTimerapply,Off
+	Textapplybutton =
+	Tooltip,
+	return
 }
 
 Get_Effectivity_Tab_Location(ByRef X_Location, ByRef Y_Location)
-	{
-		
-   SetTimer, ToolTipTimerEffectivity, 10  ;timer routine will occur every 10ms..
-
-Wait_For_Shift_Mouse_Click()
-
-   MouseGetPos, X_Location, Y_Location
-sleep()
-Winget, Active_ID, ID, A
-   SetTimer, ToolTipTimerEffectivity,Off
-   Textapplybutton =
-   Tooltip,
-   return Active_ID
-	}
+{
+	
+	SetTimer, ToolTipTimerEffectivity, 10  ;timer routine will occur every 10ms..
+	
+	Wait_For_Shift_Mouse_Click()
+	
+	MouseGetPos, X_Location, Y_Location
+	sleep()
+	Winget, Active_ID, ID, A
+	SetTimer, ToolTipTimerEffectivity,Off
+	Textapplybutton =
+	Tooltip,
+	return Active_ID
+}
 
 ToolTipTimerEffectivity:
 {
-ToolTip, Please Shift + mouse button click on the "Effectivity" tab of the ACM effectivity screen to get it's location.
-   Return
+	ToolTip, Please Shift + mouse button click on the "Effectivity" tab of the ACM effectivity screen to get it's location.
+	Return
 }
 
 ToolTipTimerapply:
 {
-ToolTip, Please Shift + mouse button click on the "Apply button" in the ACM effectivity screen to get it's location.
-   Return
+	ToolTip, Please Shift + mouse button click on the "Apply button" in the ACM effectivity screen to get it's location.
+	Return
 }
 
 /*
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Below is the Create_Main__gui_Menu funciton along with the functions it solely calls to .\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-	*/
+*/
 
-	Create_Main_GUI_Menu() ; no unit test needed
+Create_Main_GUI_Menu() ; no unit test needed
+{
+	Menu, BBBB, Add, &Check For Update , Versioncheck
+	Menu, BBBB, Add, &Options, OptionsGui
+	Menu, BBBB, Add,
+	Menu, CCCC, Add, &Run							(Crtl + 2), Start_Macro
+	Menu, CCCC, Add, &Pause/Unpause 				(Pause / Insert), pausesub
+	Menu, CCCC, Add, &Stop Macro					(ESC), Exit_Program
+	Menu, CCCC, Add, &Reload Macro, restart_macro
+	Menu, CCCC, Add, &Reload Macro with Current Effectivity, restart_macro_Effectivity
+	Menu, BBBB, Add, &Exit							(Ctrl + Q), Quitapp
+	Menu, DDDD, Add, &How To Use					(F1), HowTo
+	Menu, DDDD, Add, &About , Aboutmacro
+	
+	Menu, MyMenuBar, Add, &File, :BBBB
+	Menu, MyMenuBar, Add, &Macro, :CCCC
+	Menu, MyMenuBar, Add, &Help, :DDDD
+	Return
+}
+
+pausesub:
+{
+	if A_IsPaused = 0
 	{
-		Menu, BBBB, Add, &Check For Update , Versioncheck
-		Menu, BBBB, Add, &Options, OptionsGui
-		Menu, BBBB, Add,
-		Menu, CCCC, Add, &Run							(Crtl + 2), Start_Macro
-		Menu, CCCC, Add, &Pause/Unpause 				(Pause / Insert), pausesub
-		Menu, CCCC, Add, &Stop Macro					(ESC), Exit_Program
-		Menu, CCCC, Add, &Reload Macro, restart_macro
-		Menu, CCCC, Add, &Reload Macro with Current Effectivity, restart_macro_Effectivity
-		Menu, BBBB, Add, &Exit							(Ctrl + Q), Quitapp
-		Menu, DDDD, Add, &How To Use					(F1), HowTo
-		Menu, DDDD, Add, &About , Aboutmacro
-
-		Menu, MyMenuBar, Add, &File, :BBBB
-		Menu, MyMenuBar, Add, &Macro, :CCCC
-		Menu, MyMenuBar, Add, &Help, :DDDD
-		Return
-	}
-
-	pausesub:
-	{
-		if A_IsPaused = 0
+		gosub, radio_button
+		Gui 1: -AlwaysOnTop
+		Gui_Image_Show("Pause") ; Options are Start, Pause, Run, Stop
+		Gui, Submit, NoHide
+		Loop, 4
 		{
-			gosub, radio_button
-			Gui 1: -AlwaysOnTop
-			Gui_Image_Show("Pause") ; Options are Start, Pause, Run, Stop
-			Gui, Submit, NoHide
-			Loop, 4
-			{
-				Move_Message_Box("262144",Effectivity_Macro, "Macro is paused. Press pause key to unpause",".1")
-			}
-			Move_Message_Box("262144",Effectivity_Macro, "Macro is paused. Press pause key to unpause","10")
-			Pause, toggle, 1
-			Return
-		}else  {
-			Gui 1: +AlwaysOnTop
-			Gui_Image_Show("Run") ; Options are Start, Pause, Run, Stop
-			Gui, Submit, NoHide
-			Pause, toggle, 1
+			Move_Message_Box("262144",Effectivity_Macro, "Macro is paused. Press pause key to unpause",".1")
 		}
-		return
+		Move_Message_Box("262144",Effectivity_Macro, "Macro is paused. Press pause key to unpause","10")
+		Pause, toggle, 1
+		Return
+	}else  {
+		Gui 1: +AlwaysOnTop
+		Gui_Image_Show("Run") ; Options are Start, Pause, Run, Stop
+		Gui, Submit, NoHide
+		Pause, toggle, 1
 	}
+	return
+}
 
-	Exit_Program(Unit_Test := 0) ; unit
+Exit_Program(Unit_Test := 0) ; unit
+{
+	global pToken
+	GuiControlGet, serialsentered
+	Result := Move_Message_Box("262148",Effectivity_Macro, " The number of successful Serial additions to ACM is "  serialsentered "`n`n Are you sure you want to Quit the macro?.`n`n Press YES to Quit the Macro.`n`n No to keep going.")
+	If Result = Yes
 	{
-		global pToken
-		GuiControlGet, serialsentered
-		Result := Move_Message_Box("262148",Effectivity_Macro, " The number of successful Serial additions to ACM is "  serialsentered "`n`n Are you sure you want to Quit the macro?.`n`n Press YES to Quit the Macro.`n`n No to keep going.")
-		If Result = Yes
-		{		
-			Gui 1: -AlwaysOnTop
-			If (!unit_test)
+		Gui 1: -AlwaysOnTop
+		If (!unit_test)
 			Gui_Image_Show("Stopped")
-			Send {Shift Up}{Ctrl Up}
-			breakloop = 1
-			If (!Unit_Test)
+		Send {Shift Up}{Ctrl Up}
+		breakloop = 1
+		If (!Unit_Test)
 			ExitApp
-		}
-		
-		Gdip_Shutdown(pToken)
-		return Result
 	}
+	
+	Gdip_Shutdown(pToken)
+	return Result
+}
 
 Clickyes:
 {
-Send {y}
-SetTimer, Clickyes, Off
-return
+	Send {y}
+	SetTimer, Clickyes, Off
+	return
 }
 
 Clickno:
 {
-Send {n}
-SetTimer, Clickno, Off
-return
+	Send {n}
+	SetTimer, Clickno, Off
+	return
 }
 
-	restart_macro() ; no unit test needed
-	{
-		Result := Move_Message_Box("262148",Effectivity_Macro, "Are you sure that you want to reload the program?" )
-		If Result =  yes
+restart_macro() ; no unit test needed
+{
+	Result := Move_Message_Box("262148",Effectivity_Macro, "Are you sure that you want to reload the program?" )
+	If Result =  yes
 		Reload
+	
+	return
+}
 
-		return
-	}
-
-	restart_macro_Effectivity() ; no unit test needed
+restart_macro_Effectivity() ; no unit test needed
+{
+	global nextserialtoadd, EditField, EditField2,reloadprefixtext,serialsentered
+	
+	Result := Move_Message_Box("262148",Effectivity_Macro, "Are you sure that you want to reload the program?" )
+	
+	If Result =  yes
 	{
-		global nextserialtoadd, EditField, EditField2,reloadprefixtext,serialsentered
-
-		Result := Move_Message_Box("262148",Effectivity_Macro, "Are you sure that you want to reload the program?" )
-
-		If Result =  yes
-		{
-			GuiControlGet, nextserialtoadd
-			GuiControlGet, EditField
-			GuiControlGet, EditField2
-			GuiControlGet, serialsentered
-			GuiControlGet, reloadprefixtext
-
-			If nextserialtoadd =
+		GuiControlGet, nextserialtoadd
+		GuiControlGet, EditField
+		GuiControlGet, EditField2
+		GuiControlGet, serialsentered
+		GuiControlGet, reloadprefixtext
+		
+		If nextserialtoadd =
 			EditField = %editfield%
-			else
-				EditField = %nextserialtoadd%`n%editfield%
-
-			FileAppend, %EditField%, C:\SerialMacro\TempAdd.txt
-			FileAppend, %EditField2%, C:\SerialMacro\TempAdded.txt
-			FileAppend, %reloadprefixtext%, C:\SerialMacro\Tempamount.txt
-			FileAppend, %serialsentered%, C:\SerialMacro\Tempcount.txt
-			Reload
-		}
-
-		return
+		else
+			EditField = %nextserialtoadd%`n%editfield%
+		
+		FileAppend, %EditField%, C:\SerialMacro\TempAdd.txt
+		FileAppend, %EditField2%, C:\SerialMacro\TempAdded.txt
+		FileAppend, %reloadprefixtext%, C:\SerialMacro\Tempamount.txt
+		FileAppend, %serialsentered%, C:\SerialMacro\Tempcount.txt
+		Reload
 	}
+	
+	return
+}
 
 
-	/*
+/*
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Gui Screens .\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-	*/
+*/
+
+Serials_GUI_Screen(editfieldamount, editfield2amount, TotalPrefixestemp, Serialcount) ; no unit test needed
+{
+	Global
 	
-	Serials_GUI_Screen(editfieldamount, editfield2amount, TotalPrefixestemp, Serialcount) ; no unit test needed
+	activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+	
+	If TotalPrefixestemp < 1
 	{
-		Global
+		TotalPrefixestemp = 0
+	}
+	gui 1:add, Edit, x10 y50 w390 h240  vEditField,%editfieldamount%
+	gui 1:add, Edit, xp yp w390 h240 vEditField2,%editfield2amount%
+	
+	Gui 1:Add, Picture, x315 y310 w50 h50 +0x4000000  BackGroundTrans vStarting gstart_macro , C:\SerialMacro\images\Start.png
+	Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vRunning, C:\SerialMacro\images\Running.png
+	Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vpaused  gpausesub, C:\SerialMacro\images\Paused.png
+	Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vStopped grestart_macro, C:\SerialMacro\images\Stopped.png
+	Gui, 1:Add, Picture, x0 y0 w410 h400 +0x4000000 , C:\SerialMacro\images\background.png
+	
+	Gui 1:Add, Edit, xp+165 yp+343 w110 h20  vnextserialtoadd, %nextserialtoaddv%
+	
+	Gui 1:Add, Text, x5 y5   BackgroundTrans +Center , There are a total of
+	Gui 1:Add, Text, xp+65 w75  BackgroundTrans +Center vreloadprefixtext, %TotalPrefixestemp%
+	Gui 1:Add, Text, xp+55  BackgroundTrans +Center , Effectivity to add to ACM
+	
+	Gui 1:add, Radio, xp-97 yp+25 w130 h20 BackGroundTrans Checked vradio1 gradio_button, Effectivity to be added
+	Gui 1:add, Radio, xp+155 yp w140 h20 BackGroundTrans  vradio2 gradio_button, Effectivity already added
+	
+	Gui 1:Add, Text, xp-170 Yp+265 W250 h13 BackGroundTrans, Number of Effectivity successfully added to ACM =
+	Gui 1:Add, Text, xp+245  h13  W45 BackGroundTrans vserialsentered, %Serialcount%
+	
+	Gui 1:Add, Text, Xp-245 Yp+15 w250 h13  BackGroundTrans , If macro is operating incorrectly, press Esc to reload
+	Gui 1:Add, Text, xp yp+15 w250 h13  BackGroundTrans , Or press Pause Button on keyboard to Pause macro, Press Pause again to resume macro.
+	Gui 1:Add, Text, xp yp+20 w145 h20  BackgroundTrans , Next Effectivity to add to ACM:
+	Gui 1:Menu, MyMenuBar
+	Gui 1:Show,  x%amonx% y%amony% , %Effectivity_Macro%
+	gui 1: +alwaysontop
+	Editfield_Control("Editfield")
+	Guicontrol,,Radio1,1
+	
+	; IfExist  C:\SerialMacro\Tempcount.txt
+	; {
+	; FileRead, Serialcount,C:\SerialMacro\Tempcount.txt
+	; GuiControl,1:,serialsentered, Number of Serials successfully added to ACM = %Serialcount%
+	; FileDelete, C:\SerialMacro\Tempcount.txt
+	; }
+	Gui 1:Submit, NoHide
+	Return
+}
 
-		activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
 
-		If TotalPrefixestemp < 1
-		{
-			TotalPrefixestemp = 0
-		}
-		gui 1:add, Edit, x10 y50 w390 h240  vEditField,%editfieldamount%
-		gui 1:add, Edit, xp yp w390 h240 vEditField2,%editfield2amount%
 
-		Gui 1:Add, Picture, x315 y310 w50 h50 +0x4000000  BackGroundTrans vStarting gstart_macro , C:\SerialMacro\images\Start.png
-		Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vRunning, C:\SerialMacro\images\Running.png
-		Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vpaused  gpausesub, C:\SerialMacro\images\Paused.png
-		Gui 1:Add, Picture, xp yp w50 h50 +0x4000000 BackGroundTrans  vStopped grestart_macro, C:\SerialMacro\images\Stopped.png
-		Gui, 1:Add, Picture, x0 y0 w410 h400 +0x4000000 , C:\SerialMacro\images\background.png
-
-		Gui 1:Add, Edit, xp+165 yp+343 w110 h20  vnextserialtoadd, %nextserialtoaddv%
-
-		Gui 1:Add, Text, x5 y5   BackgroundTrans +Center , There are a total of
-		Gui 1:Add, Text, xp+65 w75  BackgroundTrans +Center vreloadprefixtext, %TotalPrefixestemp%
-		Gui 1:Add, Text, xp+55  BackgroundTrans +Center , Effectivity to add to ACM
-
-		Gui 1:add, Radio, xp-97 yp+25 w130 h20 BackGroundTrans Checked vradio1 gradio_button, Effectivity to be added
-		Gui 1:add, Radio, xp+155 yp w140 h20 BackGroundTrans  vradio2 gradio_button, Effectivity already added
-
-		Gui 1:Add, Text, xp-170 Yp+265 W250 h13 BackGroundTrans, Number of Effectivity successfully added to ACM =
-		Gui 1:Add, Text, xp+245  h13  W45 BackGroundTrans vserialsentered, %Serialcount%
-
-		Gui 1:Add, Text, Xp-245 Yp+15 w250 h13  BackGroundTrans , If macro is operating incorrectly, press Esc to reload
-		Gui 1:Add, Text, xp yp+15 w250 h13  BackGroundTrans , Or press Pause Button on keyboard to Pause macro, Press Pause again to resume macro.
-		Gui 1:Add, Text, xp yp+20 w145 h20  BackgroundTrans , Next Effectivity to add to ACM:
-		Gui 1:Menu, MyMenuBar
-		Gui 1:Show,  x%amonx% y%amony% , %Effectivity_Macro%
-		gui 1: +alwaysontop
+radio_button:
+{
+	Gui,1:submit,nohide
+	If (Radio1)
+	{
+		GuiControl,, Radio1, 1
 		Editfield_Control("Editfield")
-		Guicontrol,,Radio1,1
-
-		; IfExist  C:\SerialMacro\Tempcount.txt
-		; {
-		; FileRead, Serialcount,C:\SerialMacro\Tempcount.txt
-		; GuiControl,1:,serialsentered, Number of Serials successfully added to ACM = %Serialcount%
-		; FileDelete, C:\SerialMacro\Tempcount.txt
-		; }
-		Gui 1:Submit, NoHide
-		Return
 	}
-
-
-
-	radio_button:
+	
+	If (radio2)
 	{
-		Gui,1:submit,nohide
-		If (Radio1)
-		{
-			GuiControl,, Radio1, 1
-			Editfield_Control("Editfield")
-		}
-
-		If (radio2)
-		{
-			Editfield_Control("Editfield2")
-			GuiControl,, Radio2, 1
-		}
-
-		gui, 1:submit, nohide
-		return
+		Editfield_Control("Editfield2")
+		GuiControl,, Radio2, 1
 	}
+	
+	gui, 1:submit, nohide
+	return
+}
 
-	Editfield_Control(Textbox, Gui_Number := 1) ; unit
+Editfield_Control(Textbox, Gui_Number := 1) ; unit
+{
+	global editfield, editfield2
+	
+	If Textbox = Editfield
 	{
-	  global editfield, editfield2
-
-		If Textbox = Editfield
-		{
-			Guicontrol,%Gui_Number%: hide, Editfield2,
-			Guicontrol,%Gui_Number%: show, Editfield,
-			Guicontrol,%Gui_Number%: Focus, Editfield
-		}else  {
-			Guicontrol,%Gui_Number%: hide, Editfield,
-			Guicontrol,%Gui_Number%: show, Editfield2,
-			Guicontrol,%Gui_Number%: Focus, Editfield2
-		}
-		return
+		Guicontrol,%Gui_Number%: hide, Editfield2,
+		Guicontrol,%Gui_Number%: show, Editfield,
+		Guicontrol,%Gui_Number%: Focus, Editfield
+	}else  {
+		Guicontrol,%Gui_Number%: hide, Editfield,
+		Guicontrol,%Gui_Number%: show, Editfield2,
+		Guicontrol,%Gui_Number%: Focus, Editfield2
 	}
+	return
+}
 
 
-	Gui_Image_Show(Image)
+Gui_Image_Show(Image)
+{
+	global paused, Starting, Stopped, Running
+	If ( image = "Pause")
 	{
-		global paused, Starting, Stopped, Running
-		If ( image = "Pause")
-		{
-			Guicontrol,show, paused
-			Guicontrol,hide, Starting
-			Guicontrol,hide, Stopped
-			Guicontrol,hide, Running
-		}
-
-		If (image = "Run")
-		{
-			Guicontrol,Show, Running
-			Guicontrol,Hide, paused
-			Guicontrol,hide, Stopped
-			Guicontrol,hide, Starting
-		}
-		If (image = "Stop")
-		{
-			Guicontrol,Show, Stopped
-			Guicontrol,hide, Starting
-			Guicontrol,hide, paused
-			Guicontrol,hide, Running
-		}
-		If (image = "start")
-		{
-			Guicontrol,show, Starting
-			Guicontrol,hide, paused
-			Guicontrol,hide, Stopped
-			Guicontrol,hide, Running
-		}
-		return
+		Guicontrol,show, paused
+		Guicontrol,hide, Starting
+		Guicontrol,hide, Stopped
+		Guicontrol,hide, Running
 	}
-
-
-	Temp_File_Read(File_Install_Root_Folder,File_Name) ; unit
+	
+	If (image = "Run")
 	{
-		IfExist, %File_Install_Root_Folder%\%File_Name%
-		{
-			FileRead, Variable_Store, %File_Install_Root_Folder%\%File_Name%
-
-			Debug_Log_Event("Temp_File_read() ......File name is " File_Name " Variable_store is " Variable_Store)
-		}
-		else
-			Variable_Store = Null
-
-		return Variable_Store
+		Guicontrol,Show, Running
+		Guicontrol,Hide, paused
+		Guicontrol,hide, Stopped
+		Guicontrol,hide, Starting
 	}
-
-	Temp_File_Delete(File_Install_Root_Folder,File_Name) ; unit
+	If (image = "Stop")
 	{
-		IfExist, %File_Install_Root_Folder%\%File_Name%
-		{
-			FileDelete, %File_Install_Root_Folder%\%File_Name%
-
-			Debug_Log_Event("Temp_File_Delete() ......File name is " File_Name)
-			return  File_Name " - File Found and Deleted"
-		}
-		else
-			return  File_Name " - File Not Exist"
+		Guicontrol,Show, Stopped
+		Guicontrol,hide, Starting
+		Guicontrol,hide, paused
+		Guicontrol,hide, Running
 	}
-
-	Move_Message_Box(Msg_box_type,Msg_box_title, Msg_box_text, Msg_box_Time := 2147483 ) ; no unit test needed
+	If (image = "start")
 	{
-		global 
-		   Gui 1: -AlwaysOnTop
-		activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-		Settimer, winmovemsgbox, 20
-		MsgBox, % Msg_box_type , %Msg_box_title% , %Msg_box_text% , %Msg_box_time%
-  Gui 1: +AlwaysOnTop
-		IfMsgBox yes
+		Guicontrol,show, Starting
+		Guicontrol,hide, paused
+		Guicontrol,hide, Stopped
+		Guicontrol,hide, Running
+	}
+	return
+}
+
+
+Temp_File_Read(File_Install_Root_Folder,File_Name) ; unit
+{
+	IfExist, %File_Install_Root_Folder%\%File_Name%
+	{
+		FileRead, Variable_Store, %File_Install_Root_Folder%\%File_Name%
+		
+		Debug_Log_Event("Temp_File_read() ......File name is " File_Name " Variable_store is " Variable_Store)
+	}
+	else
+		Variable_Store = Null
+	
+	return Variable_Store
+}
+
+Temp_File_Delete(File_Install_Root_Folder,File_Name) ; unit
+{
+	IfExist, %File_Install_Root_Folder%\%File_Name%
+	{
+		FileDelete, %File_Install_Root_Folder%\%File_Name%
+		
+		Debug_Log_Event("Temp_File_Delete() ......File name is " File_Name)
+		return  File_Name " - File Found and Deleted"
+	}
+	else
+		return  File_Name " - File Not Exist"
+}
+
+Move_Message_Box(Msg_box_type,Msg_box_title, Msg_box_text, Msg_box_Time := 2147483 ) ; no unit test needed
+{
+	global
+	Gui 1: -AlwaysOnTop
+	activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+	Settimer, winmovemsgbox, 20
+	MsgBox, % Msg_box_type , %Msg_box_title% , %Msg_box_text% , %Msg_box_time%
+	Gui 1: +AlwaysOnTop
+	IfMsgBox yes
 		Result = Yes
-		IfMsgBox no
+	IfMsgBox no
 		Result = no
-		IfMsgBox Ok
+	IfMsgBox Ok
 		Result = Ok
-		IfMsgBox  Cancel
+	IfMsgBox  Cancel
 		Result = Cancel
-		IfMsgBox Abort
+	IfMsgBox Abort
 		Result = Abort
-		IfMsgBox Ignore
+	IfMsgBox Ignore
 		Result = Ignore
-		IfMsgBox Retry
+	IfMsgBox Retry
 		Result = Retry
-		IfMsgBox continue
+	IfMsgBox continue
 		Result = continue
-		IfMsgBox TryAgain
+	IfMsgBox TryAgain
 		Result = TryAgain
-		IfMsgBox Timeout
+	IfMsgBox Timeout
 		Result = Timeout
+	
+	return Result
+}
 
-		return Result
-	}
+winmovemsgbox:
+{
+	SetTimer, WinMoveMsgBox, OFF
+	WinMove, %Msg_box_text% , Amonx, Amony
+	return
+}
 
-	winmovemsgbox:
+activeMonitorInfo( ByRef aX, ByRef aY, ByRef aWidth,  ByRef  aHeight, ByRef mouseX, ByRef mouseY  ) ; no unit test needed
+{
+	CoordMode, Mouse, Screen
+	MouseGetPos, mouseX , mouseY
+	SysGet, monCount, MonitorCount
+	Loop %monCount%
 	{
-		SetTimer, WinMoveMsgBox, OFF
-		WinMove, %Msg_box_text% , Amonx, Amony
-		return
-	}
-
-	activeMonitorInfo( ByRef aX, ByRef aY, ByRef aWidth,  ByRef  aHeight, ByRef mouseX, ByRef mouseY  ) ; no unit test needed
-	{
-		CoordMode, Mouse, Screen
-		MouseGetPos, mouseX , mouseY
-		SysGet, monCount, MonitorCount
-		Loop %monCount%
+		SysGet, curMon, Monitor, %a_index%
+		if ( mouseX >= curMonLeft and mouseX <= curMonRight and mouseY >= curMonTop and mouseY <= curMonBottom )
 		{
-			SysGet, curMon, Monitor, %a_index%
-			if ( mouseX >= curMonLeft and mouseX <= curMonRight and mouseY >= curMonTop and mouseY <= curMonBottom )
-			{
-				aHeight := (curMonBottom - curMonTop)  /2
-				aWidth  := (curMonRight  - curMonLeft) /2
-				ay     := curMonTop
-				ax      := curMonLeft
-				ax 		:= (aWidth / 2)
-				ay		:= (aHeight / 2)
-				;msgbox, ax is %ax% `n ay is %ay% `n aheight is %aHeight% `n awidth is %aWidth%
-				
-			}}
-			return
-			}
-
-			SerialbreakquestionGUI( ByRef Save_effectivity_check := "") ; no unit test needed
-			{
-				global createexcel, checked, Escaped, Save_Effectivity_checkbox,Save_effectivity
-				
-				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-
-				gui 1: -alwaysontop
-				Gui, 8:Add, Picture, x0 y0 w400 h110 +0x4000000, %File_Install_Work_Folder%\images\background.png
-				Gui, 8: Add, text, x10 y20 BackgroundTrans, Do you want to combine the serial breaks, or keep the serial breaks seperated?
-				Gui, 8:add, button, xp+50 yp+20 gcombinequstion, Combine
-				gui, 8:add, button, xp+75 yp gkeepseperated, Keep Seperated
-				gui, 8:add, button, xp+115 yp goneup, 1-UP all Effectivity
-				Gui, 8:Add, Checkbox, XP-190 yp+30 vcreateexcel, Export Effectivity to Excel file (Effectivity.CSV)
-				Gui, 8:Add, Checkbox, XP yp+20 vSave_Effectivity_checkbox,Save formatted Effectivity for reuse
-				Gui, 8:show, x%amonx% y%amony% w400 h110
-				gui 8: +alwaysontop
-				CoordMode, Mouse, Relative
-				MouseMove 200,75
-				CoordMode, Mouse, Screen
-				
-				Pausescript()			
-
-				;~ MsgBox, % Save_effectivity  " is save effectivity"
-				Save_effectivity_check := Save_effectivity
-				If Escaped = 1
-				{
-					Escaped = 
-					Checked = Canceled
-				}
-				gui 1: +alwaysontop
-					Gui, 8:destroy
-				return checked
-			}
+			aHeight := (curMonBottom - curMonTop)  /2
+			aWidth  := (curMonRight  - curMonLeft) /2
+			ay     := curMonTop
+			ax      := curMonLeft
+			ax 		:= (aWidth / 2)
+			ay		:= (aHeight / 2)
+			;msgbox, ax is %ax% `n ay is %ay% `n aheight is %aHeight% `n awidth is %aWidth%
 			
+	}}
+	return
+}
+
+SerialbreakquestionGUI( ByRef Save_effectivity_check := "") ; no unit test needed
+{
+	global createexcel, checked, Escaped, Save_Effectivity_checkbox,Save_effectivity
+	
+	activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+	
+	gui 1: -alwaysontop
+	Gui, 8:Add, Picture, x0 y0 w400 h110 +0x4000000, %File_Install_Work_Folder%\images\background.png
+	Gui, 8: Add, text, x10 y20 BackgroundTrans, Do you want to combine the serial breaks, or keep the serial breaks seperated?
+	Gui, 8:add, button, xp+50 yp+20 gcombinequstion, Combine
+	gui, 8:add, button, xp+75 yp gkeepseperated, Keep Seperated
+	gui, 8:add, button, xp+115 yp goneup, 1-UP all Effectivity
+	Gui, 8:Add, Checkbox, XP-190 yp+30 vcreateexcel, Export Effectivity to Excel file (Effectivity.CSV)
+	Gui, 8:Add, Checkbox, XP yp+20 vSave_Effectivity_checkbox,Save formatted Effectivity for reuse
+	Gui, 8:show, x%amonx% y%amony% w400 h110
+	gui 8: +alwaysontop
+	CoordMode, Mouse, Relative
+	MouseMove 200,75
+	CoordMode, Mouse, Screen
+	
+	Pausescript()
+	
+	;~ MsgBox, % Save_effectivity  " is save effectivity"
+	Save_effectivity_check := Save_effectivity
+	If Escaped = 1
+	{
+		Escaped =
+		Checked = Canceled
+	}
+	gui 1: +alwaysontop
+	Gui, 8:destroy
+	return checked
+}
+
 8guiclose:
 8guiescape:
 {
-Escaped = 1
+	Escaped = 1
 	UnPausescript()
 	sleep()
 	gui, 8: Destroy
 	return
 }
 
-			Pausescript() ; no unit test needed
-			{
-				Menu,Tray,Icon, % "C:\Serialmacro\icons\paused.ico", ,1
-				Gui_Image_Show("Pause")
-				Pause,on
-				Return
-			}
+Pausescript() ; no unit test needed
+{
+	Menu,Tray,Icon, % "C:\Serialmacro\icons\paused.ico", ,1
+	Gui_Image_Show("Pause")
+	Pause,on
+	Return
+}
 
-			UnPausescript() ; no unit test needed
-			{
-				Pause,off
-				Menu,Tray,Icon, % "C:\Serialmacro\icons\Serial.ico", ,1
-				Gui_Image_Show("Run")	
-				Return
-			}
-
-
-			oneup()
-			{
-				global checked, Oneupserial, Save_effectivity
-				UnPausescript()
-				GuiControlGet, checked,, createexcel
-				GuiControlGet,Save_effectivity,, Save_Effectivity_checkbox
-				;~ MsgBox, % Save_effectivity " is save effectivity `n create excel is " checked
-				gui 1: +alwaysontop
-				Oneupserial = 1
-				;~ Gui, 8:destroy
-				Return Checked
-			}
-
-			combinequstion()
-			{
-				global checked, combine, Save_effectivity
-				
-				UnPausescript()
-				GuiControlGet, checked,, createexcel
-					GuiControlGet,Save_effectivity,, Save_Effectivity_checkbox
-				gui 1: +alwaysontop
-				combine = 1
-				;~ Gui, 8:destroy				
-				Return Checked
-			}
-
-			keepseperated()
-			{
-				global checked, Save_effectivity
-				UnPausescript()
-				GuiControlGet, checked,, createexcel
-					GuiControlGet,Save_effectivity,, Save_Effectivity_checkbox
-				gui 1: +alwaysontop
-				;~ Gui, 8:destroy
-				combine = 0
-				Oneupserial = 0
-				Return Checked
-			}
-
-			aboutmacro() ; no unit test needed
-			{
-				global File_Install_Work_Folder, Program_Location_Link, Effectivity_Macro
-				activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-
-				Gui, 7:Add, Picture, x0 y0 w525 h300 +0x4000000, %File_Install_Work_Folder%\images\background.png
-				gui, 7:add, Text, xp+5 yp+5 w500 h40 BackgroundTrans, This program was designed to help increase the speed and accuracy of entering machine Effectivity prefixes form the Pubtool into ACM.
-				gui, 7:add, Text, xp yp+45 w500 h20 BackgroundTrans, To get the latest version, go to the File menu and select Check for updates.
-				gui, 7:add, Text, xp yp+25 w300 h20 BackgroundTrans,  The location of the macro is at the following box account:
-				gui 7:font, CBlue Underline
-				gui, 7:add, Text, xp+275 yp w500 h20 BackgroundTrans gboxlink, %Program_Location_Link%
-				gui 7:font,
-				gui, 7:add, Text, xp-275 yp+25 w500 h40 BackgroundTrans , For reporting bugs or enhancement requests, Please send an email with the Subject line "Effectivity Macro" to the below address
-				gui 7:font, CBlue Underline
-				gui, 7:add, Text, xp yp+45 w500 h20 BackgroundTrans gemaillink, Karnia_Jarett_S@cat.com
-				gui 7:font,
-				gui, 7:add, Text, xp+300 yp+45 w500 h20 BackgroundTrans, This program was created by
-				gui, 7:add, Text, xp yp+25 w500 h20 BackgroundTrans, and is maintained by Jarett Karnia
-				Gui, 7:Show, x%amonx% y%amony% w525 h300, About %Effectivity_Macro%
-				Gui, 7: +AlwaysOnTop
-				return
-			}
-
-			emaillink() ; no unit test needed
-			{
-				Run,  mailto:Karnia_Jarett_S@cat?Subject=Effectivity Macro
-				return
-			}
-
-			boxlink() ; no unit test needed
-			{
-				global Program_Location_Link
-				Run, %Program_Location_Link%
-				return
-			}
+UnPausescript() ; no unit test needed
+{
+	Pause,off
+	Menu,Tray,Icon, % "C:\Serialmacro\icons\Serial.ico", ,1
+	Gui_Image_Show("Run")
+	Return
+}
 
 
-			sleep(Amount := 1) ; no unit test needed
-			{
-				ListLines off
-				amount := amount * 100
-				Sleep %Amount%
-ListLines on
-Return
-			}
+oneup()
+{
+	global checked, Oneupserial, Save_effectivity
+	UnPausescript()
+	GuiControlGet, checked,, createexcel
+	GuiControlGet,Save_effectivity,, Save_Effectivity_checkbox
+	;~ MsgBox, % Save_effectivity " is save effectivity `n create excel is " checked
+	gui 1: +alwaysontop
+	Oneupserial = 1
+	;~ Gui, 8:destroy
+	Return Checked
+}
+
+combinequstion()
+{
+	global checked, combine, Save_effectivity
+	
+	UnPausescript()
+	GuiControlGet, checked,, createexcel
+	GuiControlGet,Save_effectivity,, Save_Effectivity_checkbox
+	gui 1: +alwaysontop
+	combine = 1
+	;~ Gui, 8:destroy
+	Return Checked
+}
+
+keepseperated()
+{
+	global checked, Save_effectivity
+	UnPausescript()
+	GuiControlGet, checked,, createexcel
+	GuiControlGet,Save_effectivity,, Save_Effectivity_checkbox
+	gui 1: +alwaysontop
+	;~ Gui, 8:destroy
+	combine = 0
+	Oneupserial = 0
+	Return Checked
+}
+
+aboutmacro() ; no unit test needed
+{
+	global File_Install_Work_Folder, Program_Location_Link, Effectivity_Macro
+	activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+	
+	Gui, 7:Add, Picture, x0 y0 w525 h300 +0x4000000, %File_Install_Work_Folder%\images\background.png
+	gui, 7:add, Text, xp+5 yp+5 w500 h40 BackgroundTrans, This program was designed to help increase the speed and accuracy of entering machine Effectivity prefixes form the Pubtool into ACM.
+	gui, 7:add, Text, xp yp+45 w500 h20 BackgroundTrans, To get the latest version, go to the File menu and select Check for updates.
+	gui, 7:add, Text, xp yp+25 w300 h20 BackgroundTrans,  The location of the macro is at the following box account:
+	gui 7:font, CBlue Underline
+	gui, 7:add, Text, xp+275 yp w500 h20 BackgroundTrans gboxlink, %Program_Location_Link%
+	gui 7:font,
+	gui, 7:add, Text, xp-275 yp+25 w500 h40 BackgroundTrans , For reporting bugs or enhancement requests, Please send an email with the Subject line "Effectivity Macro" to the below address
+	gui 7:font, CBlue Underline
+	gui, 7:add, Text, xp yp+45 w500 h20 BackgroundTrans gemaillink, Karnia_Jarett_S@cat.com
+	gui 7:font,
+	gui, 7:add, Text, xp+300 yp+45 w500 h20 BackgroundTrans, This program was created by
+	gui, 7:add, Text, xp yp+25 w500 h20 BackgroundTrans, and is maintained by Jarett Karnia
+	Gui, 7:Show, x%amonx% y%amony% w525 h300, About %Effectivity_Macro%
+	Gui, 7: +AlwaysOnTop
+	return
+}
+
+emaillink() ; no unit test needed
+{
+	Run,  mailto:Karnia_Jarett_S@cat?Subject=Effectivity Macro
+	return
+}
+
+boxlink() ; no unit test needed
+{
+	global Program_Location_Link
+	Run, %Program_Location_Link%
+	return
+}
 
 
-	/*
+sleep(Amount := 1) ; no unit test needed
+{
+	ListLines off
+	amount := amount * 100
+	Sleep %Amount%
+	ListLines on
+	Return
+}
+
+
+/*
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\. Update macro functions  .\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\..\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-	*/
+*/
 
 Versioncheck(Start := "1") ; no unit test needed
-			{
-				global  Configuration_File_Location, Update_Check_URL, req
-
-
-Internet_Status := Internet_Connection_Check()
-
-If (!Internet_Status)
-Return
-
-Load_ini_file(Configuration_File_Location)
+{
+	global  Configuration_File_Location, Update_Check_URL, req
+	
+	
+	Internet_Status := Internet_Connection_Check()
+	
+	If (!Internet_Status)
+		Return
+	
+	Load_ini_file(Configuration_File_Location)
 	
 	If (start)
 	{
-	Progress,  w200, Updating..., Gathering Information, Effectivity Macro Updater
-				Progress, 0
-}
-;~ req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-req := ComObjCreate("Msxml2.XMLHTTP")
-
-; Open a request with async enabled.
-;~ req.SetTimeouts(10000, 10000, 10000, 10000)
-		
+		Progress,  w200, Updating..., Gathering Information, Effectivity Macro Updater
+		Progress, 0
+	}
+	;~ req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+	req := ComObjCreate("Msxml2.XMLHTTP")
+	
+	; Open a request with async enabled.
+	;~ req.SetTimeouts(10000, 10000, 10000, 10000)
+	
 	If (start)
 	{
-				Progress,  w200, Updating..., Fetching Server Information, Effectivity Macro Updater
-				Progress, 15
-			}
-If (Start)
-req.open("GET", Update_Check_URL, true)
-else
-req.open("GET", Update_Check_URL, false)
-
+		Progress,  w200, Updating..., Fetching Server Information, Effectivity Macro Updater
+		Progress, 15
+	}
+	If (Start)
+		req.open("GET", Update_Check_URL, true)
+	else
+		req.open("GET", Update_Check_URL, false)
+	
 	If (start)
 	{
-				Progress,  w200, Updating...,Gathering Current Version From Server, Effectivity Macro Updater
-				Progress, 50
+		Progress,  w200, Updating...,Gathering Current Version From Server, Effectivity Macro Updater
+		Progress, 50
 		
-				Progress,  w200,Updating..., Comparing Version Information, Effectivity Macro Updater
-				Progress, 60
-			}
+		Progress,  w200,Updating..., Comparing Version Information, Effectivity Macro Updater
+		Progress, 60
+	}
 	req.onreadystatechange := Func("Ready")
-; Send the request.  Ready() will be called when it's complete.
-Try
-req.send()
-catch e
-{
-	Progress,  w200,Updating..., Server Timedout, Error
-	Sleep 1000
-				Progress, 100
-				Progress, off
-	Return
-}
-return
+	; Send the request.  Ready() will be called when it's complete.
+	Try
+		req.send()
+	catch e
+	{
+		Progress,  w200,Updating..., Server Timedout, Error
+		Sleep 1000
+		Progress, 100
+		Progress, off
+		Return
+	}
+	return
 }
 
 
 UPdate_TExt(Text, start)
 {
-global First_Run, Configuration_File_Location, Version_Number
-Loop, Parse, Text, `n`r
-{
-	If A_LoopField contains Version=
-		update_Version := A_LoopField
-	else
-		What_is_new_text := What_is_new_text A_LoopField "`n"
-}
-
-StringReplace, update_Version,update_Version,Version=,,
-				If (update_Version <= Version_Number) and  (First_run = "0")
-				{
-						If (start)
+	global First_Run, Configuration_File_Location, Version_Number
+	Loop, Parse, Text, `n`r
 	{
-					Progress,  w200,Updating..., Macro is Up to date., Arbortext Macro Updater
-					Progress, 100
-					sleep 1000
-				}
-
-				}
-
-				If (update_Version > Version_Number)  or (First_run = "1")
-				{
-				Progress, Off
-						IF (!First_Run)
-						{
-					gui,35: font, S15  ;Set 10-point Verdana.
-				Gui, 35:Add, Text,x5 y5, New Version available!
-				Gui, 35:Add, Text,xp yP+25, Your version is %Version_Number% 
+		If A_LoopField contains Version=
+			update_Version := A_LoopField
+		else
+			What_is_new_text := What_is_new_text A_LoopField "`n"
+	}
+	
+	StringReplace, update_Version,update_Version,Version=,,
+	If (update_Version <= Version_Number) and  (First_run = "0")
+	{
+		If (start)
+		{
+			Progress,  w200,Updating..., Macro is Up to date., Arbortext Macro Updater
+			Progress, 100
+			sleep 1000
+		}
+		
+	}
+	
+	If (update_Version > Version_Number)  or (First_run = "1")
+	{
+		Progress, Off
+		IF (!First_Run)
+		{
+			gui,35: font, S15  ;Set 10-point Verdana.
+			Gui, 35:Add, Text,x5 y5, New Version available!
+			Gui, 35:Add, Text,xp yP+25, Your version is %Version_Number%
 			gui,35: font, S15 cRED  ; Set 10-point Verdana.
-				Gui, 35:Add, Text,xp yP+25, New  version is %update_Version% 
-}			
-			gui,35: font, s10 cblack  ; Set 10-point Verdana.
-						If (First_Run)
-				Gui, 35:Add, Edit,xp yP+35 w600 h500,  Looks Like This is Your first time Running This Version. `n`n %What_is_new_text%
-				else
-				Gui, 35:Add, Edit,xp yP+35 w600 h500, %What_is_new_text%
-				If (First_run)
-				Gui, 35:Add, Button, yp+525  w100 h25 gCancel, Ok
-				else
-				{
-				Gui, 35:Add, Button, yp+525 gDownload_new_version, DOWNLOAD NEW VERSION
-				Gui, 35:Add, Button, xp+200 gCancel, Cancel
-			}
-			If (First_Run)
-				gui, 35:Show,,What's New
-			else
-				gui, 35:Show,,New Version!
-			
-				gui 35: + AlwaysOnTop
-					First_Run=0
-						Write_ini_file(Configuration_File_Location)
-				Pause, on
-				}
-Progress, Off
-				return
-			}
+			Gui, 35:Add, Text,xp yP+25, New  version is %update_Version%
+		}
+		gui,35: font, s10 cblack  ; Set 10-point Verdana.
+		If (First_Run)
+			Gui, 35:Add, Edit,xp yP+35 w600 h500,  Looks Like This is Your first time Running This Version. `n`n %What_is_new_text%
+		else
+			Gui, 35:Add, Edit,xp yP+35 w600 h500, %What_is_new_text%
+		If (First_run)
+			Gui, 35:Add, Button, yp+525  w100 h25 gCancel, Ok
+		else
+		{
+			Gui, 35:Add, Button, yp+525 gDownload_new_version, DOWNLOAD NEW VERSION
+			Gui, 35:Add, Button, xp+200 gCancel, Cancel
+		}
+		If (First_Run)
+			gui, 35:Show,,What's New
+		else
+			gui, 35:Show,,New Version!
+		
+		gui 35: + AlwaysOnTop
+		First_Run=0
+		Write_ini_file(Configuration_File_Location)
+		Pause, on
+	}
+	Progress, Off
+	return
+}
 
 Ready() {
 	global req, start
 	if (req.readyState != 4)  ; Not done yet.
 		return
 	if (req.status == 200) ; OK.
-	  UPdate_TExt(req.responseText, start)
+		UPdate_TExt(req.responseText, start)
 	
 	return
-
+	
 }
-		
+
 
 
 Internet_Connection_Check()
 {
-   global req, Internet_Status
-req := ComObjCreate("Msxml2.XMLHTTP")
-;~ req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-
-; Open a request with async enabled.
-;~ req.SetTimeouts(10000, 10000, 10000, 10000)
-req.open("GET", "https://www.google.com", false)
-; Set our callback function (v1.1.17+).
-req.onreadystatechange := Func("Internet_check")
-; Send the request.  Ready() will be called when it's complete.
-Try
-req.send()
-
-catch e
-	Internet_Status = 0
+	global req, Internet_Status
+	req := ComObjCreate("Msxml2.XMLHTTP")
+	;~ req := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 	
-Return Internet_Status
+	; Open a request with async enabled.
+	;~ req.SetTimeouts(10000, 10000, 10000, 10000)
+	req.open("GET", "https://www.google.com", false)
+	; Set our callback function (v1.1.17+).
+	req.onreadystatechange := Func("Internet_check")
+	; Send the request.  Ready() will be called when it's complete.
+	Try
+		req.send()
+	
+	catch e
+		Internet_Status = 0
+	
+	Return Internet_Status
 }
 
 Kill_Check:
 {
-SetTimer, Kill_check,Off
-SplashTextOff
+	SetTimer, Kill_check,Off
+	SplashTextOff
 	Internet_Status = 0
-Exit
-return
+	Exit
+	return
 }
 
 Internet_check() {
@@ -3754,10 +4024,10 @@ Internet_check() {
 	if (req.status == 200) ; OK.
 		Internet_Status = 1
 	else
-	Internet_Status = 0
+		Internet_Status = 0
 	
-
-return Internet_Status
+	
+	return Internet_Status
 }
 
 
@@ -3765,8 +4035,8 @@ return Internet_Status
 35GuiClose:
 {
 	gui, 35:destroy
-Pause, Off
-Return
+	Pause, Off
+	Return
 }
 
 Download_new_version()
@@ -3774,7 +4044,7 @@ Download_new_version()
 	global Program_Location_Link
 	Pause, off
 	Gui 35: Destroy
-Run, %Program_Location_Link%
+	Run, %Program_Location_Link%
 	
 	return
 }
@@ -3782,71 +4052,71 @@ Run, %Program_Location_Link%
 Cancel:
 {
 	pause, off
-Gui 35:Destroy
-return
-}	
+	Gui 35:Destroy
+	return
+}
 
 OptionsGui:
-	{
-					activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
-					Enable_Two_Tabs = 0
-					Load_ini_file(Configuration_File_Location)
-					;~ IniRead, Refreshrate, %Configuration_File_Location%, Refreshrate,Refreshrate
-					;~ IniRead, Sleep_Delay, %Configuration_File_Location%, Sleep_Delay,Sleep_Delay
-					gui 10: +alwaysontop
-					Gui , 1: -AlwaysOnTop
-					gui 10:add, text, x5 y5 w320 h20 ,Refreash ACM Rate (After how many entered effectivity)
-					gui 10:add, edit, xp+275 yp-3 w30 veditfield5 , %refreshrate%
-					gui 10:add, Text, xp-275 yp+30, ACM speed Compensation (10 = 1 second delay)
-					gui 10:add, edit, xp+275 yp-3 w30 veditfield10 , %Sleep_Delay%
-					Gui 10:add, Checkbox, Checked%Enable_Two_Tabs% xp-275 yp+25 vEnable_Two_Tabs , Enable Two Tabs
-					gui 10:add, button, xp yp+26 h20 w75 Default gsavesets, Save Settings
-					Gui, 10:Add, Picture, x0 y0 w325 h100 +0x4000000 , %File_Install_Work_Folder%\images\background.png
-					gui 10:show, x%amonx% y%amony% w325 h100, Options
-					Guicontrol,10:, editfield5, %refreshrate%
-					Guicontrol,10:, editfield10, %Sleep_Delay%
-					gui, 10:submit, nohide
-					return
-				}
+{
+	activeMonitorInfo( amonx,Amony,AmonW,AmonH,mx,my ) ;gets the coordinates of the screen where the mouse is located.
+	Enable_Two_Tabs = 0
+	Load_ini_file(Configuration_File_Location)
+	;~ IniRead, Refreshrate, %Configuration_File_Location%, Refreshrate,Refreshrate
+	;~ IniRead, Sleep_Delay, %Configuration_File_Location%, Sleep_Delay,Sleep_Delay
+	gui 10: +alwaysontop
+	Gui , 1: -AlwaysOnTop
+	gui 10:add, text, x5 y5 w320 h20 ,Refreash ACM Rate (After how many entered effectivity)
+	gui 10:add, edit, xp+275 yp-3 w30 veditfield5 , %refreshrate%
+	gui 10:add, Text, xp-275 yp+30, ACM speed Compensation (10 = 1 second delay)
+	gui 10:add, edit, xp+275 yp-3 w30 veditfield10 , %Sleep_Delay%
+	Gui 10:add, Checkbox, Checked%Enable_Two_Tabs% xp-275 yp+25 vEnable_Two_Tabs , Enable Two Tabs
+	gui 10:add, button, xp yp+26 h20 w75 Default gsavesets, Save Settings
+	Gui, 10:Add, Picture, x0 y0 w325 h100 +0x4000000 , %File_Install_Work_Folder%\images\background.png
+	gui 10:show, x%amonx% y%amony% w325 h100, Options
+	Guicontrol,10:, editfield5, %refreshrate%
+	Guicontrol,10:, editfield10, %Sleep_Delay%
+	gui, 10:submit, nohide
+	return
+}
 
-				GuiClose:
-				{
-					Result := Move_Message_Box("262148","Quit" Effectivity_Macro, "Are you sure you want to quit?")
-					;~ MsgBox, %Program_Location_Link%
-					If Result =  yes
-					ExitApp
+GuiClose:
+{
+	Result := Move_Message_Box("262148","Quit" Effectivity_Macro, "Are you sure you want to quit?")
+	;~ MsgBox, %Program_Location_Link%
+	If Result =  yes
+		ExitApp
+	
+	return
+}
 
-					return
-				}
+10GuiClose:
+10Guiescape:
+{
+	Gui, 10: Destroy
+	return
+}
 
-				10GuiClose:
-				10Guiescape:
-				{
-					Gui, 10: Destroy
-					return
-				}
-
-				savesets()
-				{
-					global
-					Gui , 1: +AlwaysOnTop
-					gui 10:submit, nohide
-					GuiControlGet,Refreshrate,,editfield5
-					GuiControlGet,sleep_delay,,editfield10
-					GuiControlGet, Enable_Two_Tabs
-				IniWrite, %Sleep_Delay%, %Configuration_File_Location%,Sleep_Delay,Sleep_Delay
-				IniWrite, %Refreshrate%, %Configuration_File_Location%,Refreshrate,Refreshrate
-				IniWrite, %Enable_Two_Tabs%, %Configuration_File_Location%,Enable_Two_Tabs,Enable_Two_Tabs
-				
-					gui 10:destroy
-					return
-				}
+savesets()
+{
+	global
+	Gui , 1: +AlwaysOnTop
+	gui 10:submit, nohide
+	GuiControlGet,Refreshrate,,editfield5
+	GuiControlGet,sleep_delay,,editfield10
+	GuiControlGet, Enable_Two_Tabs
+	IniWrite, %Sleep_Delay%, %Configuration_File_Location%,Sleep_Delay,Sleep_Delay
+	IniWrite, %Refreshrate%, %Configuration_File_Location%,Refreshrate,Refreshrate
+	IniWrite, %Enable_Two_Tabs%, %Configuration_File_Location%,Enable_Two_Tabs,Enable_Two_Tabs
+	
+	gui 10:destroy
+	return
+}
 
 savevalue:
 {
-GuiControlGet,Sleep_Delay,,EditField20
-IniWrite, %Sleep_Delay%, %Configuration_File_Location%,Sleep_Delay,Sleep_Delay
-return
+	GuiControlGet,Sleep_Delay,,EditField20
+	IniWrite, %Sleep_Delay%, %Configuration_File_Location%,Sleep_Delay,Sleep_Delay
+	return
 }
 
 
@@ -3857,11 +4127,11 @@ return
 
 
 /*
-\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-\./.\./.\.\./.\./.\.\./.\./.\. Section of lib files that I got from forums and searching.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
-\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	\./.\./.\.\./.\./.\.\./.\./.\. Section of lib files that I got from forums and searching.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
+	\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.\./.\./.\.
 */
-     
+
 ;**********************************************************************************
 ;
 ; Gdip_ImageSearch()
@@ -3932,83 +4202,83 @@ return
 ;==================================================================================
 ;
 ;**********************************************************************************
-
+listLines, off
 Gdip_ImageSearch(pBitmapHaystack,pBitmapNeedle,ByRef OutputList=""
 ,OuterX1=0,OuterY1=0,OuterX2=0,OuterY2=0,Variation=0,Trans=""
 ,SearchDirection=1,Instances=1,LineDelim="`n",CoordDelim=",") {
 
-    ; Some validations that can be done before proceeding any further
-    If !( pBitmapHaystack && pBitmapNeedle )
-        Return -1001
-    If Variation not between 0 and 255
-        return -1002
-    If ( ( OuterX1 < 0 ) || ( OuterY1 < 0 ) )
-        return -1003
-    If SearchDirection not between 1 and 8
-        SearchDirection := 1
-    If ( Instances < 0 )
-        Instances := 0
+; Some validations that can be done before proceeding any further
+If !( pBitmapHaystack && pBitmapNeedle )
+	Return -1001
+If Variation not between 0 and 255
+	return -1002
+If ( ( OuterX1 < 0 ) || ( OuterY1 < 0 ) )
+	return -1003
+If SearchDirection not between 1 and 8
+	SearchDirection := 1
+If ( Instances < 0 )
+	Instances := 0
 
-    ; Getting the dimensions and locking the bits [haystack]
-    Gdip_GetImageDimensions(pBitmapHaystack,hWidth,hHeight)
-    ; Last parameter being 1 says the LockMode flag is "READ only"
-    If Gdip_LockBits(pBitmapHaystack,0,0,hWidth,hHeight,hStride,hScan,hBitmapData,1)
-    OR !(hWidth := NumGet(hBitmapData,0))
-    OR !(hHeight := NumGet(hBitmapData,4))
-        Return -1004
+; Getting the dimensions and locking the bits [haystack]
+Gdip_GetImageDimensions(pBitmapHaystack,hWidth,hHeight)
+; Last parameter being 1 says the LockMode flag is "READ only"
+If Gdip_LockBits(pBitmapHaystack,0,0,hWidth,hHeight,hStride,hScan,hBitmapData,1)
+	OR !(hWidth := NumGet(hBitmapData,0))
+	OR !(hHeight := NumGet(hBitmapData,4))
+	Return -1004
 
-    ; Careful! From this point on, we must do the following before returning:
-    ; - unlock haystack bits
+; Careful! From this point on, we must do the following before returning:
+; - unlock haystack bits
 
-    ; Getting the dimensions and locking the bits [needle]
-    Gdip_GetImageDimensions(pBitmapNeedle,nWidth,nHeight)
-    ; If Trans is correctly specified, create a backup of the original needle bitmap
-    ; and modify the current one, setting the desired color as transparent.
-    ; Also, since a copy is created, we must remember to dispose the new bitmap later.
-    ; This whole thing has to be done before locking the bits.
-    If Trans between 0 and 0xFFFFFF
-    {
-        pOriginalBmpNeedle := pBitmapNeedle
-        pBitmapNeedle := Gdip_CloneBitmapArea(pOriginalBmpNeedle,0,0,nWidth,nHeight)
-        Gdip_SetBitmapTransColor(pBitmapNeedle,Trans)
-        DumpCurrentNeedle := true
-    }
+; Getting the dimensions and locking the bits [needle]
+Gdip_GetImageDimensions(pBitmapNeedle,nWidth,nHeight)
+; If Trans is correctly specified, create a backup of the original needle bitmap
+; and modify the current one, setting the desired color as transparent.
+; Also, since a copy is created, we must remember to dispose the new bitmap later.
+; This whole thing has to be done before locking the bits.
+If Trans between 0 and 0xFFFFFF
+{
+	pOriginalBmpNeedle := pBitmapNeedle
+	pBitmapNeedle := Gdip_CloneBitmapArea(pOriginalBmpNeedle,0,0,nWidth,nHeight)
+	Gdip_SetBitmapTransColor(pBitmapNeedle,Trans)
+	DumpCurrentNeedle := true
+}
 
-    ; Careful! From this point on, we must do the following before returning:
-    ; - unlock haystack bits
-    ; - dispose current needle bitmap (if necessary)
+; Careful! From this point on, we must do the following before returning:
+; - unlock haystack bits
+; - dispose current needle bitmap (if necessary)
 
-    If Gdip_LockBits(pBitmapNeedle,0,0,nWidth,nHeight,nStride,nScan,nBitmapData)
-    OR !(nWidth := NumGet(nBitmapData,0))
-    OR !(nHeight := NumGet(nBitmapData,4))
-    {
-        If ( DumpCurrentNeedle )
-            Gdip_DisposeImage(pBitmapNeedle)
-        Gdip_UnlockBits(pBitmapHaystack,hBitmapData)
-        Return -1005
-    }
-    
-    ; Careful! From this point on, we must do the following before returning:
-    ; - unlock haystack bits
-    ; - unlock needle bits
-    ; - dispose current needle bitmap (if necessary)
+If Gdip_LockBits(pBitmapNeedle,0,0,nWidth,nHeight,nStride,nScan,nBitmapData)
+	OR !(nWidth := NumGet(nBitmapData,0))
+	OR !(nHeight := NumGet(nBitmapData,4))
+{
+	If ( DumpCurrentNeedle )
+		Gdip_DisposeImage(pBitmapNeedle)
+	Gdip_UnlockBits(pBitmapHaystack,hBitmapData)
+	Return -1005
+}
 
-    ; Adjust the search box. "OuterX2,OuterY2" will be the last pixel evaluated
-    ; as possibly matching with the needle's first pixel. So, we must avoid going
-    ; beyond this maximum final coordinate.
-    OuterX2 := ( !OuterX2 ? hWidth-nWidth+1 : OuterX2-nWidth+1 )
-    OuterY2 := ( !OuterY2 ? hHeight-nHeight+1 : OuterY2-nHeight+1 )
+; Careful! From this point on, we must do the following before returning:
+; - unlock haystack bits
+; - unlock needle bits
+; - dispose current needle bitmap (if necessary)
 
-    OutputCount := Gdip_MultiLockedBitsSearch(hStride,hScan,hWidth,hHeight
-    ,nStride,nScan,nWidth,nHeight,OutputList,OuterX1,OuterY1,OuterX2,OuterY2
-    ,Variation,SearchDirection,Instances,LineDelim,CoordDelim)
+; Adjust the search box. "OuterX2,OuterY2" will be the last pixel evaluated
+; as possibly matching with the needle's first pixel. So, we must avoid going
+; beyond this maximum final coordinate.
+OuterX2 := ( !OuterX2 ? hWidth-nWidth+1 : OuterX2-nWidth+1 )
+OuterY2 := ( !OuterY2 ? hHeight-nHeight+1 : OuterY2-nHeight+1 )
 
-    Gdip_UnlockBits(pBitmapHaystack,hBitmapData)
-    Gdip_UnlockBits(pBitmapNeedle,nBitmapData)
-    If ( DumpCurrentNeedle )
-        Gdip_DisposeImage(pBitmapNeedle)
+OutputCount := Gdip_MultiLockedBitsSearch(hStride,hScan,hWidth,hHeight
+,nStride,nScan,nWidth,nHeight,OutputList,OuterX1,OuterY1,OuterX2,OuterY2
+,Variation,SearchDirection,Instances,LineDelim,CoordDelim)
 
-    Return OutputCount
+Gdip_UnlockBits(pBitmapHaystack,hBitmapData)
+Gdip_UnlockBits(pBitmapNeedle,nBitmapData)
+If ( DumpCurrentNeedle )
+	Gdip_DisposeImage(pBitmapNeedle)
+
+Return OutputCount
 }
 
 ;///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4054,11 +4324,11 @@ Gdip_ImageSearch(pBitmapHaystack,pBitmapNeedle,ByRef OutputList=""
 ;==================================================================================
 
 Gdip_SetBitmapTransColor(pBitmap,TransColor) {
-    static _SetBmpTrans, Ptr, PtrA
-    if !( _SetBmpTrans ) {
-        Ptr := A_PtrSize ? "UPtr" : "UInt"
-        PtrA := Ptr . "*"
-        MCode_SetBmpTrans := "
+	static _SetBmpTrans, Ptr, PtrA
+	if !( _SetBmpTrans ) {
+		Ptr := A_PtrSize ? "UPtr" : "UInt"
+		PtrA := Ptr . "*"
+		MCode_SetBmpTrans := "
             (LTrim Join
             8b44240c558b6c241cc745000000000085c07e77538b5c2410568b74242033c9578b7c2414894c24288da424000000
             0085db7e458bc18d1439b9020000008bff8a0c113a4e0275178a4c38013a4e01750e8a0a3a0e7508c644380300ff450083c0
@@ -4067,50 +4337,50 @@ Gdip_SetBitmapTransColor(pBitmap,TransColor) {
             8498bc1488bd3660f1f440000410fb648023848017519410fb6480138087510410fb6083848ff7507c640020041ff024883c
             00448ffca75d44c03cf49ffcb75bc488b7c241033c05bc3
             )"
-        if ( A_PtrSize == 8 ) ; x64, after comma
-            MCode_SetBmpTrans := SubStr(MCode_SetBmpTrans,InStr(MCode_SetBmpTrans,",")+1)
-        else ; x86, before comma
-            MCode_SetBmpTrans := SubStr(MCode_SetBmpTrans,1,InStr(MCode_SetBmpTrans,",")-1)
-        VarSetCapacity(_SetBmpTrans, LEN := StrLen(MCode_SetBmpTrans)//2, 0)
-        Loop, %LEN%
-            NumPut("0x" . SubStr(MCode_SetBmpTrans,(2*A_Index)-1,2), _SetBmpTrans, A_Index-1, "uchar")
-        MCode_SetBmpTrans := ""
-        DllCall("VirtualProtect", Ptr,&_SetBmpTrans, Ptr,VarSetCapacity(_SetBmpTrans), "uint",0x40, PtrA,0)
-    }
-    If !pBitmap
-        Return -2001
-    If TransColor not between 0 and 0xFFFFFF
-        Return -2002
-    Gdip_GetImageDimensions(pBitmap,W,H)
-    If !(W && H)
-        Return -2003
-    If Gdip_LockBits(pBitmap,0,0,W,H,Stride,Scan,BitmapData)
-        Return -2004
-    ; The following code should be slower than using the MCode approach,
-    ; but will the kept here for now, just for reference.
-    /*
-    Count := 0
-    Loop, %H% {
-        Y := A_Index-1
-        Loop, %W% {
-            X := A_Index-1
-            CurrentColor := Gdip_GetLockBitPixel(Scan,X,Y,Stride)
-            If ( (CurrentColor & 0xFFFFFF) == TransColor )
-                Gdip_SetLockBitPixel(TransColor,Scan,X,Y,Stride), Count++
-        }
-    }
-    */
-    ; Thanks guest3456 for helping with the initial solution involving NumPut
-    Gdip_FromARGB(TransColor,A,R,G,B), VarSetCapacity(TransColor,0), VarSetCapacity(TransColor,3,255)
-    NumPut(B,TransColor,0,"UChar"), NumPut(G,TransColor,1,"UChar"), NumPut(R,TransColor,2,"UChar")
-    MCount := 0
-    E := DllCall(&_SetBmpTrans, Ptr,Scan, "int",W, "int",H, "int",Stride, Ptr,&TransColor, "int*",MCount, "cdecl int")
-    Gdip_UnlockBits(pBitmap,BitmapData)
-    If ( E != 0 ) {
-        ErrorLevel := E
-        Return -2005
-    }
-    Return MCount
+		if ( A_PtrSize == 8 ) ; x64, after comma
+			MCode_SetBmpTrans := SubStr(MCode_SetBmpTrans,InStr(MCode_SetBmpTrans,",")+1)
+		else ; x86, before comma
+			MCode_SetBmpTrans := SubStr(MCode_SetBmpTrans,1,InStr(MCode_SetBmpTrans,",")-1)
+		VarSetCapacity(_SetBmpTrans, LEN := StrLen(MCode_SetBmpTrans)//2, 0)
+		Loop, %LEN%
+			NumPut("0x" . SubStr(MCode_SetBmpTrans,(2*A_Index)-1,2), _SetBmpTrans, A_Index-1, "uchar")
+		MCode_SetBmpTrans := ""
+		DllCall("VirtualProtect", Ptr,&_SetBmpTrans, Ptr,VarSetCapacity(_SetBmpTrans), "uint",0x40, PtrA,0)
+	}
+	If !pBitmap
+		Return -2001
+	If TransColor not between 0 and 0xFFFFFF
+		Return -2002
+	Gdip_GetImageDimensions(pBitmap,W,H)
+	If !(W && H)
+		Return -2003
+	If Gdip_LockBits(pBitmap,0,0,W,H,Stride,Scan,BitmapData)
+		Return -2004
+	; The following code should be slower than using the MCode approach,
+	; but will the kept here for now, just for reference.
+	/*
+		Count := 0
+		Loop, %H% {
+			Y := A_Index-1
+			Loop, %W% {
+				X := A_Index-1
+				CurrentColor := Gdip_GetLockBitPixel(Scan,X,Y,Stride)
+				If ( (CurrentColor & 0xFFFFFF) == TransColor )
+					Gdip_SetLockBitPixel(TransColor,Scan,X,Y,Stride), Count++
+			}
+		}
+	*/
+	; Thanks guest3456 for helping with the initial solution involving NumPut
+	Gdip_FromARGB(TransColor,A,R,G,B), VarSetCapacity(TransColor,0), VarSetCapacity(TransColor,3,255)
+	NumPut(B,TransColor,0,"UChar"), NumPut(G,TransColor,1,"UChar"), NumPut(R,TransColor,2,"UChar")
+	MCount := 0
+	E := DllCall(&_SetBmpTrans, Ptr,Scan, "int",W, "int",H, "int",Stride, Ptr,&TransColor, "int*",MCount, "cdecl int")
+	Gdip_UnlockBits(pBitmap,BitmapData)
+	If ( E != 0 ) {
+		ErrorLevel := E
+		Return -2005
+	}
+	Return MCount
 }
 
 ;///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4143,59 +4413,59 @@ Gdip_MultiLockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride,nScan,nWidth,nHe
 ,ByRef OutputList="",OuterX1=0,OuterY1=0,OuterX2=0,OuterY2=0,Variation=0
 ,SearchDirection=1,Instances=0,LineDelim="`n",CoordDelim=",")
 {
-    OutputList := ""
-    OutputCount := !Instances
-    InnerX1 := OuterX1 , InnerY1 := OuterY1
-    InnerX2 := OuterX2 , InnerY2 := OuterY2
-
-    ; The following part is a rather ugly but working hack that I
-    ; came up with to adjust the variables and their increments
-    ; according to the specified Haystack Search Direction
-    /*
-    Mod(SD,4) = 0 --> iX = 2 , stepX = +0 , iY = 1 , stepY = +1
-    Mod(SD,4) = 1 --> iX = 1 , stepX = +1 , iY = 1 , stepY = +1
-    Mod(SD,4) = 2 --> iX = 1 , stepX = +1 , iY = 2 , stepY = +0
-    Mod(SD,4) = 3 --> iX = 2 , stepX = +0 , iY = 2 , stepY = +0
-    SD <= 4   ------> Vertical preference
-    SD > 4    ------> Horizontal preference
-    */
-    ; Set the index and the step (for both X and Y) to +1
-    iX := 1, stepX := 1, iY := 1, stepY := 1
-    ; Adjust Y variables if SD is 2, 3, 6 or 7
-    Modulo := Mod(SearchDirection,4)
-    If ( Modulo > 1 )
-        iY := 2, stepY := 0
-    ; adjust X variables if SD is 3, 4, 7 or 8
-    If !Mod(Modulo,3)
-        iX := 2, stepX := 0
-    ; Set default Preference to vertical and Nonpreference to horizontal
-    P := "Y", N := "X"
-    ; adjust Preference and Nonpreference if SD is 5, 6, 7 or 8
-    If ( SearchDirection > 4 )
-        P := "X", N := "Y"
-    ; Set the Preference Index and the Nonpreference Index
-    iP := i%P%, iN := i%N%
-
-    While (!(OutputCount == Instances) && (0 == Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride
-    ,nScan,nWidth,nHeight,FoundX,FoundY,OuterX1,OuterY1,OuterX2,OuterY2,Variation,SearchDirection)))
-    {
-        OutputCount++
-        OutputList .= LineDelim FoundX CoordDelim FoundY
-        Outer%P%%iP% := Found%P%+step%P%
-        Inner%N%%iN% := Found%N%+step%N%
-        Inner%P%1 := Found%P%
-        Inner%P%2 := Found%P%+1
-        While (!(OutputCount == Instances) && (0 == Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride
-        ,nScan,nWidth,nHeight,FoundX,FoundY,InnerX1,InnerY1,InnerX2,InnerY2,Variation,SearchDirection)))
-        {
-            OutputCount++
-            OutputList .= LineDelim FoundX CoordDelim FoundY
-            Inner%N%%iN% := Found%N%+step%N%
-        }
-    }
-    OutputList := SubStr(OutputList,1+StrLen(LineDelim))
-    OutputCount -= !Instances
-    Return OutputCount
+	OutputList := ""
+	OutputCount := !Instances
+	InnerX1 := OuterX1 , InnerY1 := OuterY1
+	InnerX2 := OuterX2 , InnerY2 := OuterY2
+	
+	; The following part is a rather ugly but working hack that I
+	; came up with to adjust the variables and their increments
+	; according to the specified Haystack Search Direction
+	/*
+		Mod(SD,4) = 0 --> iX = 2 , stepX = +0 , iY = 1 , stepY = +1
+		Mod(SD,4) = 1 --> iX = 1 , stepX = +1 , iY = 1 , stepY = +1
+		Mod(SD,4) = 2 --> iX = 1 , stepX = +1 , iY = 2 , stepY = +0
+		Mod(SD,4) = 3 --> iX = 2 , stepX = +0 , iY = 2 , stepY = +0
+		SD <= 4   ------> Vertical preference
+		SD > 4    ------> Horizontal preference
+	*/
+	; Set the index and the step (for both X and Y) to +1
+	iX := 1, stepX := 1, iY := 1, stepY := 1
+	; Adjust Y variables if SD is 2, 3, 6 or 7
+	Modulo := Mod(SearchDirection,4)
+	If ( Modulo > 1 )
+		iY := 2, stepY := 0
+	; adjust X variables if SD is 3, 4, 7 or 8
+	If !Mod(Modulo,3)
+		iX := 2, stepX := 0
+	; Set default Preference to vertical and Nonpreference to horizontal
+	P := "Y", N := "X"
+	; adjust Preference and Nonpreference if SD is 5, 6, 7 or 8
+	If ( SearchDirection > 4 )
+		P := "X", N := "Y"
+	; Set the Preference Index and the Nonpreference Index
+	iP := i%P%, iN := i%N%
+	
+	While (!(OutputCount == Instances) && (0 == Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride
+		,nScan,nWidth,nHeight,FoundX,FoundY,OuterX1,OuterY1,OuterX2,OuterY2,Variation,SearchDirection)))
+	{
+		OutputCount++
+		OutputList .= LineDelim FoundX CoordDelim FoundY
+		Outer%P%%iP% := Found%P%+step%P%
+		Inner%N%%iN% := Found%N%+step%N%
+		Inner%P%1 := Found%P%
+		Inner%P%2 := Found%P%+1
+		While (!(OutputCount == Instances) && (0 == Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride
+			,nScan,nWidth,nHeight,FoundX,FoundY,InnerX1,InnerY1,InnerX2,InnerY2,Variation,SearchDirection)))
+		{
+			OutputCount++
+			OutputList .= LineDelim FoundX CoordDelim FoundY
+			Inner%N%%iN% := Found%N%+step%N%
+		}
+	}
+	OutputList := SubStr(OutputList,1+StrLen(LineDelim))
+	OutputCount -= !Instances
+	Return OutputCount
 }
 
 ;///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4268,14 +4538,14 @@ Gdip_MultiLockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride,nScan,nWidth,nHe
 Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride,nScan,nWidth,nHeight
 ,ByRef x="",ByRef y="",sx1=0,sy1=0,sx2=0,sy2=0,Variation=0,sd=1)
 {
-    static _ImageSearch, Ptr, PtrA
-
-    ; Initialize all MCode stuff, if necessary
-    if !( _ImageSearch ) {
-        Ptr := A_PtrSize ? "UPtr" : "UInt"
-        PtrA := Ptr . "*"
-
-        MCode_ImageSearch := "
+	static _ImageSearch, Ptr, PtrA
+	
+	; Initialize all MCode stuff, if necessary
+	if !( _ImageSearch ) {
+		Ptr := A_PtrSize ? "UPtr" : "UInt"
+		PtrA := Ptr . "*"
+		
+		MCode_ImageSearch := "
             (LTrim Join
             8b44243883ec205355565783f8010f857a0100008b7c2458897c24143b7c24600f8db50b00008b44244c8b5c245c8b
             4c24448b7424548be80fafef896c242490897424683bf30f8d0a0100008d64240033c033db8bf5896c241c895c2420894424
@@ -4409,44 +4679,44 @@ Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride,nScan,nWidth,nHeight
             408443b8424b80000000f8c10ffffff448b442404448b8c24a800000041ffc883e9044489442404898c24c8000000443b842
             4a00000000f8dc6feffffe946f4ffff8b442404488b4c246089018b0424488b4c2468890133c0e945f4ffff
             )"
-        if ( A_PtrSize == 8 ) ; x64, after comma
-            MCode_ImageSearch := SubStr(MCode_ImageSearch,InStr(MCode_ImageSearch,",")+1)
-        else ; x86, before comma
-            MCode_ImageSearch := SubStr(MCode_ImageSearch,1,InStr(MCode_ImageSearch,",")-1)
-        VarSetCapacity(_ImageSearch, LEN := StrLen(MCode_ImageSearch)//2, 0)
-        Loop, %LEN%
-            NumPut("0x" . SubStr(MCode_ImageSearch,(2*A_Index)-1,2), _ImageSearch, A_Index-1, "uchar")
-        MCode_ImageSearch := ""
-        DllCall("VirtualProtect", Ptr,&_ImageSearch, Ptr,VarSetCapacity(_ImageSearch), "uint",0x40, PtrA,0)
-    }
-
-    ; Abort if an initial coordinates is located before a final coordinate
-    If ( sx2 < sx1 )
-        return -3001
-    If ( sy2 < sy1 )
-        return -3002
-
-    ; Check the search box. "sx2,sy2" will be the last pixel evaluated
-    ; as possibly matching with the needle's first pixel. So, we must
-    ; avoid going beyond this maximum final coordinate.
-    If ( sx2 > (hWidth-nWidth+1) )
-        return -3003
-    If ( sy2 > (hHeight-nHeight+1) )
-        return -3004
-
-    ; Abort if the width or height of the search box is 0
-    If ( sx2-sx1 == 0 )
-        return -3005
-    If ( sy2-sy1 == 0 )
-        return -3006
-
-    ; The DllCall parameters are the same for easier C code modification,
-    ; even though they aren't all used on the _ImageSearch version
-    x := 0, y := 0
-    , E := DllCall( &_ImageSearch, "int*",x, "int*",y, Ptr,hScan, Ptr,nScan, "int",nWidth, "int",nHeight
-    , "int",hStride, "int",nStride, "int",sx1, "int",sy1, "int",sx2, "int",sy2, "int",Variation
-    , "int",sd, "cdecl int")
-    Return ( E == "" ? -3007 : E )
+		if ( A_PtrSize == 8 ) ; x64, after comma
+			MCode_ImageSearch := SubStr(MCode_ImageSearch,InStr(MCode_ImageSearch,",")+1)
+		else ; x86, before comma
+			MCode_ImageSearch := SubStr(MCode_ImageSearch,1,InStr(MCode_ImageSearch,",")-1)
+		VarSetCapacity(_ImageSearch, LEN := StrLen(MCode_ImageSearch)//2, 0)
+		Loop, %LEN%
+			NumPut("0x" . SubStr(MCode_ImageSearch,(2*A_Index)-1,2), _ImageSearch, A_Index-1, "uchar")
+		MCode_ImageSearch := ""
+		DllCall("VirtualProtect", Ptr,&_ImageSearch, Ptr,VarSetCapacity(_ImageSearch), "uint",0x40, PtrA,0)
+	}
+	
+	; Abort if an initial coordinates is located before a final coordinate
+	If ( sx2 < sx1 )
+		return -3001
+	If ( sy2 < sy1 )
+		return -3002
+	
+	; Check the search box. "sx2,sy2" will be the last pixel evaluated
+	; as possibly matching with the needle's first pixel. So, we must
+	; avoid going beyond this maximum final coordinate.
+	If ( sx2 > (hWidth-nWidth+1) )
+		return -3003
+	If ( sy2 > (hHeight-nHeight+1) )
+		return -3004
+	
+	; Abort if the width or height of the search box is 0
+	If ( sx2-sx1 == 0 )
+		return -3005
+	If ( sy2-sy1 == 0 )
+		return -3006
+	
+	; The DllCall parameters are the same for easier C code modification,
+	; even though they aren't all used on the _ImageSearch version
+	x := 0, y := 0
+	, E := DllCall( &_ImageSearch, "int*",x, "int*",y, Ptr,hScan, Ptr,nScan, "int",nWidth, "int",nHeight
+	, "int",hStride, "int",nStride, "int",sx1, "int",sy1, "int",sx2, "int",sy2, "int",Variation
+	, "int",sd, "cdecl int")
+	Return ( E == "" ? -3007 : E )
 }
 
 ; Gdip standard library v1.45 by tic (Tariq Porter) 07/09/11
@@ -4503,7 +4773,7 @@ Gdip_LockedBitsSearch(hStride,hScan,hWidth,hHeight,nStride,nScan,nWidth,nHeight
 
 ; Function:     			UpdateLayeredWindow
 ; Description:  			Updates a layered window with the handle to the DC of a gdi bitmap
-; 
+;
 ; hwnd        				Handle of the layered window to update
 ; hdc           			Handle to the DC of the GDI bitmap to update the window with
 ; Layeredx      			x position to place the window
@@ -4523,26 +4793,26 @@ UpdateLayeredWindow(hwnd, hdc, x="", y="", w="", h="", Alpha=255)
 	
 	if ((x != "") && (y != ""))
 		VarSetCapacity(pt, 8), NumPut(x, pt, 0, "UInt"), NumPut(y, pt, 4, "UInt")
-
+	
 	if (w = "") ||(h = "")
 		WinGetPos,,, w, h, ahk_id %hwnd%
-   
+	
 	return DllCall("UpdateLayeredWindow"
-					, Ptr, hwnd
-					, Ptr, 0
-					, Ptr, ((x = "") && (y = "")) ? 0 : &pt
-					, "int64*", w|h<<32
-					, Ptr, hdc
-					, "int64*", 0
-					, "uint", 0
-					, "UInt*", Alpha<<16|1<<24
-					, "uint", 2)
+	, Ptr, hwnd
+	, Ptr, 0
+	, Ptr, ((x = "") && (y = "")) ? 0 : &pt
+	, "int64*", w|h<<32
+	, Ptr, hdc
+	, "int64*", 0
+	, "uint", 0
+	, "UInt*", Alpha<<16|1<<24
+	, "uint", 2)
 }
 
 ;#####################################################################################
 
 ; Function				BitBlt
-; Description			The BitBlt function performs a bit-block transfer of the color data corresponding to a rectangle 
+; Description			The BitBlt function performs a bit-block transfer of the color data corresponding to a rectangle
 ;						of pixels from the specified source device context into a destination device context.
 ;
 ; dDC					handle to destination DC
@@ -4582,21 +4852,21 @@ BitBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, Raster="")
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	
 	return DllCall("gdi32\BitBlt"
-					, Ptr, dDC
-					, "int", dx
-					, "int", dy
-					, "int", dw
-					, "int", dh
-					, Ptr, sDC
-					, "int", sx
-					, "int", sy
-					, "uint", Raster ? Raster : 0x00CC0020)
+	, Ptr, dDC
+	, "int", dx
+	, "int", dy
+	, "int", dw
+	, "int", dh
+	, Ptr, sDC
+	, "int", sx
+	, "int", sy
+	, "uint", Raster ? Raster : 0x00CC0020)
 }
 
 ;#####################################################################################
 
 ; Function				StretchBlt
-; Description			The StretchBlt function copies a bitmap from a source rectangle into a destination rectangle, 
+; Description			The StretchBlt function copies a bitmap from a source rectangle into a destination rectangle,
 ;						stretching or compressing the bitmap to fit the dimensions of the destination rectangle, if necessary.
 ;						The system stretches or compresses the bitmap according to the stretching mode currently set in the destination device context.
 ;
@@ -4614,24 +4884,24 @@ BitBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, Raster="")
 ;
 ; return				If the function succeeds, the return value is nonzero
 ;
-; notes					If no raster operation is specified, then SRCCOPY is used. It uses the same raster operations as BitBlt		
+; notes					If no raster operation is specified, then SRCCOPY is used. It uses the same raster operations as BitBlt
 
 StretchBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, sw, sh, Raster="")
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	
 	return DllCall("gdi32\StretchBlt"
-					, Ptr, ddc
-					, "int", dx
-					, "int", dy
-					, "int", dw
-					, "int", dh
-					, Ptr, sdc
-					, "int", sx
-					, "int", sy
-					, "int", sw
-					, "int", sh
-					, "uint", Raster ? Raster : 0x00CC0020)
+	, Ptr, ddc
+	, "int", dx
+	, "int", dy
+	, "int", dw
+	, "int", dh
+	, Ptr, sdc
+	, "int", sx
+	, "int", sy
+	, "int", sw
+	, "int", sh
+	, "uint", Raster ? Raster : 0x00CC0020)
 }
 
 ;#####################################################################################
@@ -4652,8 +4922,8 @@ StretchBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, sw, sh, Raster="")
 SetStretchBltMode(hdc, iStretchMode=4)
 {
 	return DllCall("gdi32\SetStretchBltMode"
-					, A_PtrSize ? "UPtr" : "UInt", hdc
-					, "int", iStretchMode)
+	, A_PtrSize ? "UPtr" : "UInt", hdc
+	, "int", iStretchMode)
 }
 
 ;#####################################################################################
@@ -4726,16 +4996,16 @@ SetImage(hwnd, hBitmap)
 
 SetSysColorToControl(hwnd, SysColor=15)
 {
-   WinGetPos,,, w, h, ahk_id %hwnd%
-   bc := DllCall("GetSysColor", "Int", SysColor, "UInt")
-   pBrushClear := Gdip_BrushCreateSolid(0xff000000 | (bc >> 16 | bc & 0xff00 | (bc & 0xff) << 16))
-   pBitmap := Gdip_CreateBitmap(w, h), G := Gdip_GraphicsFromImage(pBitmap)
-   Gdip_FillRectangle(G, pBrushClear, 0, 0, w, h)
-   hBitmap := Gdip_CreateHBITMAPFromBitmap(pBitmap)
-   SetImage(hwnd, hBitmap)
-   Gdip_DeleteBrush(pBrushClear)
-   Gdip_DeleteGraphics(G), Gdip_DisposeImage(pBitmap), DeleteObject(hBitmap)
-   return 0
+	WinGetPos,,, w, h, ahk_id %hwnd%
+	bc := DllCall("GetSysColor", "Int", SysColor, "UInt")
+	pBrushClear := Gdip_BrushCreateSolid(0xff000000 | (bc >> 16 | bc & 0xff00 | (bc & 0xff) << 16))
+	pBitmap := Gdip_CreateBitmap(w, h), G := Gdip_GraphicsFromImage(pBitmap)
+	Gdip_FillRectangle(G, pBrushClear, 0, 0, w, h)
+	hBitmap := Gdip_CreateHBITMAPFromBitmap(pBitmap)
+	SetImage(hwnd, hBitmap)
+	Gdip_DeleteBrush(pBrushClear)
+	Gdip_DeleteGraphics(G), Gdip_DisposeImage(pBitmap), DeleteObject(hBitmap)
+	return 0
 }
 
 ;#####################################################################################
@@ -4758,7 +5028,7 @@ Gdip_BitmapFromScreen(Screen=0, Raster="")
 	if (Screen = 0)
 	{
 		Sysget, x, 76
-		Sysget, y, 77	
+		Sysget, y, 77
 		Sysget, w, 78
 		Sysget, h, 79
 	}
@@ -4781,10 +5051,10 @@ Gdip_BitmapFromScreen(Screen=0, Raster="")
 		StringSplit, S, Screen, |
 		x := S1, y := S2, w := S3, h := S4
 	}
-
+	
 	if (x = "") || (y = "") || (w = "") || (h = "")
 		return -1
-
+	
 	chdc := CreateCompatibleDC(), hbm := CreateDIBSection(w, h, chdc), obm := SelectObject(chdc, hbm), hhdc := hhdc ? hhdc : GetDC()
 	BitBlt(chdc, 0, 0, w, h, hhdc, x, y, Raster)
 	ReleaseDC(hhdc)
@@ -4830,8 +5100,8 @@ Gdip_BitmapFromHWND(hwnd)
 
 CreateRectF(ByRef RectF, x, y, w, h)
 {
-   VarSetCapacity(RectF, 16)
-   NumPut(x, RectF, 0, "float"), NumPut(y, RectF, 4, "float"), NumPut(w, RectF, 8, "float"), NumPut(h, RectF, 12, "float")
+	VarSetCapacity(RectF, 16)
+	NumPut(x, RectF, 0, "float"), NumPut(y, RectF, 4, "float"), NumPut(w, RectF, 8, "float"), NumPut(h, RectF, 12, "float")
 }
 
 ;#####################################################################################
@@ -4865,8 +5135,8 @@ CreateRect(ByRef Rect, x, y, w, h)
 
 CreateSizeF(ByRef SizeF, w, h)
 {
-   VarSetCapacity(SizeF, 8)
-   NumPut(w, SizeF, 0, "float"), NumPut(h, SizeF, 4, "float")     
+	VarSetCapacity(SizeF, 8)
+	NumPut(w, SizeF, 0, "float"), NumPut(h, SizeF, 4, "float")
 }
 ;#####################################################################################
 
@@ -4881,8 +5151,8 @@ CreateSizeF(ByRef SizeF, w, h)
 
 CreatePointF(ByRef PointF, x, y)
 {
-   VarSetCapacity(PointF, 8)
-   NumPut(x, PointF, 0, "float"), NumPut(y, PointF, 4, "float")     
+	VarSetCapacity(PointF, 8)
+	NumPut(x, PointF, 0, "float"), NumPut(y, PointF, 4, "float")
 }
 ;#####################################################################################
 
@@ -4914,13 +5184,13 @@ CreateDIBSection(w, h, hdc="", bpp=32, ByRef ppvBits=0)
 	, NumPut(bpp, bi, 14, "ushort")
 	
 	hbm := DllCall("CreateDIBSection"
-					, Ptr, hdc2
-					, Ptr, &bi
-					, "uint", 0
-					, A_PtrSize ? "UPtr*" : "uint*", ppvBits
-					, Ptr, 0
-					, "uint", 0, Ptr)
-
+	, Ptr, hdc2
+	, Ptr, &bi
+	, "uint", 0
+	, A_PtrSize ? "UPtr*" : "uint*", ppvBits
+	, Ptr, 0
+	, "uint", 0, Ptr)
+	
 	if !hdc
 		ReleaseDC(hdc2)
 	return hbm
@@ -4979,7 +5249,7 @@ CreateCompatibleBitmap(hdc, w, h)
 ; Function				CreateCompatibleDC
 ; Description			This function creates a memory device context (DC) compatible with the specified device
 ;
-; hdc					Handle to an existing device context					
+; hdc					Handle to an existing device context
 ;
 ; return				returns the handle to a device context or 0 on failure
 ;
@@ -4987,7 +5257,7 @@ CreateCompatibleBitmap(hdc, w, h)
 
 CreateCompatibleDC(hdc=0)
 {
-   return DllCall("CreateCompatibleDC", A_PtrSize ? "UPtr" : "UInt", hdc)
+	return DllCall("CreateCompatibleDC", A_PtrSize ? "UPtr" : "UInt", hdc)
 }
 
 ;#####################################################################################
@@ -5032,17 +5302,17 @@ SelectObject(hdc, hgdiobj)
 
 DeleteObject(hObject)
 {
-	   Sleep(.1)
-   return DllCall("DeleteObject", A_PtrSize ? "UPtr" : "UInt", hObject)
+	Sleep(.1)
+	return DllCall("DeleteObject", A_PtrSize ? "UPtr" : "UInt", hObject)
 }
 
 ;#####################################################################################
 
 ; Function				GetDC
 ; Description			This function retrieves a handle to a display device context (DC) for the client area of the specified window.
-;						The display device context can be used in subsequent graphics display interface (GDI) functions to draw in the client area of the window. 
+;						The display device context can be used in subsequent graphics display interface (GDI) functions to draw in the client area of the window.
 ;
-; hwnd					Handle to the window whose device context is to be retrieved. If this value is NULL, GetDC retrieves the device context for the entire screen					
+; hwnd					Handle to the window whose device context is to be retrieved. If this value is NULL, GetDC retrieves the device context for the entire screen
 ;
 ; return				The handle the device context for the specified window's client area indicates success. NULL indicates failure
 
@@ -5071,7 +5341,7 @@ GetDCEx(hwnd, flags=0, hrgnClip=0)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	
-    return DllCall("GetDCEx", Ptr, hwnd, Ptr, hrgnClip, "int", flags)
+	return DllCall("GetDCEx", Ptr, hwnd, Ptr, hrgnClip, "int", flags)
 }
 
 ;#####################################################################################
@@ -5086,7 +5356,7 @@ GetDCEx(hwnd, flags=0, hrgnClip=0)
 ;						0 = not released
 ;
 ; notes					The application must call the ReleaseDC function for each call to the GetWindowDC function and for each call to the GetDC function that retrieves a common device context
-;						An application cannot use the ReleaseDC function to release a device context that was created by calling the CreateDC function; instead, it must use the DeleteDC function. 
+;						An application cannot use the ReleaseDC function to release a device context that was created by calling the CreateDC function; instead, it must use the DeleteDC function.
 
 ReleaseDC(hdc, hwnd=0)
 {
@@ -5108,7 +5378,7 @@ ReleaseDC(hdc, hwnd=0)
 
 DeleteDC(hdc)
 {
-   return DllCall("DeleteDC", A_PtrSize ? "UPtr" : "UInt", hdc)
+	return DllCall("DeleteDC", A_PtrSize ? "UPtr" : "UInt", hdc)
 }
 ;#####################################################################################
 
@@ -5300,16 +5570,16 @@ Gdip_DrawBezier(pGraphics, pPen, x1, y1, x2, y2, x3, y3, x4, y4)
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	
 	return DllCall("gdiplus\GdipDrawBezier"
-					, Ptr, pgraphics
-					, Ptr, pPen
-					, "float", x1
-					, "float", y1
-					, "float", x2
-					, "float", y2
-					, "float", x3
-					, "float", y3
-					, "float", x4
-					, "float", y4)
+	, Ptr, pgraphics
+	, Ptr, pPen
+	, "float", x1
+	, "float", y1
+	, "float", x2
+	, "float", y2
+	, "float", x3
+	, "float", y3
+	, "float", x4
+	, "float", y4)
 }
 
 ;#####################################################################################
@@ -5335,14 +5605,14 @@ Gdip_DrawArc(pGraphics, pPen, x, y, w, h, StartAngle, SweepAngle)
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	
 	return DllCall("gdiplus\GdipDrawArc"
-					, Ptr, pGraphics
-					, Ptr, pPen
-					, "float", x
-					, "float", y
-					, "float", w
-					, "float", h
-					, "float", StartAngle
-					, "float", SweepAngle)
+	, Ptr, pGraphics
+	, Ptr, pPen
+	, "float", x
+	, "float", y
+	, "float", w
+	, "float", h
+	, "float", StartAngle
+	, "float", SweepAngle)
 }
 
 ;#####################################################################################
@@ -5382,19 +5652,19 @@ Gdip_DrawPie(pGraphics, pPen, x, y, w, h, StartAngle, SweepAngle)
 ; x2					x-coordinate of the end of the line
 ; y2					y-coordinate of the end of the line
 ;
-; return				status enumeration. 0 = success		
+; return				status enumeration. 0 = success
 
 Gdip_DrawLine(pGraphics, pPen, x1, y1, x2, y2)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	
 	return DllCall("gdiplus\GdipDrawLine"
-					, Ptr, pGraphics
-					, Ptr, pPen
-					, "float", x1
-					, "float", y1
-					, "float", x2
-					, "float", y2)
+	, Ptr, pGraphics
+	, Ptr, pPen
+	, "float", x1
+	, "float", y1
+	, "float", x2
+	, "float", y2)
 }
 
 ;#####################################################################################
@@ -5406,13 +5676,13 @@ Gdip_DrawLine(pGraphics, pPen, x1, y1, x2, y2)
 ; pPen					Pointer to a pen
 ; Points				the coordinates of all the points passed as x1,y1|x2,y2|x3,y3.....
 ;
-; return				status enumeration. 0 = success				
+; return				status enumeration. 0 = success
 
 Gdip_DrawLines(pGraphics, pPen, Points)
 {
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	StringSplit, Points, Points, |
-	VarSetCapacity(PointF, 8*Points0)   
+	VarSetCapacity(PointF, 8*Points0)
 	Loop, %Points0%
 	{
 		StringSplit, Coord, Points%A_Index%, `,
@@ -5440,12 +5710,12 @@ Gdip_FillRectangle(pGraphics, pBrush, x, y, w, h)
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	
 	return DllCall("gdiplus\GdipFillRectangle"
-					, Ptr, pGraphics
-					, Ptr, pBrush
-					, "float", x
-					, "float", y
-					, "float", w
-					, "float", h)
+	, Ptr, pGraphics
+	, Ptr, pBrush
+	, "float", x
+	, "float", y
+	, "float", w
+	, "float", h)
 }
 
 ;#####################################################################################
@@ -5503,12 +5773,12 @@ Gdip_FillPolygon(pGraphics, pBrush, Points, FillMode=0)
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	
 	StringSplit, Points, Points, |
-	VarSetCapacity(PointF, 8*Points0)   
+	VarSetCapacity(PointF, 8*Points0)
 	Loop, %Points0%
 	{
 		StringSplit, Coord, Points%A_Index%, `,
 		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
-	}   
+	}
 	return DllCall("gdiplus\GdipFillPolygon", Ptr, pGraphics, Ptr, pBrush, Ptr, &PointF, "int", Points0, "int", FillMode)
 }
 
@@ -5533,14 +5803,14 @@ Gdip_FillPie(pGraphics, pBrush, x, y, w, h, StartAngle, SweepAngle)
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	
 	return DllCall("gdiplus\GdipFillPie"
-					, Ptr, pGraphics
-					, Ptr, pBrush
-					, "float", x
-					, "float", y
-					, "float", w
-					, "float", h
-					, "float", StartAngle
-					, "float", SweepAngle)
+	, Ptr, pGraphics
+	, Ptr, pBrush
+	, "float", x
+	, "float", y
+	, "float", w
+	, "float", h
+	, "float", StartAngle
+	, "float", SweepAngle)
 }
 
 ;#####################################################################################
@@ -5628,38 +5898,38 @@ Gdip_DrawImagePointsRect(pGraphics, pBitmap, Points, sx="", sy="", sw="", sh="",
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	
 	StringSplit, Points, Points, |
-	VarSetCapacity(PointF, 8*Points0)   
+	VarSetCapacity(PointF, 8*Points0)
 	Loop, %Points0%
 	{
 		StringSplit, Coord, Points%A_Index%, `,
 		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
 	}
-
+	
 	if (Matrix&1 = "")
 		ImageAttr := Gdip_SetImageAttributesColorMatrix(Matrix)
 	else if (Matrix != 1)
 		ImageAttr := Gdip_SetImageAttributesColorMatrix("1|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0|0|" Matrix "|0|0|0|0|0|1")
-		
+	
 	if (sx = "" && sy = "" && sw = "" && sh = "")
 	{
 		sx := 0, sy := 0
 		sw := Gdip_GetImageWidth(pBitmap)
 		sh := Gdip_GetImageHeight(pBitmap)
 	}
-
+	
 	E := DllCall("gdiplus\GdipDrawImagePointsRect"
-				, Ptr, pGraphics
-				, Ptr, pBitmap
-				, Ptr, &PointF
-				, "int", Points0
-				, "float", sx
-				, "float", sy
-				, "float", sw
-				, "float", sh
-				, "int", 2
-				, Ptr, ImageAttr
-				, Ptr, 0
-				, Ptr, 0)
+	, Ptr, pGraphics
+	, Ptr, pBitmap
+	, Ptr, &PointF
+	, "int", Points0
+	, "float", sx
+	, "float", sy
+	, "float", sw
+	, "float", sh
+	, "int", 2
+	, Ptr, ImageAttr
+	, Ptr, 0
+	, Ptr, 0)
 	if ImageAttr
 		Gdip_DisposeImageAttributes(ImageAttr)
 	return E
@@ -5710,7 +5980,7 @@ Gdip_DrawImage(pGraphics, pBitmap, dx="", dy="", dw="", dh="", sx="", sy="", sw=
 		ImageAttr := Gdip_SetImageAttributesColorMatrix(Matrix)
 	else if (Matrix != 1)
 		ImageAttr := Gdip_SetImageAttributesColorMatrix("1|0|0|0|0|0|1|0|0|0|0|0|1|0|0|0|0|0|" Matrix "|0|0|0|0|0|1")
-
+	
 	if (sx = "" && sy = "" && sw = "" && sh = "")
 	{
 		if (dx = "" && dy = "" && dw = "" && dh = "")
@@ -5726,22 +5996,22 @@ Gdip_DrawImage(pGraphics, pBitmap, dx="", dy="", dw="", dh="", sx="", sy="", sw=
 			sh := Gdip_GetImageHeight(pBitmap)
 		}
 	}
-
+	
 	E := DllCall("gdiplus\GdipDrawImageRectRect"
-				, Ptr, pGraphics
-				, Ptr, pBitmap
-				, "float", dx
-				, "float", dy
-				, "float", dw
-				, "float", dh
-				, "float", sx
-				, "float", sy
-				, "float", sw
-				, "float", sh
-				, "int", 2
-				, Ptr, ImageAttr
-				, Ptr, 0
-				, Ptr, 0)
+	, Ptr, pGraphics
+	, Ptr, pBitmap
+	, "float", dx
+	, "float", dy
+	, "float", dw
+	, "float", dh
+	, "float", sx
+	, "float", sy
+	, "float", sw
+	, "float", sh
+	, "int", 2
+	, Ptr, ImageAttr
+	, Ptr, 0
+	, Ptr, 0)
 	if ImageAttr
 		Gdip_DisposeImageAttributes(ImageAttr)
 	return E
@@ -5808,8 +6078,8 @@ Gdip_GraphicsFromImage(pBitmap)
 
 Gdip_GraphicsFromHDC(hdc)
 {
-    DllCall("gdiplus\GdipCreateFromHDC", A_PtrSize ? "UPtr" : "UInt", hdc, A_PtrSize ? "UPtr*" : "UInt*", pGraphics)
-    return pGraphics
+	DllCall("gdiplus\GdipCreateFromHDC", A_PtrSize ? "UPtr" : "UInt", hdc, A_PtrSize ? "UPtr*" : "UInt*", pGraphics)
+	return pGraphics
 }
 
 ;#####################################################################################
@@ -5859,7 +6129,7 @@ Gdip_ReleaseDC(pGraphics, hdc)
 
 Gdip_GraphicsClear(pGraphics, ARGB=0x00ffffff)
 {
-    return DllCall("gdiplus\GdipGraphicsClear", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", ARGB)
+	return DllCall("gdiplus\GdipGraphicsClear", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", ARGB)
 }
 
 ;#####################################################################################
@@ -5878,23 +6148,23 @@ Gdip_GraphicsClear(pGraphics, ARGB=0x00ffffff)
 Gdip_BlurBitmap(pBitmap, Blur)
 {
 	if (Blur > 100) || (Blur < 1)
-		return -1	
+		return -1
 	
 	sWidth := Gdip_GetImageWidth(pBitmap), sHeight := Gdip_GetImageHeight(pBitmap)
 	dWidth := sWidth//Blur, dHeight := sHeight//Blur
-
+	
 	pBitmap1 := Gdip_CreateBitmap(dWidth, dHeight)
 	G1 := Gdip_GraphicsFromImage(pBitmap1)
 	Gdip_SetInterpolationMode(G1, 7)
 	Gdip_DrawImage(G1, pBitmap, 0, 0, dWidth, dHeight, 0, 0, sWidth, sHeight)
-
+	
 	Gdip_DeleteGraphics(G1)
-
+	
 	pBitmap2 := Gdip_CreateBitmap(sWidth, sHeight)
 	G2 := Gdip_GraphicsFromImage(pBitmap2)
 	Gdip_SetInterpolationMode(G2, 7)
 	Gdip_DrawImage(G2, pBitmap1, 0, 0, sWidth, sHeight, 0, 0, dWidth, dHeight)
-
+	
 	Gdip_DeleteGraphics(G2)
 	Gdip_DisposeImage(pBitmap1)
 	return pBitmap2
@@ -5904,7 +6174,7 @@ Gdip_BlurBitmap(pBitmap, Blur)
 
 ; Function:     		Gdip_SaveBitmapToFile
 ; Description:  		Saves a bitmap to a file in any supported format onto disk
-;   
+;
 ; pBitmap				Pointer to a bitmap
 ; sOutput      			The name of the file that the bitmap will be saved to. Supported extensions are: .BMP,.DIB,.RLE,.JPG,.JPEG,.JPE,.JFIF,.GIF,.TIF,.TIFF,.PNG
 ; Quality      			If saving as jpg (.JPG,.JPEG,.JPE,.JFIF) then quality can be 1-100 with default at maximum quality
@@ -5926,7 +6196,7 @@ Gdip_SaveBitmapToFile(pBitmap, sOutput, Quality=75)
 	if Extension not in BMP,DIB,RLE,JPG,JPEG,JPE,JFIF,GIF,TIF,TIFF,PNG
 		return -1
 	Extension := "." Extension
-
+	
 	DllCall("gdiplus\GdipGetImageEncodersSize", "uint*", nCount, "uint*", nSize)
 	VarSetCapacity(ci, nSize)
 	DllCall("gdiplus\GdipGetImageEncoders", "uint", nCount, "uint", nSize, Ptr, &ci)
@@ -5961,7 +6231,7 @@ Gdip_SaveBitmapToFile(pBitmap, sOutput, Quality=75)
 	
 	if !pCodec
 		return -3
-
+	
 	if (Quality != 75)
 	{
 		Quality := (Quality < 0) ? 0 : (Quality > 100) ? 100 : Quality
@@ -5979,10 +6249,10 @@ Gdip_SaveBitmapToFile(pBitmap, sOutput, Quality=75)
 					NumPut(Quality, NumGet(NumPut(4, NumPut(1, p+0)+20, "UInt")), "UInt")
 					break
 				}
-			}      
+			}
 		}
 	}
-
+	
 	if (!A_IsUnicode)
 	{
 		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sOutput, "int", -1, Ptr, 0, "int", 0)
@@ -6028,7 +6298,7 @@ Gdip_GetPixel(pBitmap, x, y)
 
 Gdip_SetPixel(pBitmap, x, y, ARGB)
 {
-   return DllCall("gdiplus\GdipBitmapSetPixel", A_PtrSize ? "UPtr" : "UInt", pBitmap, "int", x, "int", y, "int", ARGB)
+	return DllCall("gdiplus\GdipBitmapSetPixel", A_PtrSize ? "UPtr" : "UInt", pBitmap, "int", x, "int", y, "int", ARGB)
 }
 
 ;#####################################################################################
@@ -6042,8 +6312,8 @@ Gdip_SetPixel(pBitmap, x, y, ARGB)
 
 Gdip_GetImageWidth(pBitmap)
 {
-   DllCall("gdiplus\GdipGetImageWidth", A_PtrSize ? "UPtr" : "UInt", pBitmap, "uint*", Width)
-   return Width
+	DllCall("gdiplus\GdipGetImageWidth", A_PtrSize ? "UPtr" : "UInt", pBitmap, "uint*", Width)
+	return Width
 }
 
 ;#####################################################################################
@@ -6057,8 +6327,8 @@ Gdip_GetImageWidth(pBitmap)
 
 Gdip_GetImageHeight(pBitmap)
 {
-   DllCall("gdiplus\GdipGetImageHeight", A_PtrSize ? "UPtr" : "UInt", pBitmap, "uint*", Height)
-   return Height
+	DllCall("gdiplus\GdipGetImageHeight", A_PtrSize ? "UPtr" : "UInt", pBitmap, "uint*", Height)
+	return Height
 }
 
 ;#####################################################################################
@@ -6164,7 +6434,7 @@ Gdip_CreateBitmapFromFile(sFile, IconNumber=1, IconSize="")
 			
 			if !hIcon
 				continue
-
+			
 			if !DllCall("GetIconInfo", Ptr, hIcon, Ptr, &buf)
 			{
 				DestroyIcon(hIcon)
@@ -6182,7 +6452,7 @@ Gdip_CreateBitmapFromFile(sFile, IconNumber=1, IconSize="")
 		}
 		if !hIcon
 			return -1
-
+		
 		Width := NumGet(buf, 4, "int"), Height := NumGet(buf, 8, "int")
 		hbm := CreateDIBSection(Width, -Height), hdc := CreateCompatibleDC(), obm := SelectObject(hdc, hbm)
 		if !DllCall("DrawIconEx", Ptr, hdc, "int", 0, "int", 0, Ptr, hIcon, "uint", Width, "uint", Height, "uint", 0, Ptr, 0, "uint", 3)
@@ -6255,8 +6525,8 @@ Gdip_CreateHICONFromBitmap(pBitmap)
 
 Gdip_CreateBitmap(Width, Height, Format=0x26200A)
 {
-    DllCall("gdiplus\GdipCreateBitmapFromScan0", "int", Width, "int", Height, "int", 0, "int", Format, A_PtrSize ? "UPtr" : "UInt", 0, A_PtrSize ? "UPtr*" : "uint*", pBitmap)
-    Return pBitmap
+	DllCall("gdiplus\GdipCreateBitmapFromScan0", "int", Width, "int", Height, "int", 0, "int", Format, A_PtrSize ? "UPtr" : "UInt", 0, A_PtrSize ? "UPtr*" : "uint*", pBitmap)
+	Return pBitmap
 }
 
 ;#####################################################################################
@@ -6304,13 +6574,13 @@ Gdip_SetBitmapToClipboard(pBitmap)
 Gdip_CloneBitmapArea(pBitmap, x, y, w, h, Format=0x26200A)
 {
 	DllCall("gdiplus\GdipCloneBitmapArea"
-					, "float", x
-					, "float", y
-					, "float", w
-					, "float", h
-					, "int", Format
-					, A_PtrSize ? "UPtr" : "UInt", pBitmap
-					, A_PtrSize ? "UPtr*" : "UInt*", pBitmapDest)
+	, "float", x
+	, "float", y
+	, "float", w
+	, "float", h
+	, "int", Format
+	, A_PtrSize ? "UPtr" : "UInt", pBitmap
+	, A_PtrSize ? "UPtr*" : "UInt*", pBitmapDest)
 	return pBitmapDest
 }
 
@@ -6320,8 +6590,8 @@ Gdip_CloneBitmapArea(pBitmap, x, y, w, h, Format=0x26200A)
 
 Gdip_CreatePen(ARGB, w)
 {
-   DllCall("gdiplus\GdipCreatePen1", "UInt", ARGB, "float", w, "int", 2, A_PtrSize ? "UPtr*" : "UInt*", pPen)
-   return pPen
+	DllCall("gdiplus\GdipCreatePen1", "UInt", ARGB, "float", w, "int", 2, A_PtrSize ? "UPtr*" : "UInt*", pPen)
+	return pPen
 }
 
 ;#####################################################################################
@@ -6459,28 +6729,28 @@ Gdip_CloneBrush(pBrush)
 
 Gdip_DeletePen(pPen)
 {
-   return DllCall("gdiplus\GdipDeletePen", A_PtrSize ? "UPtr" : "UInt", pPen)
+	return DllCall("gdiplus\GdipDeletePen", A_PtrSize ? "UPtr" : "UInt", pPen)
 }
 
 ;#####################################################################################
 
 Gdip_DeleteBrush(pBrush)
 {
-   return DllCall("gdiplus\GdipDeleteBrush", A_PtrSize ? "UPtr" : "UInt", pBrush)
+	return DllCall("gdiplus\GdipDeleteBrush", A_PtrSize ? "UPtr" : "UInt", pBrush)
 }
 
 ;#####################################################################################
 
 Gdip_DisposeImage(pBitmap)
 {
-   return DllCall("gdiplus\GdipDisposeImage", A_PtrSize ? "UPtr" : "UInt", pBitmap)
+	return DllCall("gdiplus\GdipDisposeImage", A_PtrSize ? "UPtr" : "UInt", pBitmap)
 }
 
 ;#####################################################################################
 
 Gdip_DeleteGraphics(pGraphics)
 {
-   return DllCall("gdiplus\GdipDeleteGraphics", A_PtrSize ? "UPtr" : "UInt", pGraphics)
+	return DllCall("gdiplus\GdipDeleteGraphics", A_PtrSize ? "UPtr" : "UInt", pGraphics)
 }
 
 ;#####################################################################################
@@ -6494,28 +6764,28 @@ Gdip_DisposeImageAttributes(ImageAttr)
 
 Gdip_DeleteFont(hFont)
 {
-   return DllCall("gdiplus\GdipDeleteFont", A_PtrSize ? "UPtr" : "UInt", hFont)
+	return DllCall("gdiplus\GdipDeleteFont", A_PtrSize ? "UPtr" : "UInt", hFont)
 }
 
 ;#####################################################################################
 
 Gdip_DeleteStringFormat(hFormat)
 {
-   return DllCall("gdiplus\GdipDeleteStringFormat", A_PtrSize ? "UPtr" : "UInt", hFormat)
+	return DllCall("gdiplus\GdipDeleteStringFormat", A_PtrSize ? "UPtr" : "UInt", hFormat)
 }
 
 ;#####################################################################################
 
 Gdip_DeleteFontFamily(hFamily)
 {
-   return DllCall("gdiplus\GdipDeleteFontFamily", A_PtrSize ? "UPtr" : "UInt", hFamily)
+	return DllCall("gdiplus\GdipDeleteFontFamily", A_PtrSize ? "UPtr" : "UInt", hFamily)
 }
 
 ;#####################################################################################
 
 Gdip_DeleteMatrix(Matrix)
 {
-   return DllCall("gdiplus\GdipDeleteMatrix", A_PtrSize ? "UPtr" : "UInt", Matrix)
+	return DllCall("gdiplus\GdipDeleteMatrix", A_PtrSize ? "UPtr" : "UInt", Matrix)
 }
 
 ;#####################################################################################
@@ -6535,27 +6805,27 @@ Gdip_TextToGraphics(pGraphics, Text, Options, Font="Arial", Width="", Height="",
 	RegExMatch(Options, "i)NoWrap", NoWrap)
 	RegExMatch(Options, "i)R(\d)", Rendering)
 	RegExMatch(Options, "i)S(\d+)(p*)", Size)
-
+	
 	if !Gdip_DeleteBrush(Gdip_CloneBrush(Colour2))
 		PassBrush := 1, pBrush := Colour2
 	
 	if !(IWidth && IHeight) && (xpos2 || ypos2 || Width2 || Height2 || Size2)
 		return -1
-
+	
 	Style := 0, Styles := "Regular|Bold|Italic|BoldItalic|Underline|Strikeout"
 	Loop, Parse, Styles, |
 	{
 		if RegExMatch(Options, "\b" A_loopField)
-		Style |= (A_LoopField != "StrikeOut") ? (A_Index-1) : 8
+			Style |= (A_LoopField != "StrikeOut") ? (A_Index-1) : 8
 	}
-  
+	
 	Align := 0, Alignments := "Near|Left|Centre|Center|Far|Right"
 	Loop, Parse, Alignments, |
 	{
 		if RegExMatch(Options, "\b" A_loopField)
 			Align |= A_Index//2.1      ; 0|0|1|1|2|2
 	}
-
+	
 	xpos := (xpos1 != "") ? xpos2 ? IWidth*(xpos1/100) : xpos1 : 0
 	ypos := (ypos1 != "") ? ypos2 ? IHeight*(ypos1/100) : ypos1 : 0
 	Width := Width1 ? Width2 ? IWidth*(Width1/100) : Width1 : IWidth
@@ -6564,7 +6834,7 @@ Gdip_TextToGraphics(pGraphics, Text, Options, Font="Arial", Width="", Height="",
 		Colour := "0x" (Colour2 ? Colour2 : "ff000000")
 	Rendering := ((Rendering1 >= 0) && (Rendering1 <= 5)) ? Rendering1 : 4
 	Size := (Size1 > 0) ? Size2 ? IHeight*(Size1/100) : Size1 : 12
-
+	
 	hFamily := Gdip_FontFamilyCreate(Font)
 	hFont := Gdip_FontCreate(hFamily, Size, Style)
 	FormatStyle := NoWrap ? 0x4000 | 0x1000 : 0x4000
@@ -6572,12 +6842,12 @@ Gdip_TextToGraphics(pGraphics, Text, Options, Font="Arial", Width="", Height="",
 	pBrush := PassBrush ? pBrush : Gdip_BrushCreateSolid(Colour)
 	if !(hFamily && hFont && hFormat && pBrush && pGraphics)
 		return !pGraphics ? -2 : !hFamily ? -3 : !hFont ? -4 : !hFormat ? -5 : !pBrush ? -6 : 0
-   
+	
 	CreateRectF(RC, xpos, ypos, Width, Height)
 	Gdip_SetStringFormatAlign(hFormat, Align)
 	Gdip_SetTextRenderingHint(pGraphics, Rendering)
 	ReturnRC := Gdip_MeasureString(pGraphics, Text, hFont, hFormat, RC)
-
+	
 	if vPos
 	{
 		StringSplit, ReturnRC, ReturnRC, |
@@ -6592,13 +6862,13 @@ Gdip_TextToGraphics(pGraphics, Text, Options, Font="Arial", Width="", Height="",
 		CreateRectF(RC, xpos, ypos, Width, ReturnRC4)
 		ReturnRC := Gdip_MeasureString(pGraphics, Text, hFont, hFormat, RC)
 	}
-
+	
 	if !Measure
 		E := Gdip_DrawString(pGraphics, Text, hFont, hFormat, pBrush, RC)
-
+	
 	if !PassBrush
 		Gdip_DeleteBrush(pBrush)
-	Gdip_DeleteStringFormat(hFormat)   
+	Gdip_DeleteStringFormat(hFormat)
 	Gdip_DeleteFont(hFont)
 	Gdip_DeleteFontFamily(hFamily)
 	return E ? E : ReturnRC
@@ -6618,13 +6888,13 @@ Gdip_DrawString(pGraphics, sString, hFont, hFormat, pBrush, ByRef RectF)
 	}
 	
 	return DllCall("gdiplus\GdipDrawString"
-					, Ptr, pGraphics
-					, Ptr, A_IsUnicode ? &sString : &wString
-					, "int", -1
-					, Ptr, hFont
-					, Ptr, &RectF
-					, Ptr, hFormat
-					, Ptr, pBrush)
+	, Ptr, pGraphics
+	, Ptr, A_IsUnicode ? &sString : &wString
+	, "int", -1
+	, Ptr, hFont
+	, Ptr, &RectF
+	, Ptr, hFormat
+	, Ptr, pBrush)
 }
 
 ;#####################################################################################
@@ -6637,20 +6907,20 @@ Gdip_MeasureString(pGraphics, sString, hFont, hFormat, ByRef RectF)
 	if !A_IsUnicode
 	{
 		nSize := DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, "uint", 0, "int", 0)
-		VarSetCapacity(wString, nSize*2)   
+		VarSetCapacity(wString, nSize*2)
 		DllCall("MultiByteToWideChar", "uint", 0, "uint", 0, Ptr, &sString, "int", -1, Ptr, &wString, "int", nSize)
 	}
 	
 	DllCall("gdiplus\GdipMeasureString"
-					, Ptr, pGraphics
-					, Ptr, A_IsUnicode ? &sString : &wString
-					, "int", -1
-					, Ptr, hFont
-					, Ptr, &RectF
-					, Ptr, hFormat
-					, Ptr, &RC
-					, "uint*", Chars
-					, "uint*", Lines)
+	, Ptr, pGraphics
+	, Ptr, A_IsUnicode ? &sString : &wString
+	, "int", -1
+	, Ptr, hFont
+	, Ptr, &RectF
+	, Ptr, hFormat
+	, Ptr, &RC
+	, "uint*", Chars
+	, "uint*", Lines)
 	
 	return &RC ? NumGet(RC, 0, "float") "|" NumGet(RC, 4, "float") "|" NumGet(RC, 8, "float") "|" NumGet(RC, 12, "float") "|" Chars "|" Lines : 0
 }
@@ -6660,7 +6930,7 @@ Gdip_MeasureString(pGraphics, sString, hFont, hFormat, ByRef RectF)
 ; Far = 2
 Gdip_SetStringFormatAlign(hFormat, Align)
 {
-   return DllCall("gdiplus\GdipSetStringFormatAlign", A_PtrSize ? "UPtr" : "UInt", hFormat, "int", Align)
+	return DllCall("gdiplus\GdipSetStringFormatAlign", A_PtrSize ? "UPtr" : "UInt", hFormat, "int", Align)
 }
 
 ; StringFormatFlagsDirectionRightToLeft    = 0x00000001
@@ -6671,11 +6941,11 @@ Gdip_SetStringFormatAlign(hFormat, Align)
 ; StringFormatFlagsMeasureTrailingSpaces   = 0x00000800
 ; StringFormatFlagsNoWrap                  = 0x00001000
 ; StringFormatFlagsLineLimit               = 0x00002000
-; StringFormatFlagsNoClip                  = 0x00004000 
+; StringFormatFlagsNoClip                  = 0x00004000
 Gdip_StringFormatCreate(Format=0, Lang=0)
 {
-   DllCall("gdiplus\GdipCreateStringFormat", "int", Format, "int", Lang, A_PtrSize ? "UPtr*" : "UInt*", hFormat)
-   return hFormat
+	DllCall("gdiplus\GdipCreateStringFormat", "int", Format, "int", Lang, A_PtrSize ? "UPtr*" : "UInt*", hFormat)
+	return hFormat
 }
 
 ; Regular = 0
@@ -6686,8 +6956,8 @@ Gdip_StringFormatCreate(Format=0, Lang=0)
 ; Strikeout = 8
 Gdip_FontCreate(hFamily, Size, Style=0)
 {
-   DllCall("gdiplus\GdipCreateFont", A_PtrSize ? "UPtr" : "UInt", hFamily, "float", Size, "int", Style, "int", 0, A_PtrSize ? "UPtr*" : "UInt*", hFont)
-   return hFont
+	DllCall("gdiplus\GdipCreateFont", A_PtrSize ? "UPtr" : "UInt", hFamily, "float", Size, "int", Style, "int", 0, A_PtrSize ? "UPtr*" : "UInt*", hFont)
+	return hFont
 }
 
 Gdip_FontFamilyCreate(Font)
@@ -6702,9 +6972,9 @@ Gdip_FontFamilyCreate(Font)
 	}
 	
 	DllCall("gdiplus\GdipCreateFontFamilyFromName"
-					, Ptr, A_IsUnicode ? &Font : &wFont
-					, "uint", 0
-					, A_PtrSize ? "UPtr*" : "UInt*", hFamily)
+	, Ptr, A_IsUnicode ? &Font : &wFont
+	, "uint", 0
+	, A_PtrSize ? "UPtr*" : "UInt*", hFamily)
 	
 	return hFamily
 }
@@ -6715,14 +6985,14 @@ Gdip_FontFamilyCreate(Font)
 
 Gdip_CreateAffineMatrix(m11, m12, m21, m22, x, y)
 {
-   DllCall("gdiplus\GdipCreateMatrix2", "float", m11, "float", m12, "float", m21, "float", m22, "float", x, "float", y, A_PtrSize ? "UPtr*" : "UInt*", Matrix)
-   return Matrix
+	DllCall("gdiplus\GdipCreateMatrix2", "float", m11, "float", m12, "float", m21, "float", m22, "float", x, "float", y, A_PtrSize ? "UPtr*" : "UInt*", Matrix)
+	return Matrix
 }
 
 Gdip_CreateMatrix()
 {
-   DllCall("gdiplus\GdipCreateMatrix", A_PtrSize ? "UPtr*" : "UInt*", Matrix)
-   return Matrix
+	DllCall("gdiplus\GdipCreateMatrix", A_PtrSize ? "UPtr*" : "UInt*", Matrix)
+	return Matrix
 }
 
 ;#####################################################################################
@@ -6747,13 +7017,13 @@ Gdip_AddPathPolygon(Path, Points)
 	Ptr := A_PtrSize ? "UPtr" : "UInt"
 	
 	StringSplit, Points, Points, |
-	VarSetCapacity(PointF, 8*Points0)   
+	VarSetCapacity(PointF, 8*Points0)
 	Loop, %Points0%
 	{
 		StringSplit, Coord, Points%A_Index%, `,
 		NumPut(Coord1, PointF, 8*(A_Index-1), "float"), NumPut(Coord2, PointF, (8*(A_Index-1))+4, "float")
-	}   
-
+	}
+	
 	return DllCall("gdiplus\GdipAddPathPolygon", Ptr, Path, Ptr, &PointF, "int", Points0)
 }
 
@@ -6786,7 +7056,7 @@ Gdip_SetTextRenderingHint(pGraphics, RenderingHint)
 ; HighQualityBicubic = 7
 Gdip_SetInterpolationMode(pGraphics, InterpolationMode)
 {
-   return DllCall("gdiplus\GdipSetInterpolationMode", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", InterpolationMode)
+	return DllCall("gdiplus\GdipSetInterpolationMode", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", InterpolationMode)
 }
 
 ; Default = 0
@@ -6796,14 +7066,14 @@ Gdip_SetInterpolationMode(pGraphics, InterpolationMode)
 ; AntiAlias = 4
 Gdip_SetSmoothingMode(pGraphics, SmoothingMode)
 {
-   return DllCall("gdiplus\GdipSetSmoothingMode", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", SmoothingMode)
+	return DllCall("gdiplus\GdipSetSmoothingMode", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", SmoothingMode)
 }
 
 ; CompositingModeSourceOver = 0 (blended)
 ; CompositingModeSourceCopy = 1 (overwrite)
 Gdip_SetCompositingMode(pGraphics, CompositingMode=0)
 {
-   return DllCall("gdiplus\GdipSetCompositingMode", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", CompositingMode)
+	return DllCall("gdiplus\GdipSetCompositingMode", A_PtrSize ? "UPtr" : "UInt", pGraphics, "int", CompositingMode)
 }
 
 ;#####################################################################################
@@ -6855,8 +7125,8 @@ Gdip_ResetWorldTransform(pGraphics)
 
 Gdip_GetRotatedTranslation(Width, Height, Angle, ByRef xTranslation, ByRef yTranslation)
 {
-	pi := 3.14159, TAngle := Angle*(pi/180)	
-
+	pi := 3.14159, TAngle := Angle*(pi/180)
+	
 	Bound := (Angle >= 0) ? Mod(Angle, 360) : 360-Mod(-Angle, -360)
 	if ((Bound >= 0) && (Bound <= 90))
 		xTranslation := Height*Sin(TAngle), yTranslation := 0
@@ -6892,7 +7162,7 @@ Gdip_GetRotatedDimensions(Width, Height, Angle, ByRef RWidth, ByRef RHeight)
 ; RotateNoneFlipXY     = Rotate180FlipNone
 ; Rotate90FlipXY       = Rotate270FlipNone
 ; Rotate180FlipXY      = RotateNoneFlipNone
-; Rotate270FlipXY      = Rotate90FlipNone 
+; Rotate270FlipXY      = Rotate90FlipNone
 
 Gdip_ImageRotateFlip(pBitmap, RotateFlipType=1)
 {
@@ -6907,7 +7177,7 @@ Gdip_ImageRotateFlip(pBitmap, RotateFlipType=1)
 ; Complement = 5
 Gdip_SetClipRect(pGraphics, x, y, w, h, CombineMode=0)
 {
-   return DllCall("gdiplus\GdipSetClipRect",  A_PtrSize ? "UPtr" : "UInt", pGraphics, "float", x, "float", y, "float", w, "float", h, "int", CombineMode)
+	return DllCall("gdiplus\GdipSetClipRect",  A_PtrSize ? "UPtr" : "UInt", pGraphics, "float", x, "float", y, "float", w, "float", h, "int", CombineMode)
 }
 
 Gdip_SetClipPath(pGraphics, Path, CombineMode=0)
@@ -6918,7 +7188,7 @@ Gdip_SetClipPath(pGraphics, Path, CombineMode=0)
 
 Gdip_ResetClip(pGraphics)
 {
-   return DllCall("gdiplus\GdipResetClip", A_PtrSize ? "UPtr" : "UInt", pGraphics)
+	return DllCall("gdiplus\GdipResetClip", A_PtrSize ? "UPtr" : "UInt", pGraphics)
 }
 
 Gdip_GetClipRegion(pGraphics)
@@ -6996,7 +7266,7 @@ Gdip_PixelateBitmap(pBitmap, ByRef pBitmapOut, BlockSize)
 	if (!PixelateBitmap)
 	{
 		if A_PtrSize != 8 ; x86 machine code
-		MCode_PixelateBitmap =
+			MCode_PixelateBitmap =
 		(LTrim Join
 		558BEC83EC3C8B4514538B5D1C99F7FB56578BC88955EC894DD885C90F8E830200008B451099F7FB8365DC008365E000894DC88955F08945E833FF897DD4
 		397DE80F8E160100008BCB0FAFCB894DCC33C08945F88945FC89451C8945143BD87E608B45088D50028BC82BCA8BF02BF2418945F48B45E02955F4894DC4
@@ -7022,7 +7292,7 @@ Gdip_PixelateBitmap(pBitmap, ByRef pBitmapOut, BlockSize)
 		8A55FC88540F018A55F888140883C104FF4D1075DFFF45088B45083B45EC7C9F5F5E33C05BC9C21800
 		)
 		else ; x64 machine code
-		MCode_PixelateBitmap =
+			MCode_PixelateBitmap =
 		(LTrim Join
 		4489442418488954241048894C24085355565741544155415641574883EC28418BC1448B8C24980000004C8BDA99488BD941F7F9448BD0448BFA8954240C
 		448994248800000085C00F8E9D020000418BC04533E4458BF299448924244C8954241041F7F933C9898C24980000008BEA89542404448BE889442408EB05
@@ -7054,19 +7324,19 @@ Gdip_PixelateBitmap(pBitmap, ByRef pBitmapOut, BlockSize)
 			NumPut("0x" SubStr(MCode_PixelateBitmap, (2*A_Index)-1, 2), PixelateBitmap, A_Index-1, "UChar")
 		DllCall("VirtualProtect", Ptr, &PixelateBitmap, Ptr, VarSetCapacity(PixelateBitmap), "uint", 0x40, A_PtrSize ? "UPtr*" : "UInt*", 0)
 	}
-
+	
 	Gdip_GetImageDimensions(pBitmap, Width, Height)
 	
 	if (Width != Gdip_GetImageWidth(pBitmapOut) || Height != Gdip_GetImageHeight(pBitmapOut))
 		return -1
 	if (BlockSize > Width || BlockSize > Height)
 		return -2
-
+	
 	E1 := Gdip_LockBits(pBitmap, 0, 0, Width, Height, Stride1, Scan01, BitmapData1)
 	E2 := Gdip_LockBits(pBitmapOut, 0, 0, Width, Height, Stride2, Scan02, BitmapData2)
 	if (E1 || E2)
 		return -3
-
+	
 	E := DllCall(&PixelateBitmap, Ptr, Scan01, Ptr, Scan02, "int", Width, "int", Height, "int", Stride1, "int", BlockSize)
 	
 	Gdip_UnlockBits(pBitmap, BitmapData1), Gdip_UnlockBits(pBitmapOut, BitmapData2)
@@ -7124,12 +7394,12 @@ StrGetB(Address, Length=-1, Encoding=0)
 {
 	; Flexible parameter handling:
 	if Length is not integer
-	Encoding := Length,  Length := -1
-
+		Encoding := Length,  Length := -1
+	
 	; Check for obvious errors.
 	if (Address+0 < 1024)
 		return
-
+	
 	; Ensure 'Encoding' contains a numeric identifier.
 	if Encoding = UTF-16
 		Encoding = 1200
@@ -7137,7 +7407,7 @@ StrGetB(Address, Length=-1, Encoding=0)
 		Encoding = 65001
 	else if SubStr(Encoding,1,2)="CP"
 		Encoding := SubStr(Encoding,3)
-
+	
 	if !Encoding ; "" or 0
 	{
 		; No conversion necessary, but we might not want the whole string.
@@ -7162,4 +7432,4 @@ StrGetB(Address, Length=-1, Encoding=0)
 	}
 	
 	return String
-}	 
+}
