@@ -1,0 +1,36 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Folder_Exist_Check()</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link href="default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<h1>Folder_Exist_Check()</h1>
+<p>Checks to ensure that a folder exists on the users computer</p>
+
+<pre class="Syntax">Folder_Exist_Check(Folder)</pre>
+<h3>Parameters</h4>
+<dl>
+  <dt>Folder</dt>
+  <dd><p>This should contain the full file path of the folder</p>
+<pre class="NoIndent"> Folder = C:\SerialMacro
+ Folder_Exist_Check(Folder)</pre></dd>
+</dl>
+<h3>Returns</h3>
+<p>The Name of the <em>Folder</em> Variable - the <em>result</em>  Variable</p>
+<pre class="NoIndent">Folder := C:\SerialMacro
+Result := Folder_Exist_Check(Folder)</pre>
+<p>Result would be <code>C:\SerialMacro - Folder_Exist</code> if the folder <strong>IS</strong> on the C Drive
+Result would be <code>C:\SerialMacro - Folder_Not_Exist</code> if the folder was <strong>NOT</strong> on the C Drive</p>
+<h3>Remarks</h3>
+<p>Uses the AutoHotkey built in function of <code>FileExist()</code> to determing is the file is on the computer</p>
+<h3 id="additional-information">Additional Information</h3>
+<p>For more information on the <code>FileExist()</code> function click on the link (Internet Connection Required) below:<br/>
+<a href="https://autohotkey.com/docs/commands/FileExist.htm">FileExist()</a></p>
+
+</body>
+</html>
