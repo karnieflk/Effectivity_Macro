@@ -2,37 +2,19 @@
  * * * Compile_AHK SETTINGS BEGIN * * *
 
 [AHK2EXE]
-Exe_File=%In_Dir%\Effectivity Macro 2.0.exe
+Exe_File=%In_Dir%\Effectivity Macro 2.01.exe
 [VERSION]
 Set_Version_Info=1
-File_Version=2.0.0.0
+File_Version=2.0.1.0
 Inc_File_Version=0
 Legal_Copyright=Jarett Karnia
-Product_Version=2.0.0.0
+Product_Version=2.0.0.6
+Inc_Product_Version=1
 [ICONS]
 Icon_1=C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\icons\Serial.ico
 Icon_4=C:\Users\karnijs\Documents\NiMi Containers\Autohotkey\icons\paused.ico
 
 * * * Compile_AHK SETTINGS END * * *
-*/
-
-/*
-	* * * Compile_AHK SETTINGS BEGIN * * *
-	
-	[AHK2EXE]
-	Exe_File=%In_Dir%\Effectivity Macro 2.5.7 Beta Dual Tab.exe
-	[VERSION]
-	Set_Version_Info=1
-	File_Description=Effectivity Macro 2.5.7 Beta
-	File_Version=2.0.0.0
-	Inc_File_Version=0
-	Legal_Copyright=Jarett Karnia
-	Product_Version=2.0.0.13
-	[ICONS]
-	Icon_1=%In_Dir%\Rewrite of 1.4 Revised.ahk_1.ico
-	Icon_4=%In_Dir%\Rewrite of 1.4 Revised.ahk_4.ico
-	
-	* * * Compile_AHK SETTINGS END * * *
 */
 
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
@@ -110,7 +92,7 @@ Global Prefix_Number_Location_Check, First_Effectivity_Numbers, Title, Current_M
 */
 
 
-Version_Number = 2..0
+Version_Number = 2.01
 ;~ Version_Number = 1.1 test
 Effectivity_Macro :=  "Effectivity Macro V" Version_Number
 Checkp=0
@@ -240,7 +222,7 @@ If (editfield = "null") || (editfield2= "null") || (TotalPrefixes = "null") || (
 
 
 SplashTextOn,,20,,Checking for update....
-;~ Versioncheck("0")
+Versioncheck("1")
 SplashTextOff
 Formatted_text_completed = 0
 IniRead, reuse, %Configuration_File_Location%, reuse,reuse
@@ -3928,13 +3910,10 @@ UPdate_TExt(Text, start)
 	StringReplace, update_Version,update_Version,Version=,,
 	If (update_Version <= Version_Number) and  (First_run = "0")
 	{
-		If (start)
-		{
-			Progress,  w200,Updating..., Macro is Up to date., Arbortext Macro Updater
-			Progress, 100
-			sleep 1000
-		}
 		
+			Progress,  w200,Check Complete, Macro is Up to date., Effectivity  Macro Updater
+		Progress, 100
+			sleep 3000		
 	}
 	
 	If (update_Version > Version_Number)  or (First_run = "1")
